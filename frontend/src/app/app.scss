@@ -1,0 +1,61 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+  background:
+    radial-gradient(circle at 82% 18%, rgb(30 138 149 / 22%), transparent 28rem),
+    #0d2038;
+  color: #f5f8fa;
+}
+
+.learning-shell {
+  box-sizing: border-box;
+  width: min(72rem, 100%);
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: clamp(3rem, 8vw, 7rem) clamp(1.5rem, 6vw, 5rem);
+}
+
+.eyebrow,
+section > span {
+  color: #4fd1c5;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+h1 {
+  max-width: 16ch;
+  margin: 1rem 0;
+  font-size: clamp(2.6rem, 7vw, 5.8rem);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+}
+
+.summary {
+  max-width: 47rem;
+  color: #c7d5df;
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  line-height: 1.65;
+}
+
+section {
+  max-width: 44rem;
+  margin-top: clamp(3rem, 8vw, 7rem);
+  padding: 1.5rem;
+  border: 1px solid rgb(79 209 197 / 35%);
+  background: rgb(17 50 77 / 72%);
+  border-radius: 0.75rem;
+}
+
+h2 {
+  margin: 0.75rem 0;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+}
+
+section p {
+  margin-bottom: 0;
+  color: #c7d5df;
+  line-height: 1.6;
+}
+
