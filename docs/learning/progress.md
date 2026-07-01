@@ -5,8 +5,8 @@ Durum değerleri: `Bekliyor`, `Devam ediyor`, `Review`, `Tamamlandı`.
 ## Güncel konum
 
 - Aşama: 1 - Modern Angular Temelleri
-- Modül: 1 - Ürün, Alan ve Workspace Başlangıcı
-- Ders: 7 - Kalite kapısı ve Git checkpoint
+- Modül: 2 - Component ve Template Modeli
+- Ders: 3 - Control Flow
 - Durum: Devam ediyor
 
 ## Modül 1 dersleri
@@ -19,7 +19,19 @@ Durum değerleri: `Bekliyor`, `Devam ediyor`, `Review`, `Tamamlandı`.
 | 1.4 | Angular CLI ve workspace | Tamamlandı | `docs/learning/module-01-lessons-04-06-angular-foundations.md` |
 | 1.5 | Dosyadan ekrana akış | Tamamlandı | `docs/learning/module-01-lessons-04-06-angular-foundations.md` |
 | 1.6 | Strict, standalone, zoneless, routing, SCSS, Vitest | Tamamlandı | `docs/learning/module-01-lessons-04-06-angular-foundations.md` |
-| 1.7 | Kalite kapısı ve Git checkpoint | Devam ediyor | `docs/learning/module-01-lesson-07-quality-gate.md` |
+| 1.7 | Kalite kapısı ve Git checkpoint | Tamamlandı | GitHub Actions `Frontend CI` başarılı |
+
+## Modül 2 dersleri
+
+| No | Ders | Durum | Kanıt |
+|---:|---|---|---|
+| 2.1 | Component çalışma modeli | Tamamlandı | `docs/learning/module-02-component-template.md` |
+| 2.2 | Template ve binding | Tamamlandı | `IncidentCard` component'i ve testleri |
+| 2.3 | `@if`, `@for`, `@switch` control flow | Devam ediyor | Incident durum, sinyal ve Severity görünümleri |
+| 2.4 | `input()` ve `output()` | Bekliyor | Typed parent-child sözleşmesi |
+| 2.5 | Component composition | Bekliyor | Page/List/Card ağacı |
+| 2.6 | Incident feature component'leri | Bekliyor | Filter/List/Empty State |
+| 2.7 | Test ve accessibility | Bekliyor | Component kalite kapısı |
 
 ## Teknik bootstrap kanıtı
 
@@ -32,6 +44,7 @@ Durum değerleri: `Bekliyor`, `Devam ediyor`, `Review`, `Tamamlandı`.
 - Development server sonucu: HTTP 200.
 - İlk Git commit'i: `78f9386 chore: initialize InfraFlow platform`.
 - Yerel `main` branch'i `origin/main` ile senkronlandı.
+- GitHub Actions `Frontend CI` workflow'u başarılı tamamlandı.
 
 Teknik kurulumun tamamlanması Modül 1'in öğrenildiği anlamına gelmez. Her ders açıklama, uygulama ve review ile ayrıca tamamlanacaktır.
 
@@ -39,8 +52,8 @@ Teknik kurulumun tamamlanması Modül 1'in öğrenildiği anlamına gelmez. Her 
 
 | Modül | Başlık | Durum |
 |---:|---|---|
-| 1 | Ürün, Alan ve Workspace Başlangıcı | Devam ediyor |
-| 2 | Component ve Template Modeli | Bekliyor |
+| 1 | Ürün, Alan ve Workspace Başlangıcı | Tamamlandı |
+| 2 | Component ve Template Modeli | Devam ediyor |
 | 3 | Dependency Injection ve Routing | Bekliyor |
 | 4 | Signals, RxJS ve Test Temelleri | Bekliyor |
 | 5 | Domain ve Feature Sınırları | Bekliyor |

@@ -1,0 +1,119 @@
+:host {
+  display: block;
+}
+
+.incident-card {
+  display: grid;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  border: 1px solid rgb(79 209 197 / 35%);
+  border-radius: 0.75rem;
+  background: rgb(17 50 77 / 76%);
+  transition:
+    border-color 160ms ease,
+    opacity 160ms ease;
+}
+
+.incident-card--acknowledged {
+  border-color: rgb(134 239 172 / 55%);
+  opacity: 0.78;
+}
+
+.incident-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.incident-card__id {
+  margin: 0;
+  color: #9fb2c2;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.8rem;
+}
+
+.incident-card__severity {
+  padding: 0.35rem 0.65rem;
+  border: 1px solid rgb(248 113 113 / 55%);
+  border-radius: 999px;
+  color: #fecaca;
+  background: rgb(127 29 29 / 38%);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.incident-card__content {
+  display: grid;
+  gap: 0.4rem;
+}
+
+h2,
+p {
+  margin: 0;
+}
+
+h2 {
+  font-size: clamp(1.35rem, 3vw, 1.8rem);
+}
+
+.incident-card__content p {
+  color: #c7d5df;
+  line-height: 1.5;
+}
+
+.incident-card__signals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.incident-card__signals li {
+  padding: 0.35rem 0.55rem;
+  border: 1px solid rgb(159 178 194 / 35%);
+  border-radius: 0.4rem;
+  color: #c7d5df;
+  background: rgb(9 31 50 / 55%);
+  font-size: 0.78rem;
+}
+
+.incident-card__guidance,
+.incident-card__status {
+  margin: 0;
+  font-weight: 700;
+}
+
+.incident-card__guidance {
+  color: #fecaca;
+}
+
+.incident-card__status {
+  color: #86efac;
+}
+
+button {
+  justify-self: start;
+  padding: 0.75rem 1rem;
+  border: 0;
+  border-radius: 0.5rem;
+  color: #08252a;
+  background: #4fd1c5;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: #7de2da;
+}
+
+button:focus-visible {
+  outline: 3px solid #f5f8fa;
+  outline-offset: 3px;
+}
+

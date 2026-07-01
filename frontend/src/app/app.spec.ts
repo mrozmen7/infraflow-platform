@@ -25,8 +25,8 @@ describe('App', () => {
       'Critical infrastructure operations',
     );
     expect(element.querySelector('section span')?.textContent).toContain(
-      'Phase 1 / Module 1',
+      'Phase 1 / Module 2',
     );
+    expect(element.querySelector('app-incident-card')).toBeTruthy();
   });
 });
-
