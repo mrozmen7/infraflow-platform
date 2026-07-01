@@ -4,6 +4,8 @@ Bu dosya 6 aşama ve 20 modülün hangi küçük derslerle, hangi sırada ve han
 
 ## Öğretme yöntemi
 
+Her İngilizce veya teknik terim ilk geçtiği yerde hemen Türkçe anlamıyla birlikte verilir. Örnek: `Dependency (projenin çalışmak için ihtiyaç duyduğu dış paket)`. Terim öğrenilmeden o terimle işlem yapılmaz.
+
 Her ders aynı döngüyü izler:
 
 1. **Hatırlama:** Önceki dersten üç kısa soru.
@@ -310,4 +312,3 @@ Her modül sonunda:
 4. Kod ve mimari review yapılır.
 5. Doküman ve ADR gerekiyorsa güncellenir.
 6. `module-XX-complete` etiketi ancak bundan sonra oluşturulur.
-

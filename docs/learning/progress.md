@@ -6,7 +6,7 @@ Durum değerleri: `Bekliyor`, `Devam ediyor`, `Review`, `Tamamlandı`.
 
 - Aşama: 1 - Modern Angular Temelleri
 - Modül: 1 - Ürün, Alan ve Workspace Başlangıcı
-- Ders: 2 - Domain dili
+- Ders: 7 - Kalite kapısı ve Git checkpoint
 - Durum: Devam ediyor
 
 ## Modül 1 dersleri
@@ -14,12 +14,12 @@ Durum değerleri: `Bekliyor`, `Devam ediyor`, `Review`, `Tamamlandı`.
 | No | Ders | Durum | Kanıt |
 |---:|---|---|---|
 | 1.1 | Product Charter | Tamamlandı | `docs/product/product-charter.md` |
-| 1.2 | Domain dili | Devam ediyor | `docs/domain/domain-language.md` |
-| 1.3 | Node.js, npm ve paket modeli | Bekliyor | Sürüm ve komut açıklaması |
-| 1.4 | Angular CLI ve workspace | Bekliyor | Çalışan Angular 22 workspace |
-| 1.5 | Dosyadan ekrana akış | Bekliyor | main/config/component akış çizimi |
-| 1.6 | Strict, standalone, zoneless, routing, SCSS, Vitest | Bekliyor | Konfigürasyon review'u |
-| 1.7 | Kalite kapısı ve Git checkpoint | Bekliyor | Test + build + review |
+| 1.2 | Domain dili | Tamamlandı | `docs/domain/domain-language.md` |
+| 1.3 | Node.js, npm ve paket modeli | Tamamlandı | `docs/learning/module-01-lesson-03-node-npm.md` |
+| 1.4 | Angular CLI ve workspace | Tamamlandı | `docs/learning/module-01-lessons-04-06-angular-foundations.md` |
+| 1.5 | Dosyadan ekrana akış | Tamamlandı | `docs/learning/module-01-lessons-04-06-angular-foundations.md` |
+| 1.6 | Strict, standalone, zoneless, routing, SCSS, Vitest | Tamamlandı | `docs/learning/module-01-lessons-04-06-angular-foundations.md` |
+| 1.7 | Kalite kapısı ve Git checkpoint | Devam ediyor | `docs/learning/module-01-lesson-07-quality-gate.md` |
 
 ## Teknik bootstrap kanıtı
 
@@ -30,6 +30,8 @@ Durum değerleri: `Bekliyor`, `Devam ediyor`, `Review`, `Tamamlandı`.
 - Production build başarılı.
 - Vitest sonucu: 2/2 test başarılı.
 - Development server sonucu: HTTP 200.
+- İlk Git commit'i: `78f9386 chore: initialize InfraFlow platform`.
+- Yerel `main` branch'i `origin/main` ile senkronlandı.
 
 Teknik kurulumun tamamlanması Modül 1'in öğrenildiği anlamına gelmez. Her ders açıklama, uygulama ve review ile ayrıca tamamlanacaktır.
 

@@ -4,6 +4,8 @@
 
 Bu repository'de yeni bir teknoloji veya Angular API'si açıklanmadan uygulanmaz. Her konu şu sırayla ele alınır:
 
+İngilizce veya teknik bir terim ilk kullanıldığı yerde hemen Türkçe anlamıyla birlikte yazılır. Örnek: `Severity (olayın teknik ciddiyeti)` ve `Priority (işin ele alınma sırası)`. Okuyucunun terimin anlamını başka yerde araması beklenmez.
+
 1. Nedir? Teknik olmayan bir benzetmeyle açıkla.
 2. Hangi problemi çözer?
 3. Zihinsel modeli ve çalışma biçimi nedir?
@@ -39,4 +41,3 @@ cd frontend
 npm test -- --watch=false
 npm run build
 ```
-
