@@ -1,0 +1,35 @@
+<article class="incident-detail" [attr.data-severity]="incident().severity">
+  <a class="back-link" routerLink="/incidents">← Incident workspace</a>
+
+  <header>
+    <div>
+      <p class="eyebrow">{{ incident().id }} · {{ incident().status }}</p>
+      <h1>{{ incident().title }}</h1>
+      <p class="description">{{ incident().description }}</p>
+    </div>
+    <span class="severity">{{ incident().severity }}</span>
+  </header>
+
+  <dl>
+    <div>
+      <dt>Priority</dt>
+      <dd>{{ incident().priority }}</dd>
+    </div>
+    <div>
+      <dt>Asset</dt>
+      <dd>{{ incident().assetId }}</dd>
+    </div>
+    <div>
+      <dt>Location</dt>
+      <dd>{{ incident().location }}</dd>
+    </div>
+    <div>
+      <dt>Reported</dt>
+      <dd>
+        <time [attr.datetime]="incident().reportedAt">
+          {{ incident().reportedAt | date: 'd MMM y, HH:mm' : 'UTC' }} UTC
+        </time>
+      </dd>
+    </div>
+  </dl>
+</article>

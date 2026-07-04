@@ -1,0 +1,25 @@
+<form class="filter-bar" aria-label="Incident filters" (submit)="$event.preventDefault()">
+  <label class="filter-bar__field filter-bar__field--search">
+    <span>Search incidents</span>
+    <input
+      #searchInput
+      type="search"
+      name="incident-search"
+      autocomplete="off"
+      placeholder="ID, asset, location or title"
+      [value]="searchTerm()"
+      (input)="onSearchInput($event)"
+    />
+  </label>
+
+  <label class="filter-bar__field">
+    <span>Severity</span>
+    <select name="incident-severity" [value]="severity()" (change)="onSeverityChange($event)">
+      @for (severityOption of severityOptions; track severityOption) {
+        <option [value]="severityOption">{{ severityOption }}</option>
+      }
+    </select>
+  </label>
+
+  <button type="button" (click)="resetRequested.emit()">Reset filters</button>
+</form>

@@ -1,26 +1,34 @@
-import { Component } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Component, computed, input, output } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
-type IncidentSeverity = 'Low' | 'Medium' | 'High' | 'Critical';
+import { Incident } from '../../domain/incident';
 
 @Component({
   selector: 'app-incident-card',
+  imports: [DatePipe, RouterLink],
   templateUrl: './incident-card.html',
   styleUrl: './incident-card.scss',
 })
 export class IncidentCard {
-  protected readonly incidentId = 'INC-2026-0001';
-  protected readonly title = 'Transformer smoke detected';
-  protected readonly location = 'North Tunnel · KM 3.0';
-  protected readonly reportedAt = '30 June 2026 · 17:42';
-  protected readonly severity: IncidentSeverity = 'Critical';
-  protected readonly operationalSignals = [
-    'Smoke detected',
-    'Lighting unavailable',
-    'Traffic active',
-  ];
-  protected acknowledged = false;
+  readonly incident = input.required<Incident>();
+  readonly selected = input(false);
 
-  protected acknowledge(): void {
-    this.acknowledged = true;
-  }
+  readonly acknowledgeRequested = output<string>();
+  readonly selectRequested = output<string>();
+
+  protected readonly canAcknowledge = computed(() => this.incident().status === 'Open');
+
+  protected readonly guidance = computed(() => {
+    switch (this.incident().severity) {
+      case 'Critical':
+        return 'Immediate safety response required';
+      case 'High':
+        return 'Urgent operational review required';
+      case 'Medium':
+        return 'Plan an operational inspection';
+      case 'Low':
+        return 'Monitor during standard operations';
+    }
+  });
 }

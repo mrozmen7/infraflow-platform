@@ -1,42 +1,52 @@
 <article
   class="incident-card"
-  [class.incident-card--acknowledged]="acknowledged"
-  [attr.aria-labelledby]="incidentId + '-title'"
+  [class.incident-card--selected]="selected()"
+  [attr.data-severity]="incident().severity"
+  [attr.aria-labelledby]="incident().id + '-title'"
 >
   <header class="incident-card__header">
-    <p class="incident-card__id">{{ incidentId }}</p>
-    <span class="incident-card__severity">{{ severity }}</span>
+    <p class="incident-card__id">{{ incident().id }}</p>
+    <div class="incident-card__badges">
+      <span class="incident-card__priority" [attr.aria-label]="'Priority ' + incident().priority">
+        {{ incident().priority }}
+      </span>
+      <span class="incident-card__severity">{{ incident().severity }}</span>
+    </div>
   </header>
 
   <div class="incident-card__content">
-    <h2 [id]="incidentId + '-title'">{{ title }}</h2>
-    <p>{{ location }}</p>
-    <p>{{ reportedAt }}</p>
+    <h2 [id]="incident().id + '-title'">
+      <a [routerLink]="['/incidents', incident().id]">{{ incident().title }}</a>
+    </h2>
+    <p>{{ incident().location }}</p>
+    <p>
+      <time [attr.datetime]="incident().reportedAt">
+        {{ incident().reportedAt | date: 'd MMM y, HH:mm' : 'UTC' }} UTC
+      </time>
+    </p>
   </div>
 
   <ul class="incident-card__signals" aria-label="Operational signals">
-    @for (operationalSignal of operationalSignals; track operationalSignal) {
+    @for (operationalSignal of incident().operationalSignals; track operationalSignal) {
       <li>{{ operationalSignal }}</li>
     } @empty {
       <li>No operational signal reported</li>
     }
   </ul>
 
-  @switch (severity) {
-    @case ('Critical') {
-      <p class="incident-card__guidance">Immediate safety response required</p>
-    }
-    @case ('High') {
-      <p class="incident-card__guidance">Urgent operational review required</p>
-    }
-    @default {
-      <p class="incident-card__guidance">Standard operational review required</p>
-    }
-  }
+  <p class="incident-card__guidance">{{ guidance() }}</p>
 
-  @if (acknowledged) {
-    <p class="incident-card__status" role="status">Incident acknowledged by operator</p>
-  } @else {
-    <button type="button" (click)="acknowledge()">Acknowledge incident</button>
-  }
+  <footer class="incident-card__footer">
+    <p class="incident-card__status">Status: {{ incident().status }}</p>
+    <div class="incident-card__actions">
+      <button type="button" class="button-secondary" (click)="selectRequested.emit(incident().id)">
+        Select
+      </button>
+      @if (canAcknowledge()) {
+        <button type="button" (click)="acknowledgeRequested.emit(incident().id)">
+          Acknowledge
+        </button>
+      }
+    </div>
+  </footer>
 </article>

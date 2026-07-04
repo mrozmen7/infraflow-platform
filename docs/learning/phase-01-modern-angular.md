@@ -1,79 +1,98 @@
 # Aşama 1: Modern Angular Temelleri
 
-## Aşamanın amacı
+- Durum: Tamamlandı
+- Tamamlanma tarihi: 1 Temmuz 2026
 
-Angular'ın modern zihinsel modelini öğrenerek InfraFlow'un ilk çalışan dikey dilimini oluşturmak. Bu aşamanın sonunda mock veriyle çalışan, test edilen ve production build alan bir Incident ekranı bulunacaktır.
+## Amaç
 
-## Modül 1: Ürün, Alan ve Workspace Başlangıcı
+Angular'ın modern zihinsel modelini öğrenerek InfraFlow'un ilk çalışan Incident (arıza) dikey dilimini oluşturmak. Dikey dilim; URL'den veri erişimine, kullanıcı etkileşiminden testlere kadar küçük fakat uçtan uca çalışan ürün parçasıdır.
 
-### Anlamı
+## Modül 1 — Ürün, Alan ve Workspace Başlangıcı
 
-Kod yazmadan önce ne inşa ettiğimizi, kimin kullanacağını ve proje araçlarının nasıl çalışacağını belirleriz. Workspace, projenin kaynak kodunu, testini, build ayarlarını ve geliştirme komutlarını bir arada yöneten çalışma alanıdır.
+Önce ürün sınırı, ortak domain dili (iş alanının ortak dili) ve geliştirme araçları kuruldu. Angular 22, strict TypeScript, standalone component, zoneless çalışma, routing, SCSS ve Vitest kararları doğrulandı. GitHub Actions kalite kapısı oluşturuldu.
 
-### Neden önce gelir?
+Kanıtlar:
 
-Ürün sınırı bilinmeden iyi klasör yapısı veya doğru component tasarlanamaz. Desteklenmeyen Node sürümüyle yapılan kurulum da daha sonra rastgele build sorunlarına dönüşür.
+- `docs/product/product-charter.md`
+- `docs/domain/domain-language.md`
+- `docs/learning/module-01-workspace.md`
+- `.github/workflows/frontend-ci.yml`
 
-### Çıkış kapısı
+## Modül 2 — Component ve Template Modeli
 
-- Product Charter hazırdır.
-- Desteklenen Node ve Angular sürümü sabitlenmiştir.
-- Angular uygulaması çalışır.
-- Test ve production build başarılıdır.
+Ekran Page/Filter/List/Card/Empty State component'lerine ayrıldı. `input()` ile aşağı doğru veri, `output()` ile yukarı doğru olay akışı kuruldu. Binding, control flow, content projection ve view query gerçek Incident ekranında uygulandı.
 
-## Modül 2: Component ve Template Modeli
+Kanıt: `docs/learning/module-02-component-template.md`
 
-### Anlamı
+## Modül 3 — Dependency Injection ve Routing
 
-Component, ekrandaki bir parçanın davranışı ile görünümünü bir araya getirir. Template, kullanıcıya gösterilecek HTML yapısını ve verinin ekrana nasıl bağlandığını tanımlar.
+UI, Incident veri kaynağından `InjectionToken` ve repository portu ile ayrıldı. Repository yalnızca Incident route ağacında sağlandı. Incident, Asset ve Work Order rotaları lazy yüklendi. Feature guard, detail resolver, Not Found ve feature-disabled rotaları eklendi.
 
-### Neden ikinci sırada?
+Kanıt: `docs/learning/module-03-dependency-injection-routing.md`
 
-Angular uygulamasının görünen bütün feature'ları component'lerden oluşur. Veri akışını öğrenmeden state yönetimine geçmek, sorumlulukların yanlış yere konmasına yol açar.
+## Modül 4 — Signals, RxJS ve Test Temelleri
 
-### Uygulama
+Arama, Severity filtresi, seçim ve kullanıcı mesajları Signal ile yönetildi. `computed`, `effect` ve `linkedSignal` gerçek state problemlerine uygulandı. Arama akışı RxJS ile debounce edildi. Asenkron liste `resource()` ile loading/error/empty/success durumlarına ayrıldı ve eski istekler `AbortSignal` ile iptal edildi.
 
-Incident listesi, Incident kartı, filtre çubuğu ve empty/loading/error görünümleri.
+Kanıt: `docs/learning/module-04-signals-rxjs-testing.md`
 
-## Modül 3: Dependency Injection ve Routing
-
-### Anlamı
-
-Dependency Injection bir sınıfın ihtiyaç duyduğu servisi kendisinin üretmesi yerine dışarıdan almasını sağlar. Routing ise URL'yi uygulamadaki feature ve ekranlarla eşleştirir.
-
-### Neden üçüncü sırada?
-
-Component sözleşmelerini gördükten sonra servislerin yaşam sürelerini ve feature'ların nasıl ayrılıp lazy yükleneceğini anlamak daha kolaydır.
-
-### Uygulama
-
-App shell, Incident/Assets/Work Orders lazy route'ları, hata rotaları ve runtime config.
-
-## Modül 4: Signals, RxJS ve Test Temelleri
-
-### Anlamı
-
-State, uygulamanın o andaki hafızasıdır. Signal bu hafızadaki bir değeri ve ona bağlı hesapları takip eder. RxJS zaman içinde gelen asenkron olay akışlarını yönetir. Testler beklenen davranışın bozulmadığını kanıtlar.
-
-### Neden dördüncü sırada?
-
-Signals veya RxJS'i doğru kullanmak için önce state'in hangi component veya feature'a ait olduğunu bilmek gerekir. Aksi halde aynı veri farklı yerlerde tutulur ve birbirinden kopar.
-
-### Uygulama
-
-Incident arama, filtreleme, seçim, detay yükleme, loading/error state ve race condition testleri.
-
-## Aşama sırası
+## Uygulama sırası
 
 ```text
-Ürün ve workspace
-        ↓
-Component sözleşmeleri
-        ↓
-Servis ve route sınırları
-        ↓
-State, asenkron akış ve test
-        ↓
-Çalışan Incident dikey dilimi
+1. Ürün ve domain sözlüğü
+          ↓
+2. Angular workspace ve kalite kapısı
+          ↓
+3. Incident type ve component sözleşmeleri
+          ↓
+4. Filter → List → Card component ağacı
+          ↓
+5. Repository portu ve route-scoped provider
+          ↓
+6. Lazy routes, guard ve resolver
+          ↓
+7. Signal + RxJS + Resource state akışı
+          ↓
+8. Normal, loading, error, empty ve race testleri
 ```
 
+## Çalışan mimari
+
+```text
+Browser URL
+    ↓
+Angular Router
+    ↓
+Lazy Incident route
+    ↓
+IncidentListPage (state owner)
+    ├── Signal/RxJS/Resource
+    ├── IncidentFilterBar
+    ├── IncidentList
+    │     └── IncidentCard × N
+    └── EmptyState
+          ↓
+INCIDENT_REPOSITORY token
+          ↓
+MockIncidentRepository
+```
+
+## Kalite kanıtı
+
+- Node.js 24.17 ile test edildi; proje dosyası Node.js 24.15 sürümünü sabitler.
+- 8 test dosyasında 19 test başarılı.
+- Production build başarılı.
+- Incident, detail, assets, work-orders ve hata sayfaları ayrı lazy chunk olarak üretildi.
+- Strict TypeScript ve strict template kontrolleri açık kaldı.
+- Erişilebilir navigation, form label'ları, live region, focus görünümü ve reduced-motion desteği eklendi.
+
+## Bilinçli sınırlar
+
+- Veri halen kontrollü mock repository'den gelir; gerçek Spring Boot backend Aşama 5'tedir.
+- Frontend guard güvenlik sınırı değildir; authorization backend'de uygulanacaktır.
+- `httpResource()` gerçek HTTP API gelene kadar kullanılmaz; boş veya sahte endpoint çağrısı yapılmaz.
+- Gelişmiş domain katmanları ve architecture fitness testleri Aşama 2'de ele alınacaktır.
+
+## Sonraki adım
+
+Aşama 2, Modül 5: Domain ve Feature Sınırları. Aşama 2 ancak bu aşamanın kod review'u ve manuel Git commit/push işlemi tamamlandıktan sonra başlatılır.

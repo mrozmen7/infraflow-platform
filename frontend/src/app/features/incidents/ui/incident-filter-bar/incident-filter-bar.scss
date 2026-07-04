@@ -1,0 +1,67 @@
+:host {
+  display: block;
+}
+
+.filter-bar {
+  display: grid;
+  grid-template-columns: minmax(14rem, 1fr) minmax(10rem, 14rem) auto;
+  align-items: end;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-medium);
+  background: var(--color-surface);
+}
+
+.filter-bar__field {
+  display: grid;
+  gap: 0.45rem;
+}
+
+label > span {
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+input,
+select,
+button {
+  min-height: 2.8rem;
+  box-sizing: border-box;
+  border-radius: 0.5rem;
+  font: inherit;
+}
+
+input,
+select {
+  width: 100%;
+  border: 1px solid var(--color-border-strong);
+  padding: 0.65rem 0.75rem;
+  color: var(--color-text);
+  background: #091f32;
+}
+
+button {
+  border: 1px solid var(--color-border-strong);
+  padding: 0.65rem 0.9rem;
+  color: var(--color-text);
+  background: transparent;
+  cursor: pointer;
+}
+
+input:focus-visible,
+select:focus-visible,
+button:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+@media (max-width: 48rem) {
+  .filter-bar {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+}

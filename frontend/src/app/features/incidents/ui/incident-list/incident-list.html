@@ -1,0 +1,12 @@
+<ol class="incident-list" aria-label="Incident results">
+  @for (incident of incidents(); track incident.id) {
+    <li>
+      <app-incident-card
+        [incident]="incident"
+        [selected]="selectedIncidentId() === incident.id"
+        (acknowledgeRequested)="acknowledgeRequested.emit($event)"
+        (selectRequested)="selectRequested.emit($event)"
+      />
+    </li>
+  }
+</ol>

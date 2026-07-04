@@ -1,0 +1,10 @@
+<section class="empty-state" aria-labelledby="empty-state-title">
+  <div class="empty-state__icon" aria-hidden="true">∅</div>
+  <h2 id="empty-state-title">{{ title() }}</h2>
+  <div class="empty-state__description">
+    <ng-content />
+  </div>
+  <div class="empty-state__actions">
+    <ng-content select="[empty-state-actions]" />
+  </div>
+</section>

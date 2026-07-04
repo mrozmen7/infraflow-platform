@@ -4,10 +4,10 @@ Durum değerleri: `Bekliyor`, `Devam ediyor`, `Review`, `Tamamlandı`.
 
 ## Güncel konum
 
-- Aşama: 1 - Modern Angular Temelleri
-- Modül: 2 - Component ve Template Modeli
-- Ders: 3 - Control Flow
-- Durum: Devam ediyor
+- Son tamamlanan: Aşama 1 - Modern Angular Temelleri
+- Tamamlanan modüller: 1, 2, 3 ve 4
+- Sonraki: Aşama 2 / Modül 5 - Domain ve Feature Sınırları
+- Durum: Aşama 2 henüz başlatılmadı
 
 ## Modül 1 dersleri
 
@@ -15,47 +15,65 @@ Durum değerleri: `Bekliyor`, `Devam ediyor`, `Review`, `Tamamlandı`.
 |---:|---|---|---|
 | 1.1 | Product Charter | Tamamlandı | `docs/product/product-charter.md` |
 | 1.2 | Domain dili | Tamamlandı | `docs/domain/domain-language.md` |
-| 1.3 | Node.js, npm ve paket modeli | Tamamlandı | `docs/learning/module-01-lesson-03-node-npm.md` |
-| 1.4 | Angular CLI ve workspace | Tamamlandı | `docs/learning/module-01-lessons-04-06-angular-foundations.md` |
-| 1.5 | Dosyadan ekrana akış | Tamamlandı | `docs/learning/module-01-lessons-04-06-angular-foundations.md` |
-| 1.6 | Strict, standalone, zoneless, routing, SCSS, Vitest | Tamamlandı | `docs/learning/module-01-lessons-04-06-angular-foundations.md` |
+| 1.3 | Node.js, npm ve paket modeli | Tamamlandı | `module-01-lesson-03-node-npm.md` |
+| 1.4 | Angular CLI ve workspace | Tamamlandı | `module-01-lessons-04-06-angular-foundations.md` |
+| 1.5 | Dosyadan ekrana akış | Tamamlandı | `module-01-lessons-04-06-angular-foundations.md` |
+| 1.6 | Strict, standalone, zoneless, routing, SCSS, Vitest | Tamamlandı | `module-01-lessons-04-06-angular-foundations.md` |
 | 1.7 | Kalite kapısı ve Git checkpoint | Tamamlandı | GitHub Actions `Frontend CI` başarılı |
 
 ## Modül 2 dersleri
 
 | No | Ders | Durum | Kanıt |
 |---:|---|---|---|
-| 2.1 | Component çalışma modeli | Tamamlandı | `docs/learning/module-02-component-template.md` |
-| 2.2 | Template ve binding | Tamamlandı | `IncidentCard` component'i ve testleri |
-| 2.3 | `@if`, `@for`, `@switch` control flow | Devam ediyor | Incident durum, sinyal ve Severity görünümleri |
-| 2.4 | `input()` ve `output()` | Bekliyor | Typed parent-child sözleşmesi |
-| 2.5 | Component composition | Bekliyor | Page/List/Card ağacı |
-| 2.6 | Incident feature component'leri | Bekliyor | Filter/List/Empty State |
-| 2.7 | Test ve accessibility | Bekliyor | Component kalite kapısı |
+| 2.1 | Component çalışma modeli | Tamamlandı | Component class/template/style/selector ayrımı |
+| 2.2 | Template ve binding | Tamamlandı | IncidentCard binding'leri |
+| 2.3 | `@if`, `@for`, `@switch` control flow | Tamamlandı | Incident durumları ve exhaustiveness örneği |
+| 2.4 | `input()` ve `output()` | Tamamlandı | Typed Card/Filter/List sözleşmeleri |
+| 2.5 | Component composition | Tamamlandı | Page → List → Card ağacı, `ng-content`, `viewChild` |
+| 2.6 | Incident feature component'leri | Tamamlandı | Filter/List/Card/Empty State |
+| 2.7 | Test ve accessibility | Tamamlandı | Component testleri ve erişilebilir shell |
 
-## Teknik bootstrap kanıtı
+## Modül 3 dersleri
 
-- Angular 22.0.4 kuruldu.
-- Node.js 24.15.0 proje sürümü olarak sabitlendi.
-- Strict TypeScript ve strict template kontrolleri açıldı.
-- Standalone, zoneless, routing, SCSS ve Vitest başlangıcı hazırlandı.
-- Production build başarılı.
-- Vitest sonucu: 2/2 test başarılı.
-- Development server sonucu: HTTP 200.
-- İlk Git commit'i: `78f9386 chore: initialize InfraFlow platform`.
-- Yerel `main` branch'i `origin/main` ile senkronlandı.
-- GitHub Actions `Frontend CI` workflow'u başarılı tamamlandı.
+| No | Ders | Durum | Kanıt |
+|---:|---|---|---|
+| 3.1 | Dependency Injection problemi | Tamamlandı | UI mock sınıfını doğrudan üretmiyor |
+| 3.2 | `inject()`, provider, InjectionToken | Tamamlandı | `INCIDENT_REPOSITORY`, `APP_RUNTIME_CONFIG` |
+| 3.3 | Provider yaşam alanları | Tamamlandı | Root config ve route-scoped repository |
+| 3.4 | URL, route config, router outlet | Tamamlandı | App shell ve route ağacı |
+| 3.5 | Lazy route ve feature sınırı | Tamamlandı | Ayrı production chunk'ları |
+| 3.6 | Guard, resolver, hata rotaları | Tamamlandı | Feature flag, Incident detail, redirects |
+| 3.7 | Incident/Asset/Work Order navigasyonu | Tamamlandı | Erişilebilir primary navigation |
 
-Teknik kurulumun tamamlanması Modül 1'in öğrenildiği anlamına gelmez. Her ders açıklama, uygulama ve review ile ayrıca tamamlanacaktır.
+## Modül 4 dersleri
+
+| No | Ders | Durum | Kanıt |
+|---:|---|---|---|
+| 4.1 | State ve tek sahip | Tamamlandı | `IncidentListPage` state owner |
+| 4.2 | `signal()` | Tamamlandı | Search, Severity, action state |
+| 4.3 | `computed()`, `effect()`, `linkedSignal()` | Tamamlandı | Query, document title, geçerli seçim |
+| 4.4 | Observable ve RxJS | Tamamlandı | Debounced search stream |
+| 4.5 | Signal/RxJS dönüşümü ve seçim kuralı | Tamamlandı | `toObservable`, `toSignal` |
+| 4.6 | `resource()`, `httpResource()` ve UI durumları | Tamamlandı | Mock async resource; HTTP geçiş kararı belgeli |
+| 4.7 | Race condition ve test | Tamamlandı | AbortSignal + 19 başarılı test |
+
+## Teknik kanıt
+
+- Angular 22.0.4.
+- Strict TypeScript ve strict template.
+- Standalone, zoneless, lazy routing, SCSS ve Vitest.
+- Node.js 24.17 üzerinde 8/8 test dosyası ve 19/19 test başarılı.
+- Production build başarılı ve lazy route chunk'ları üretildi.
+- Mock Incident list/search/select/acknowledge/detail akışı çalışıyor.
 
 ## 20 modül durumu
 
 | Modül | Başlık | Durum |
 |---:|---|---|
 | 1 | Ürün, Alan ve Workspace Başlangıcı | Tamamlandı |
-| 2 | Component ve Template Modeli | Devam ediyor |
-| 3 | Dependency Injection ve Routing | Bekliyor |
-| 4 | Signals, RxJS ve Test Temelleri | Bekliyor |
+| 2 | Component ve Template Modeli | Tamamlandı |
+| 3 | Dependency Injection ve Routing | Tamamlandı |
+| 4 | Signals, RxJS ve Test Temelleri | Tamamlandı |
 | 5 | Domain ve Feature Sınırları | Bekliyor |
 | 6 | State Management ve Signal Store | Bekliyor |
 | 7 | Signal Forms ve Kurumsal Formlar | Bekliyor |

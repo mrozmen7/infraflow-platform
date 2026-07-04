@@ -1,0 +1,51 @@
+<section class="incident-page" aria-labelledby="incident-page-title">
+  <header class="incident-page__header">
+    <div>
+      <p class="eyebrow">Operations · Live queue</p>
+      <h1 id="incident-page-title">Incident workspace</h1>
+      <p class="lede">
+        Triage infrastructure events, keep operational focus, and acknowledge ownership.
+      </p>
+    </div>
+
+    <div class="incident-page__summary" aria-live="polite">
+      <span>Current result</span>
+      <strong>{{ resultSummary() }}</strong>
+    </div>
+  </header>
+
+  <app-incident-filter-bar
+    [searchTerm]="searchTerm()"
+    [severity]="severityFilter()"
+    (searchTermChanged)="updateSearchTerm($event)"
+    (severityChanged)="updateSeverity($event)"
+    (resetRequested)="resetFilters()"
+  />
+
+  <p class="visually-hidden" aria-live="polite">{{ actionMessage() }}</p>
+
+  @if (incidentsResource.isLoading()) {
+    <div class="loading-state" role="status">
+      <span class="loading-state__indicator" aria-hidden="true"></span>
+      Loading incident operations…
+    </div>
+  } @else if (errorMessage()) {
+    <section class="error-state" role="alert" aria-labelledby="incident-error-title">
+      <h2 id="incident-error-title">Incident request failed</h2>
+      <p>{{ errorMessage() }}</p>
+      <button type="button" (click)="retryLoading()">Retry</button>
+    </section>
+  } @else if (incidents().length > 0) {
+    <app-incident-list
+      [incidents]="incidents()"
+      [selectedIncidentId]="selectedIncidentId()"
+      (selectRequested)="selectIncident($event)"
+      (acknowledgeRequested)="acknowledgeIncident($event)"
+    />
+  } @else {
+    <app-empty-state title="No incidents match these filters">
+      <p>Change the search or severity filter to return to the operational queue.</p>
+      <button empty-state-actions type="button" (click)="resetFilters()">Clear filters</button>
+    </app-empty-state>
+  }
+</section>

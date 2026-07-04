@@ -1,147 +1,135 @@
 # Modül 2: Component ve Template Modeli
 
-## Modül amacı
+## Amaç
 
-Angular ekranlarını sorumluluğu açık, erişilebilir ve test edilebilir component'lere ayırmak; TypeScript verisiyle HTML görünümü arasındaki veri akışını öğrenmek.
+Bir Angular ekranını küçük, tek sorumluluklu ve test edilebilir parçalara ayırmak; parent-child (üst bileşen-alt bileşen) veri akışını kurmak ve erişilebilir bir Incident (arıza) ekranı üretmek.
 
-## Dersler
+## Problem
 
-1. Component (ekrandaki belirli görevi yöneten bağımsız Angular parçası)
-2. Template (component'in HTML görünümü) ve Binding (TypeScript ile HTML arasındaki bağlantı)
-3. Control Flow (template içinde koşul ve liste yönetimi)
-4. Input ve Output (parent-child veri ve olay sözleşmeleri)
-5. Component Composition (küçük component'lerden büyük ekran oluşturma)
-6. Incident List, Filter Bar ve Empty State uygulaması
-7. Component Test ve Accessibility review'u
+Tek bir component (ekrandaki belirli görevi yöneten Angular parçası) bütün veriyi, filtreyi, kartları ve kullanıcı aksiyonlarını yönetirse dosya hızla büyür. Bir değişiklik başka davranışları bozar ve parçalar yeniden kullanılamaz.
 
-## Ders 1: Component çalışma modeli
+## Ders 2.1 — Component çalışma modeli
 
-Bir Angular component dört temel parçayı birleştirir:
+Bir component dört parçayı birleştirir:
 
-- `class` (veri ve davranışı taşıyan TypeScript sınıfı)
-- `template` (kullanıcıya gösterilen HTML yapısı)
-- `style` (component'in görsel kuralları)
-- `selector` (component'in HTML içindeki özel etiket adı)
+- TypeScript class (veri ve davranışı taşıyan sınıf),
+- template (kullanıcıya gösterilen HTML görünümü),
+- style (bileşene ait görsel kurallar),
+- selector (bileşenin HTML içindeki özel etiket adı).
 
-Component tek ve anlaşılır bir kullanıcı sorumluluğu taşımalıdır. `IncidentCard`, tek bir Incident özetini ve onun doğrudan kullanıcı aksiyonunu gösterir; bütün sayfanın filtreleme ve yükleme sorumluluğunu almaz.
-
-## Ders 2: Template ve Binding
-
-### Interpolation (TypeScript değerini metin olarak HTML'de gösterme)
+InfraFlow örneği:
 
 ```html
-<h2>{{ title }}</h2>
+<app-incident-card />
 ```
 
-Angular class içindeki `title` değerini okuyup ekranda metin olarak gösterir.
+`IncidentCard` yalnızca tek bir Incident özetini gösterir. Arama ve veri yükleme sorumluluğu kartta değildir.
 
-### Property Binding (HTML element özelliğini TypeScript değerine bağlama)
+## Ders 2.2 — Binding
+
+Binding (TypeScript ile HTML arasındaki bağlantı) dört yönde kullanıldı:
 
 ```html
-<button [disabled]="acknowledged">...</button>
+<h2>{{ incident().title }}</h2>
+<article [attr.data-severity]="incident().severity">
+<article [class.incident-card--selected]="selected()">
+<button (click)="acknowledgeRequested.emit(incident().id)">Acknowledge</button>
 ```
 
-`acknowledged` true olduğunda button'ın gerçek `disabled` özelliği etkinleşir.
+- Interpolation (değeri metin olarak gösterme): `{{ ... }}`
+- Property/attribute binding (HTML özelliğini veriye bağlama): `[...]`
+- Class binding (CSS sınıfını koşula bağlama): `[class...]`
+- Event binding (tarayıcı olayını metoda bağlama): `(click)`
 
-### Attribute Binding (HTML attribute değerini dinamik olarak bağlama)
+## Ders 2.3 — Control Flow
 
-```html
-<article [attr.aria-labelledby]="incidentId + '-title'">...</article>
-```
+Control Flow (şablon içindeki koşul ve tekrar yönetimi) şu amaçlarla kullanıldı:
 
-Erişilebilirlik için `aria-labelledby` attribute'u doğru başlık id'sine bağlanır.
+- `@if`: loading, error, empty ve dolu sonuç durumlarından yalnızca birini gösterir.
+- `@for`: Incident ve operasyon sinyali listelerini üretir.
+- `@empty`: operasyon sinyali olmayan kartta güvenli açıklama gösterir.
+- `@switch`: ilk prototipte Severity rehberini seçmek için kullanıldı; son tasarımda aynı karar exhaustiveness (bütün olasılıkların ele alınması) sağlayan TypeScript `switch` içine taşındı.
 
-### Class Binding (CSS class'ını koşula göre ekleme veya kaldırma)
+Gerçek business rule (iş kuralı) template içine yazılmaz. Template yalnızca görünümü seçer.
 
-```html
-<article [class.incident-card--acknowledged]="acknowledged">...</article>
-```
+## Ders 2.4 — `input()` ve `output()`
 
-Incident kabul edildiğinde görsel durum class'ı eklenir.
-
-### Event Binding (kullanıcı olayını TypeScript metoduna bağlama)
-
-```html
-<button (click)="acknowledge()">...</button>
-```
-
-Kullanıcı click olayı oluşturduğunda Angular `acknowledge()` metodunu çalıştırır.
-
-## Veri akışı
-
-```text
-TypeScript değeri
-       ↓
-Template binding
-       ↓
-Browser ekranı
-       ↓
-Kullanıcı click olayı
-       ↓
-TypeScript metodu
-       ↓
-Güncellenen görünüm
-```
-
-Bu derste veri component'in kendi içinde tutulur. Parent component'ten veri alma ve parent'a olay gönderme sözleşmesi Ders 4'te `input()` ve `output()` ile öğretilecektir.
-
-## Ders 3: Control Flow
-
-Control Flow (template içindeki koşul ve tekrar akışını yönetme), hangi HTML parçalarının ne zaman ve kaç kez gösterileceğini belirler.
-
-### `@if` (koşula göre görünüm seçme)
-
-```html
-@if (acknowledged) {
-  <p role="status">Incident acknowledged by operator</p>
-} @else {
-  <button type="button">Acknowledge incident</button>
-}
-```
-
-Incident henüz kabul edilmediyse button görünür. Kabul edildikten sonra button DOM'dan kaldırılır ve durum mesajı gösterilir.
-
-### `@for` (bir listedeki her değer için HTML üretme)
-
-```html
-@for (operationalSignal of operationalSignals; track operationalSignal) {
-  <li>{{ operationalSignal }}</li>
-} @empty {
-  <li>No operational signal reported</li>
-}
-```
-
-- `operationalSignal` (mevcut döngü elemanı)
-- `operationalSignals` (tekrar edilen kaynak liste)
-- `track` (Angular'ın listedeki eleman kimliğini takip etme kuralı)
-- `@empty` (liste boş olduğunda gösterilen görünüm)
-
-`track`, liste değiştiğinde Angular'ın hangi DOM elemanını yeniden kullanabileceğini belirler. Gerçek entity listelerinde mümkün olduğunda benzersiz `id` alanı kullanılacaktır.
-
-### `@switch` (tek değerin farklı olasılıklarını eşleştirme)
-
-```html
-@switch (severity) {
-  @case ('Critical') { ... }
-  @case ('High') { ... }
-  @default { ... }
-}
-```
-
-Severity değerine göre operasyon rehberi seçilir. `@default` (hiçbir case eşleşmediğinde kullanılan görünüm), bilinmeyen veya yeni bir değer geldiğinde güvenli geri dönüş sağlar.
-
-Control flow yalnızca görünümü yönetir. Critical Severity için gerçek business rule veya authorization kararı template içine yazılmaz; daha sonra domain ve backend katmanında uygulanır.
-
-### Strict template kontrolünden çıkan ders
-
-TypeScript ilk halinde `severity` alanını yalnızca `'Critical'` literal type (tek bir sabit değeri kabul eden tip) olarak çıkardı. Bu durumda `@case ('High')` hiçbir zaman eşleşemezdi ve Angular build işlemini durdurdu.
-
-İzin verilen bütün Severity değerlerini union type (birden fazla belirli değerden birini kabul eden birleşim tipi) ile tanımladık:
+`input()` (üst bileşenden alt bileşene veri alma sözleşmesi) tek yönlü veri girişidir:
 
 ```typescript
-type IncidentSeverity = 'Low' | 'Medium' | 'High' | 'Critical';
-
-protected readonly severity: IncidentSeverity = 'Critical';
+readonly incident = input.required<Incident>();
 ```
 
-Bu sayede template yalnızca tanımlı Severity değerlerini karşılaştırabilir; yazım hatası veya bilinmeyen değer derleme sırasında yakalanır.
+`required` (zorunlu), parent component veri göndermezse build sırasında hata üretilmesini sağlar.
+
+`output()` (alt bileşenden üst bileşene olay gönderme sözleşmesi) kullanıcının niyetini bildirir:
+
+```typescript
+readonly acknowledgeRequested = output<string>();
+```
+
+Kart Incident durumunu kendisi değiştirmez. Yalnızca Incident kimliğini parent component'e yollar. Gerçek state owner (durum sahibi) olan sayfa/repository kararı uygular.
+
+```text
+Parent state
+    │ input
+    ▼
+IncidentCard
+    │ output event
+    ▼
+Parent action handler
+```
+
+## Ders 2.5 — Component Composition
+
+Component Composition (küçük bileşenlerden büyük ekran oluşturma) ağacı:
+
+```text
+IncidentListPage
+├── IncidentFilterBar
+├── IncidentList
+│   └── IncidentCard × N
+└── EmptyState
+```
+
+`viewChild()` (parent içinden belirli child bileşene güvenli referans alma), filtre sıfırlandığında arama alanına klavye odağını geri taşır.
+
+`ng-content` (parent tarafından verilen HTML içeriğini child içinde belirlenen yere yerleştirme), `EmptyState` başlığının altına açıklama ve aksiyon düğmesi yerleştirir.
+
+## Ders 2.6 — Feature component'leri
+
+- `IncidentFilterBar`: Arama ve Severity girdilerini alır, değişiklikleri output olarak yollar.
+- `IncidentList`: Koleksiyonu dolaşır ve her Incident için kart üretir.
+- `IncidentCard`: Özet, Severity, Priority, status ve aksiyonları gösterir.
+- `EmptyState`: Sonuç olmadığında tekrar kullanılabilir boş durum görünümü sağlar.
+- `IncidentListPage`: Verinin ve kullanıcı state'inin sahibidir; child bileşenleri orkestre eder.
+
+## Ders 2.7 — Test ve Accessibility
+
+Accessibility (engelli kullanıcılar dahil herkesin arayüzü kullanabilmesi) için:
+
+- semantic HTML (anlamlı HTML) olarak `main`, `nav`, `article`, `ol`, `time`, `dl` kullanıldı,
+- bütün form alanları görünür `label` aldı,
+- dinamik mesajlar `aria-live` ile duyuruldu,
+- klavye odağı için `focus-visible` tanımlandı,
+- içeriğe atlama bağlantısı eklendi,
+- hareket azaltma tercihi desteklendi.
+
+Testler zorunlu input render'ını, output event'ini, state'in child tarafından değiştirilmediğini ve filtre olaylarının doğru tipte yayıldığını kanıtlar.
+
+## Yakalanan hata
+
+İlk page testindeki CSS selector (HTML elemanı seçme kuralı) fazla genişti. Test Incident kartındaki `Acknowledge` yerine Filter Bar içindeki `Reset filters` düğmesine basıyordu. Selector component sınırıyla daraltıldı:
+
+```text
+app-incident-card button:not(.button-secondary)
+```
+
+Bu hata, testin yeşil olmasından önce doğru kullanıcı davranışını hedeflediğinin kanıtlanması gerektiğini gösterdi.
+
+## Çıkış kanıtı
+
+- Typed input/output sözleşmeleri tamamlandı.
+- Page/List/Card/Filter/Empty State ağacı kuruldu.
+- Normal, boş ve etkileşim durumları hazırlandı.
+- Component testleri ve erişilebilirlik temeli tamamlandı.

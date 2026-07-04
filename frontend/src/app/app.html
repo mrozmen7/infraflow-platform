@@ -1,18 +1,30 @@
-<main class="learning-shell">
-  <p class="eyebrow">InfraFlow Learning Project</p>
-  <h1>Critical infrastructure operations, built to be understood.</h1>
-  <p class="summary">
-    Modern Angular architecture, professional AI-assisted engineering, Agentic UI,
-    and Spring Boot - learned step by step through one real product.
-  </p>
+<a class="skip-link" href="#main-content">Skip to main content</a>
 
-  <section aria-labelledby="module-title">
-    <span>Phase 1 / Module 2</span>
-    <h2 id="module-title">Component and template model</h2>
-    <p>Our first component connects typed data, accessible HTML, and user interaction.</p>
+<header class="app-header">
+  <a class="brand" routerLink="/incidents" aria-label="InfraFlow home">
+    <span class="brand__mark" aria-hidden="true">IF</span>
+    <span>
+      <strong>InfraFlow</strong>
+      <small>Critical operations</small>
+    </span>
+  </a>
 
-    <app-incident-card />
-  </section>
+  <nav aria-label="Primary navigation">
+    <a routerLink="/incidents" routerLinkActive="active">Incidents</a>
+    <a routerLink="/assets" routerLinkActive="active">Assets</a>
+    <a routerLink="/work-orders" routerLinkActive="active">Work orders</a>
+  </nav>
+</header>
 
+@if (isNavigating()) {
+  <div class="navigation-progress" role="progressbar" aria-label="Loading page"></div>
+}
+
+<main id="main-content" class="app-content">
   <router-outlet />
 </main>
+
+<footer class="app-footer">
+  <span>Training environment</span>
+  <span>Angular 22 · Phase 1 complete</span>
+</footer>
