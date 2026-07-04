@@ -13,7 +13,11 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 import { EmptyState } from '../../../../shared/ui/empty-state/empty-state';
-import { INCIDENT_REPOSITORY } from '../../data-access/incident-repository';
+import {
+  acknowledgeIncident as acknowledgeIncidentUseCase,
+  IncidentRepositoryPort,
+  searchIncidents,
+} from '../../application';
 import { Incident, IncidentQuery, IncidentSeverityFilter } from '../../domain/incident';
 import { IncidentFilterBar } from '../../ui/incident-filter-bar/incident-filter-bar';
 import { IncidentList } from '../../ui/incident-list/incident-list';
@@ -25,7 +29,7 @@ import { IncidentList } from '../../ui/incident-list/incident-list';
   styleUrl: './incident-list-page.scss',
 })
 export class IncidentListPage {
-  private readonly incidentRepository = inject(INCIDENT_REPOSITORY);
+  private readonly incidentRepository = inject(IncidentRepositoryPort);
   private readonly title = inject(Title);
   private readonly filterBar = viewChild(IncidentFilterBar);
 
@@ -45,7 +49,8 @@ export class IncidentListPage {
 
   protected readonly incidentsResource = resource({
     params: () => this.incidentQuery(),
-    loader: ({ params, abortSignal }) => this.incidentRepository.search(params, abortSignal),
+    loader: ({ params, abortSignal }) =>
+      searchIncidents(this.incidentRepository, params, abortSignal),
   });
 
   protected readonly incidents = computed<readonly Incident[]>(() =>
@@ -104,7 +109,7 @@ export class IncidentListPage {
     this.actionMessage.set(`Acknowledging ${incidentId}…`);
 
     try {
-      await this.incidentRepository.acknowledge(incidentId);
+      await acknowledgeIncidentUseCase(this.incidentRepository, incidentId);
       this.actionMessage.set(`${incidentId} acknowledged by the operator.`);
       this.incidentsResource.reload();
     } catch {

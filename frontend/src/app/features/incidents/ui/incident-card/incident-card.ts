@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, computed, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { Incident } from '../../domain/incident';
+import { canAcknowledgeIncident, Incident } from '../../domain/incident';
 
 @Component({
   selector: 'app-incident-card',
@@ -17,7 +17,7 @@ export class IncidentCard {
   readonly acknowledgeRequested = output<string>();
   readonly selectRequested = output<string>();
 
-  protected readonly canAcknowledge = computed(() => this.incident().status === 'Open');
+  protected readonly canAcknowledge = computed(() => canAcknowledgeIncident(this.incident()));
 
   protected readonly guidance = computed(() => {
     switch (this.incident().severity) {

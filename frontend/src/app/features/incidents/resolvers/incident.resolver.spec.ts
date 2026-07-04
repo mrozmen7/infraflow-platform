@@ -6,7 +6,7 @@ import {
   RedirectCommand,
 } from '@angular/router';
 
-import { INCIDENT_REPOSITORY, IncidentRepository } from '../data-access/incident-repository';
+import { IncidentRepositoryPort } from '../application';
 import { Incident } from '../domain/incident';
 import { incidentResolver } from './incident.resolver';
 
@@ -28,7 +28,7 @@ describe('incidentResolver', () => {
     configureRepository({
       search: () => Promise.resolve([]),
       findById: () => Promise.resolve(incident),
-      acknowledge: () => Promise.resolve(incident),
+      save: () => Promise.resolve(incident),
     });
 
     const result = await TestBed.runInInjectionContext(() =>
@@ -42,7 +42,7 @@ describe('incidentResolver', () => {
     configureRepository({
       search: () => Promise.resolve([]),
       findById: () => Promise.resolve(undefined),
-      acknowledge: () => Promise.resolve(incident),
+      save: () => Promise.resolve(incident),
     });
 
     const result = await TestBed.runInInjectionContext(() =>
@@ -53,9 +53,9 @@ describe('incidentResolver', () => {
   });
 });
 
-function configureRepository(repository: IncidentRepository): void {
+function configureRepository(repository: IncidentRepositoryPort): void {
   TestBed.configureTestingModule({
-    providers: [provideRouter([]), { provide: INCIDENT_REPOSITORY, useValue: repository }],
+    providers: [provideRouter([]), { provide: IncidentRepositoryPort, useValue: repository }],
   });
 }
 

@@ -1,7 +1,9 @@
 import { Routes } from '@angular/router';
 
-import { provideIncidentDataAccess } from './features/incidents/data-access/provide-incident-data-access';
-import { incidentsFeatureGuard } from './features/incidents/guards/incidents-feature.guard';
+import {
+  incidentsFeatureGuard,
+  provideIncidentDataAccess,
+} from './features/incidents/public-api';
 
 export const routes: Routes = [
   {

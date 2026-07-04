@@ -1,8 +1,8 @@
 import { provideRouter } from '@angular/router';
 import { TestBed } from '@angular/core/testing';
 
-import { INCIDENT_REPOSITORY, IncidentRepository } from '../../data-access/incident-repository';
-import { Incident, IncidentQuery } from '../../domain/incident';
+import { IncidentRepositoryPort } from '../../application';
+import { Incident, IncidentId, IncidentQuery } from '../../domain/incident';
 import { IncidentListPage } from './incident-list-page';
 
 const incidents: readonly Incident[] = [
@@ -32,7 +32,7 @@ const incidents: readonly Incident[] = [
   },
 ];
 
-class FakeIncidentRepository implements IncidentRepository {
+class FakeIncidentRepository implements IncidentRepositoryPort {
   acknowledgedIncidentId = '';
   searchResult = incidents;
   searchShouldFail = false;
@@ -49,13 +49,16 @@ class FakeIncidentRepository implements IncidentRepository {
     );
   }
 
-  findById(incidentId: string): Promise<Incident | undefined> {
+  findById(incidentId: IncidentId): Promise<Incident | undefined> {
     return Promise.resolve(incidents.find((incident) => incident.id === incidentId));
   }
 
-  acknowledge(incidentId: string): Promise<Incident> {
-    this.acknowledgedIncidentId = incidentId;
-    return Promise.resolve({ ...incidents[0]!, status: 'Acknowledged' });
+  save(incident: Incident): Promise<Incident> {
+    this.acknowledgedIncidentId = incident.id;
+    this.searchResult = this.searchResult.map((current) =>
+      current.id === incident.id ? incident : current,
+    );
+    return Promise.resolve(incident);
   }
 }
 
@@ -67,7 +70,7 @@ describe('IncidentListPage', () => {
 
     await TestBed.configureTestingModule({
       imports: [IncidentListPage],
-      providers: [provideRouter([]), { provide: INCIDENT_REPOSITORY, useValue: repository }],
+      providers: [provideRouter([]), { provide: IncidentRepositoryPort, useValue: repository }],
     }).compileComponents();
   });
 

@@ -4,10 +4,10 @@ Durum değerleri: `Bekliyor`, `Devam ediyor`, `Review`, `Tamamlandı`.
 
 ## Güncel konum
 
-- Son tamamlanan: Aşama 1 - Modern Angular Temelleri
-- Tamamlanan modüller: 1, 2, 3 ve 4
-- Sonraki: Aşama 2 / Modül 5 - Domain ve Feature Sınırları
-- Durum: Aşama 2 henüz başlatılmadı
+- Son tamamlanan: Aşama 2 / Modül 5 - Domain ve Feature Sınırları
+- Tamamlanan modüller: 1, 2, 3, 4 ve 5
+- Sonraki: Aşama 2 / Modül 6 - State Management ve Signal Store
+- Durum: Modül 5 tamamlandı; Modül 6 bekliyor
 
 ## Modül 1 dersleri
 
@@ -62,8 +62,10 @@ Durum değerleri: `Bekliyor`, `Devam ediyor`, `Review`, `Tamamlandı`.
 - Angular 22.0.4.
 - Strict TypeScript ve strict template.
 - Standalone, zoneless, lazy routing, SCSS ve Vitest.
-- Node.js 24.17 üzerinde 8/8 test dosyası ve 19/19 test başarılı.
+- 12/12 test dosyası ve 30/30 test başarılı.
+- Architecture fitness check 40 TypeScript dosyasının bağımlılık yönlerini doğruluyor.
 - Production build başarılı ve lazy route chunk'ları üretildi.
+- `.nvmrc` Node.js 24.15 sürümünü sabitliyor; yerel geliştirmede `nvm use` kullanılmalıdır.
 - Mock Incident list/search/select/acknowledge/detail akışı çalışıyor.
 
 ## 20 modül durumu
@@ -74,7 +76,7 @@ Durum değerleri: `Bekliyor`, `Devam ediyor`, `Review`, `Tamamlandı`.
 | 2 | Component ve Template Modeli | Tamamlandı |
 | 3 | Dependency Injection ve Routing | Tamamlandı |
 | 4 | Signals, RxJS ve Test Temelleri | Tamamlandı |
-| 5 | Domain ve Feature Sınırları | Bekliyor |
+| 5 | Domain ve Feature Sınırları | Tamamlandı |
 | 6 | State Management ve Signal Store | Bekliyor |
 | 7 | Signal Forms ve Kurumsal Formlar | Bekliyor |
 | 8 | Kaliteli Frontend | Bekliyor |

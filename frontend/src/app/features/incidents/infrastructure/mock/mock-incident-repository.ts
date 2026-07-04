@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
-import { Incident, IncidentQuery } from '../domain/incident';
-import { IncidentRepository } from './incident-repository';
+import type { IncidentRepositoryPort } from '../../application';
+import type { Incident, IncidentId, IncidentQuery } from '../../domain/incident';
 
 const initialIncidents: readonly Incident[] = [
   {
@@ -43,7 +43,7 @@ const initialIncidents: readonly Incident[] = [
 ];
 
 @Injectable()
-export class MockIncidentRepository implements IncidentRepository {
+export class MockIncidentRepository implements IncidentRepositoryPort {
   private incidents = initialIncidents.map((incident) => ({ ...incident }));
 
   async search(query: IncidentQuery, abortSignal?: AbortSignal): Promise<readonly Incident[]> {
@@ -61,28 +61,26 @@ export class MockIncidentRepository implements IncidentRepository {
     });
   }
 
-  async findById(incidentId: string, abortSignal?: AbortSignal): Promise<Incident | undefined> {
+  async findById(
+    incidentId: IncidentId,
+    abortSignal?: AbortSignal,
+  ): Promise<Incident | undefined> {
     await waitForMockNetwork(120, abortSignal);
     return this.incidents.find((incident) => incident.id === incidentId);
   }
 
-  async acknowledge(incidentId: string): Promise<Incident> {
-    const incidentIndex = this.incidents.findIndex((incident) => incident.id === incidentId);
+  save(incident: Incident): Promise<Incident> {
+    const incidentIndex = this.incidents.findIndex((current) => current.id === incident.id);
 
     if (incidentIndex === -1) {
-      throw new Error(`Incident ${incidentId} was not found.`);
+      return Promise.reject(new Error(`Incident ${incident.id} was not found.`));
     }
 
-    const updatedIncident: Incident = {
-      ...this.incidents[incidentIndex],
-      status: 'Acknowledged',
-    };
-
-    this.incidents = this.incidents.map((incident, index) =>
-      index === incidentIndex ? updatedIncident : incident,
+    this.incidents = this.incidents.map((current, index) =>
+      index === incidentIndex ? incident : current,
     );
 
-    return updatedIncident;
+    return Promise.resolve(incident);
   }
 }
 
