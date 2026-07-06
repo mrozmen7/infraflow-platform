@@ -31,20 +31,29 @@
             ],
             "styles": [
               "src/styles.scss"
-            ]
+            ],
+            "security": {
+              "autoCsp": true
+            }
           },
           "configurations": {
             "production": {
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "330kB",
+                  "maximumError": "380kB"
                 },
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "4kB",
                   "maximumError": "8kB"
+                },
+                {
+                  "type": "bundle",
+                  "name": "incident-create-page",
+                  "maximumWarning": "85kB",
+                  "maximumError": "100kB"
                 }
               ],
               "outputHashing": "all"

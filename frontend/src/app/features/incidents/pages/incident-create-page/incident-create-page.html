@@ -1,0 +1,210 @@
+<section class="incident-create" aria-labelledby="incident-create-title">
+  <header class="incident-create__header">
+    <div>
+      <a class="back-link" routerLink="/incidents">← Incident workspace</a>
+      <p class="eyebrow">Operations · Structured reporting</p>
+      <h1 id="incident-create-title">Report an incident</h1>
+      <p class="lede">
+        Capture operational facts first. Identity, reported time, and initial status are assigned
+        when the report is accepted.
+      </p>
+    </div>
+
+    <p class="draft-state" aria-live="polite">
+      {{ hasDraftChanges() ? 'Unsaved draft' : 'Draft unchanged' }}
+    </p>
+  </header>
+
+  <form class="incident-form" [formRoot]="incidentForm">
+    @if (incidentForm().errors().length > 0) {
+      <div class="form-alert" role="alert">
+        @for (error of incidentForm().errors(); track error) {
+          <p>{{ error.message }}</p>
+        }
+      </div>
+    }
+
+    <fieldset>
+      <legend>Incident details</legend>
+
+      <div class="field field--wide">
+        <label for="incident-title">Title</label>
+        <input
+          id="incident-title"
+          type="text"
+          autocomplete="off"
+          [formField]="incidentForm.title"
+          [attr.aria-describedby]="incidentForm.title().invalid() ? 'incident-title-errors' : null"
+        />
+        <p class="field__hint">Use a short operational description, not a diagnosis.</p>
+        @if (incidentForm.title().touched() && incidentForm.title().invalid()) {
+          <ul id="incident-title-errors" class="field__errors">
+            @for (error of incidentForm.title().errors(); track error) {
+              <li>{{ error.message }}</li>
+            }
+          </ul>
+        }
+      </div>
+
+      <div class="field field--wide">
+        <label for="incident-description">Description</label>
+        <textarea
+          id="incident-description"
+          rows="5"
+          [formField]="incidentForm.description"
+          [attr.aria-describedby]="
+            incidentForm.description().invalid() ? 'incident-description-errors' : null
+          "
+        ></textarea>
+        <p class="field__hint">Record observable facts, impact, and current operating conditions.</p>
+        @if (incidentForm.description().touched() && incidentForm.description().invalid()) {
+          <ul id="incident-description-errors" class="field__errors">
+            @for (error of incidentForm.description().errors(); track error) {
+              <li>{{ error.message }}</li>
+            }
+          </ul>
+        }
+      </div>
+
+      <div class="field">
+        <label for="incident-location">Location</label>
+        <input
+          id="incident-location"
+          type="text"
+          autocomplete="off"
+          [formField]="incidentForm.location"
+          [attr.aria-describedby]="
+            incidentForm.location().invalid() ? 'incident-location-errors' : null
+          "
+        />
+        @if (incidentForm.location().touched() && incidentForm.location().invalid()) {
+          <ul id="incident-location-errors" class="field__errors">
+            @for (error of incidentForm.location().errors(); track error) {
+              <li>{{ error.message }}</li>
+            }
+          </ul>
+        }
+      </div>
+
+      <div class="field">
+        <label for="incident-asset-id">Asset ID</label>
+        <input
+          id="incident-asset-id"
+          type="text"
+          autocomplete="off"
+          placeholder="TRF-NT-003"
+          [formField]="incidentForm.assetId"
+          [attr.aria-describedby]="
+            incidentForm.assetId().invalid() ? 'incident-asset-id-errors' : null
+          "
+        />
+        @if (incidentForm.assetId().touched() && incidentForm.assetId().invalid()) {
+          <ul id="incident-asset-id-errors" class="field__errors">
+            @for (error of incidentForm.assetId().errors(); track error) {
+              <li>{{ error.message }}</li>
+            }
+          </ul>
+        }
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Operational classification</legend>
+
+      <div class="field">
+        <label for="incident-severity">Severity <span>(How serious is it?)</span></label>
+        <select id="incident-severity" [formField]="incidentForm.severity">
+          @for (severity of severityOptions; track severity) {
+            <option [value]="severity">{{ severity }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="incident-priority">Priority <span>(How soon must we act?)</span></label>
+        <select
+          id="incident-priority"
+          [formField]="incidentForm.priority"
+          [attr.aria-describedby]="
+            incidentForm.priority().invalid() ? 'incident-priority-errors' : null
+          "
+        >
+          @for (priority of priorityOptions; track priority) {
+            <option [value]="priority">{{ priority }}</option>
+          }
+        </select>
+        @if (incidentForm.priority().touched() && incidentForm.priority().invalid()) {
+          <ul id="incident-priority-errors" class="field__errors">
+            @for (error of incidentForm.priority().errors(); track error) {
+              <li>{{ error.message }}</li>
+            }
+          </ul>
+        }
+      </div>
+
+      <div class="field field--wide field--checkbox">
+        <input
+          id="incident-immediate-risk"
+          type="checkbox"
+          [formField]="incidentForm.immediateRisk"
+          [attr.aria-describedby]="
+            incidentForm.immediateRisk().invalid() ? 'incident-risk-errors' : 'incident-risk-hint'
+          "
+        />
+        <div>
+          <label for="incident-immediate-risk">Immediate safety risk confirmed</label>
+          <p id="incident-risk-hint" class="field__hint">
+            Mandatory when severity is Critical. This is an operator confirmation, not an AI decision.
+          </p>
+          @if (incidentForm.immediateRisk().touched() && incidentForm.immediateRisk().invalid()) {
+            <ul id="incident-risk-errors" class="field__errors">
+              @for (error of incidentForm.immediateRisk().errors(); track error) {
+                <li>{{ error.message }}</li>
+              }
+            </ul>
+          }
+        </div>
+      </div>
+
+      <div class="field field--wide">
+        <label for="incident-signals">Operational signals</label>
+        <textarea
+          id="incident-signals"
+          rows="3"
+          placeholder="Smoke detected, traffic active, lighting unavailable"
+          [formField]="incidentForm.operationalSignals"
+          [attr.aria-describedby]="
+            incidentForm.operationalSignals().invalid() ? 'incident-signals-errors' : 'incident-signals-hint'
+          "
+        ></textarea>
+        <p id="incident-signals-hint" class="field__hint">
+          Separate multiple signals with commas, semicolons, or new lines.
+        </p>
+        @if (
+          incidentForm.operationalSignals().touched() &&
+          incidentForm.operationalSignals().invalid()
+        ) {
+          <ul id="incident-signals-errors" class="field__errors">
+            @for (error of incidentForm.operationalSignals().errors(); track error) {
+              <li>{{ error.message }}</li>
+            }
+          </ul>
+        }
+      </div>
+    </fieldset>
+
+    <footer class="incident-form__actions">
+      <button
+        type="button"
+        class="button-secondary"
+        [disabled]="!hasDraftChanges() || incidentForm().submitting()"
+        (click)="resetDraft()"
+      >
+        Reset draft
+      </button>
+      <button type="submit" [disabled]="incidentForm().submitting()">
+        {{ incidentForm().submitting() ? 'Creating incident…' : 'Create incident' }}
+      </button>
+    </footer>
+  </form>
+</section>

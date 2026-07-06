@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 import {
   incidentsFeatureGuard,
   provideIncidentDataAccess,
+  provideIncidentStore,
 } from './features/incidents/public-api';
 
 export const routes: Routes = [
@@ -14,7 +15,7 @@ export const routes: Routes = [
   {
     path: 'incidents',
     canMatch: [incidentsFeatureGuard],
-    providers: [provideIncidentDataAccess()],
+    providers: [provideIncidentDataAccess(), provideIncidentStore()],
     loadChildren: () =>
       import('./features/incidents/incidents.routes').then((module) => module.INCIDENT_ROUTES),
   },

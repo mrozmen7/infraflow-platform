@@ -1,0 +1,203 @@
+:host {
+  display: block;
+}
+
+.incident-inspector {
+  border-top: 3px solid var(--if-color-low);
+}
+
+.incident-inspector[data-severity='Critical'] {
+  border-top-color: var(--if-color-critical);
+}
+
+.incident-inspector[data-severity='High'] {
+  border-top-color: var(--if-color-high);
+}
+
+.incident-inspector[data-severity='Medium'] {
+  border-top-color: var(--if-color-medium);
+}
+
+.incident-inspector header,
+.incident-inspector footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--if-space-4);
+  padding: var(--if-space-3) var(--if-space-4);
+}
+
+.incident-inspector header {
+  border-bottom: 1px solid var(--if-color-border);
+  background: var(--if-color-surface-subtle);
+}
+
+.inspector-label,
+.incident-id,
+.incident-summary h2,
+.incident-summary p,
+.operational-signals h3,
+.operator-note h3,
+.operator-note p {
+  margin: 0;
+}
+
+.inspector-label {
+  color: var(--if-color-ink-muted);
+  font-size: 0.62rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.incident-id {
+  margin-top: 0.15rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.status,
+.severity {
+  width: fit-content;
+  padding: 0.2rem 0.45rem;
+  border: 1px solid var(--if-color-border-strong);
+  border-radius: var(--if-radius-small);
+  color: var(--if-color-ink-muted);
+  background: var(--if-color-surface);
+  font-size: 0.64rem;
+  font-weight: 780;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.incident-summary,
+.operational-signals,
+.operator-note {
+  display: grid;
+  gap: var(--if-space-3);
+  padding: var(--if-space-4);
+  border-bottom: 1px solid var(--if-color-border);
+}
+
+.incident-summary h2 {
+  font-size: 1.18rem;
+  line-height: 1.28;
+}
+
+.incident-summary p,
+.operator-note p {
+  color: var(--if-color-ink-muted);
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+
+.incident-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+  border-bottom: 1px solid var(--if-color-border);
+}
+
+.incident-facts div {
+  min-width: 0;
+  padding: var(--if-space-3) var(--if-space-4);
+  border-right: 1px solid var(--if-color-border);
+  border-bottom: 1px solid var(--if-color-border);
+}
+
+.incident-facts div:nth-child(2n) {
+  border-right: 0;
+}
+
+.incident-facts div:last-child {
+  grid-column: 1 / -1;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.incident-facts dt,
+.operational-signals h3,
+.operator-note h3 {
+  color: var(--if-color-ink-muted);
+  font-size: 0.64rem;
+  font-weight: 780;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.incident-facts dd {
+  margin: var(--if-space-1) 0 0;
+  overflow-wrap: anywhere;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.operational-signals ul {
+  display: grid;
+  gap: var(--if-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.operational-signals li {
+  position: relative;
+  padding-left: var(--if-space-4);
+  color: var(--if-color-ink-muted);
+  font-size: 0.76rem;
+}
+
+.operational-signals li::before {
+  position: absolute;
+  top: 0.45em;
+  left: 0;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--if-color-high);
+  content: '';
+}
+
+.operator-note {
+  background: #fffaf0;
+}
+
+.incident-inspector footer {
+  align-items: stretch;
+}
+
+.incident-inspector footer a,
+.incident-inspector footer button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.4rem;
+  box-sizing: border-box;
+  border-radius: var(--if-radius-small);
+  padding: 0 var(--if-space-3);
+  font-size: 0.76rem;
+  font-weight: 750;
+}
+
+.incident-inspector footer a {
+  color: var(--if-color-primary);
+}
+
+.incident-inspector footer button {
+  border: 1px solid var(--if-color-primary);
+  color: #fff;
+  background: var(--if-color-primary);
+  cursor: pointer;
+}
+
+.incident-inspector footer button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+@media (max-width: 26rem) {
+  .incident-inspector footer {
+    flex-direction: column;
+  }
+}

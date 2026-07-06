@@ -2,7 +2,13 @@ import { provideRouter } from '@angular/router';
 import { TestBed } from '@angular/core/testing';
 
 import { IncidentRepositoryPort } from '../../application';
-import { Incident, IncidentId, IncidentQuery } from '../../domain/incident';
+import {
+  Incident,
+  IncidentId,
+  IncidentQuery,
+  NewIncident,
+} from '../../domain/incident';
+import { IncidentStore } from '../../state/incident-store';
 import { IncidentListPage } from './incident-list-page';
 
 const incidents: readonly Incident[] = [
@@ -60,6 +66,15 @@ class FakeIncidentRepository implements IncidentRepositoryPort {
     );
     return Promise.resolve(incident);
   }
+
+  create(newIncident: NewIncident): Promise<Incident> {
+    return Promise.resolve({
+      ...newIncident,
+      id: 'INC-TEST-003',
+      reportedAt: '2026-07-04T09:00:00.000Z',
+      status: 'Open',
+    });
+  }
 }
 
 describe('IncidentListPage', () => {
@@ -70,7 +85,11 @@ describe('IncidentListPage', () => {
 
     await TestBed.configureTestingModule({
       imports: [IncidentListPage],
-      providers: [provideRouter([]), { provide: IncidentRepositoryPort, useValue: repository }],
+      providers: [
+        provideRouter([]),
+        IncidentStore,
+        { provide: IncidentRepositoryPort, useValue: repository },
+      ],
     }).compileComponents();
   });
 
@@ -86,6 +105,10 @@ describe('IncidentListPage', () => {
     expect(element.textContent).toContain('2 incidents found');
     expect(element.querySelector('.incident-card--selected')?.textContent).toContain(
       'INC-TEST-001',
+    );
+    expect(element.querySelector('app-incident-inspector')?.textContent).toContain('TRF-001');
+    expect(element.querySelector('app-incident-inspector')?.textContent).toContain(
+      'Transformer smoke detected',
     );
   });
 

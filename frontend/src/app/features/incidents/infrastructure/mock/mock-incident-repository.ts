@@ -1,7 +1,13 @@
 import { Injectable } from '@angular/core';
 
 import type { IncidentRepositoryPort } from '../../application';
-import type { Incident, IncidentId, IncidentQuery } from '../../domain/incident';
+import {
+  type Incident,
+  type IncidentId,
+  type IncidentQuery,
+  type NewIncident,
+  parseIncidentId,
+} from '../../domain/incident';
 
 const initialIncidents: readonly Incident[] = [
   {
@@ -45,6 +51,7 @@ const initialIncidents: readonly Incident[] = [
 @Injectable()
 export class MockIncidentRepository implements IncidentRepositoryPort {
   private incidents = initialIncidents.map((incident) => ({ ...incident }));
+  private nextIncidentSequence = initialIncidents.length + 1;
 
   async search(query: IncidentQuery, abortSignal?: AbortSignal): Promise<readonly Incident[]> {
     await waitForMockNetwork(180, abortSignal);
@@ -81,6 +88,23 @@ export class MockIncidentRepository implements IncidentRepositoryPort {
     );
 
     return Promise.resolve(incident);
+  }
+
+  async create(newIncident: NewIncident): Promise<Incident> {
+    await waitForMockNetwork(180);
+
+    const incident: Incident = {
+      ...newIncident,
+      id: parseIncidentId(
+        `INC-${new Date().getUTCFullYear()}-${String(this.nextIncidentSequence).padStart(4, '0')}`,
+      ),
+      reportedAt: new Date().toISOString(),
+      status: 'Open',
+    };
+
+    this.nextIncidentSequence += 1;
+    this.incidents = [incident, ...this.incidents];
+    return incident;
   }
 }
 

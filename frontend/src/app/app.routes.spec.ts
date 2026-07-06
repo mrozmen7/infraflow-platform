@@ -24,6 +24,13 @@ describe('application routes', () => {
     expect(harness.routeNativeElement?.textContent).toContain('TRF-NT-003');
   });
 
+  it('lazy-loads the typed incident creation form before the id route', async () => {
+    const harness = await RouterTestingHarness.create('/incidents/new');
+
+    expect(harness.routeNativeElement?.textContent).toContain('Report an incident');
+    expect(harness.routeNativeElement?.querySelector('form')).toBeTruthy();
+  });
+
   it('catches unknown URLs with the not-found route', async () => {
     const harness = await RouterTestingHarness.create('/unknown-operation');
 

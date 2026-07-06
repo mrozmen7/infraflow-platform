@@ -8,7 +8,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "test:architecture": "node scripts/check-architecture.mjs",
-    "quality": "npm run test:architecture && npm test -- --watch=false && npm run build"
+    "test:guardrails": "node scripts/check-frontend-guardrails.mjs",
+    "quality": "npm run test:architecture && npm run test:guardrails && npm test -- --watch=false && npm run build"
   },
   "private": true,
   "packageManager": "npm@11.6.0",

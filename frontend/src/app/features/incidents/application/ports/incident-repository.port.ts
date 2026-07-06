@@ -1,4 +1,9 @@
-import type { Incident, IncidentId, IncidentQuery } from '../../domain/incident';
+import type {
+  Incident,
+  IncidentId,
+  IncidentQuery,
+  NewIncident,
+} from '../../domain/incident';
 
 export abstract class IncidentRepositoryPort {
   abstract search(
@@ -10,4 +15,5 @@ export abstract class IncidentRepositoryPort {
     abortSignal?: AbortSignal,
   ): Promise<Incident | undefined>;
   abstract save(incident: Incident): Promise<Incident>;
+  abstract create(newIncident: NewIncident): Promise<Incident>;
 }

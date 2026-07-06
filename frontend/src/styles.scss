@@ -1,15 +1,49 @@
 :root {
-  color-scheme: dark;
-  --color-background: #0d2038;
-  --color-surface: rgb(17 50 77 / 82%);
-  --color-text: #f5f8fa;
-  --color-text-muted: #b8c8d4;
-  --color-accent: #4fd1c5;
-  --color-focus: #f8d66d;
-  --color-border: rgb(79 209 197 / 24%);
-  --color-border-strong: rgb(159 178 194 / 45%);
-  --radius-medium: 0.75rem;
-  --radius-large: 1rem;
+  color-scheme: light;
+
+  /* InfraFlow design tokens: industrial, calm and information-first. */
+  --if-color-canvas: #edf1f3;
+  --if-color-surface: #ffffff;
+  --if-color-surface-subtle: #f6f8f9;
+  --if-color-navigation: #121c23;
+  --if-color-navigation-raised: #1a2831;
+  --if-color-navigation-text: #edf3f5;
+  --if-color-navigation-muted: #9fb0b9;
+  --if-color-ink: #172229;
+  --if-color-ink-muted: #5c6b73;
+  --if-color-primary: #006f78;
+  --if-color-primary-hover: #005b63;
+  --if-color-primary-subtle: #e3f2f3;
+  --if-color-focus: #006f78;
+  --if-color-border: #d4dce0;
+  --if-color-border-strong: #aebbc1;
+  --if-color-critical: #c7353f;
+  --if-color-high: #d87519;
+  --if-color-medium: #aa7a00;
+  --if-color-low: #2774a8;
+  --if-color-success: #2f7d50;
+
+  --if-space-1: 0.25rem;
+  --if-space-2: 0.5rem;
+  --if-space-3: 0.75rem;
+  --if-space-4: 1rem;
+  --if-space-5: 1.25rem;
+  --if-space-6: 1.5rem;
+  --if-space-8: 2rem;
+  --if-radius-small: 0.25rem;
+  --if-radius-medium: 0.5rem;
+
+  /* Compatibility aliases while older feature pages migrate to the new system. */
+  --color-background: var(--if-color-canvas);
+  --color-surface: var(--if-color-surface);
+  --color-text: var(--if-color-ink);
+  --color-text-muted: var(--if-color-ink-muted);
+  --color-accent: var(--if-color-primary);
+  --color-focus: var(--if-color-focus);
+  --color-border: var(--if-color-border);
+  --color-border-strong: var(--if-color-border-strong);
+  --radius-medium: var(--if-radius-medium);
+  --radius-large: var(--if-radius-medium);
   font-family:
     Inter,
     ui-sans-serif,
@@ -31,6 +65,8 @@ body {
   min-width: 20rem;
   min-height: 100dvh;
   margin: 0;
+  color: var(--if-color-ink);
+  background: var(--if-color-canvas);
 }
 button,
 input,
@@ -41,6 +77,6 @@ button {
   touch-action: manipulation;
 }
 ::selection {
-  color: #06252a;
-  background: var(--color-accent);
+  color: var(--if-color-navigation);
+  background: #8bd5da;
 }

@@ -1,5 +1,9 @@
 # Modül 1 / Ders 7: Kalite Kapısı, Git ve CI
 
+> Tarihsel not: Bu belge Modül 1'deki ilk kalite temelini anlatır. Güncel canonical frontend
+> gate `npm run quality` komutudur ve architecture, guardrail, test ve production build
+> adımlarını içerir. Güncel katalog: `docs/agentic-engineering/verification-catalog.md`.
+
 ## Quality Gate (bir değişikliğin kabul edilmeden önce geçmesi gereken kalite kontrolleri)
 
 Modül 1 için kalite kapısı:
@@ -38,9 +42,11 @@ Node.js 24.15 kurulumu
           ↓
 npm ci
           ↓
-Vitest unit testleri
-          ↓
-Angular production build
+npm run quality
+  ├─ Architecture boundary check
+  ├─ Security/accessibility guardrails
+  ├─ Vitest unit/component testleri
+  └─ Angular production build ve budgets
           ↓
 Başarılı veya başarısız kalite sonucu
 ```
@@ -64,4 +70,3 @@ Workflow yalnızca `contents: read` yetkisi kullanır. Least privilege (yalnızc
 - Initial commit: `78f9386 chore: initialize InfraFlow platform`.
 - Remote main: `origin/main` ile senkron.
 - CI workflow: İlk push sonrasında GitHub Actions üzerinde doğrulanacak.
-

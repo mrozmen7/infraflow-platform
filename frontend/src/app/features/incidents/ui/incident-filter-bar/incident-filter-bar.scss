@@ -6,22 +6,21 @@
   display: grid;
   grid-template-columns: minmax(14rem, 1fr) minmax(10rem, 14rem) auto;
   align-items: end;
-  gap: 1rem;
-  padding: 1rem;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-medium);
-  background: var(--color-surface);
+  gap: var(--if-space-3);
+  padding: var(--if-space-3) var(--if-space-4);
+  border: 1px solid var(--if-color-border);
+  background: var(--if-color-surface);
 }
 
 .filter-bar__field {
   display: grid;
-  gap: 0.45rem;
+  gap: var(--if-space-1);
 }
 
 label > span {
-  color: var(--color-text-muted);
-  font-size: 0.78rem;
-  font-weight: 800;
+  color: var(--if-color-ink-muted);
+  font-size: 0.64rem;
+  font-weight: 760;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -29,33 +28,44 @@ label > span {
 input,
 select,
 button {
-  min-height: 2.8rem;
+  min-height: 2.5rem;
   box-sizing: border-box;
-  border-radius: 0.5rem;
+  border-radius: var(--if-radius-small);
   font: inherit;
+  font-size: 0.78rem;
 }
 
 input,
 select {
   width: 100%;
-  border: 1px solid var(--color-border-strong);
-  padding: 0.65rem 0.75rem;
-  color: var(--color-text);
-  background: #091f32;
+  border: 1px solid var(--if-color-border-strong);
+  padding: 0 var(--if-space-3);
+  color: var(--if-color-ink);
+  background: var(--if-color-surface);
+}
+
+input::placeholder {
+  color: #7c8a91;
 }
 
 button {
-  border: 1px solid var(--color-border-strong);
-  padding: 0.65rem 0.9rem;
-  color: var(--color-text);
-  background: transparent;
+  border: 1px solid var(--if-color-border-strong);
+  padding: 0 var(--if-space-4);
+  color: var(--if-color-ink);
+  background: var(--if-color-surface-subtle);
+  font-weight: 700;
   cursor: pointer;
+}
+
+button:hover {
+  border-color: var(--if-color-primary);
+  color: var(--if-color-primary);
 }
 
 input:focus-visible,
 select:focus-visible,
 button:focus-visible {
-  outline: 3px solid var(--color-focus);
+  outline: 3px solid var(--if-color-focus);
   outline-offset: 2px;
 }
 

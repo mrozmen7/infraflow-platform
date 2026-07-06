@@ -12,6 +12,7 @@ import { IncidentCard } from '../incident-card/incident-card';
 export class IncidentList {
   readonly incidents = input.required<readonly Incident[]>();
   readonly selectedIncidentId = input<string | null>(null);
+  readonly pendingAcknowledgementId = input<string | null>(null);
 
   readonly acknowledgeRequested = output<string>();
   readonly selectRequested = output<string>();

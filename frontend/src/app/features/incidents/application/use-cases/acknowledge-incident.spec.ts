@@ -35,6 +35,13 @@ function createRepository(incident: Incident | undefined): {
         savedIncidents.push(savedIncident);
         return Promise.resolve(savedIncident);
       },
+      create: (newIncident) =>
+        Promise.resolve({
+          ...newIncident,
+          id: 'INC-CREATE-001',
+          reportedAt: '2026-07-04T10:00:00.000Z',
+          status: 'Open',
+        }),
     },
     savedIncidents,
     findCallCount: () => findCalls,

@@ -2,11 +2,38 @@
   display: block;
 }
 
+.incident-list__columns {
+  display: grid;
+  grid-template-columns: minmax(16rem, 1fr) minmax(7.5rem, 0.35fr) minmax(6rem, 0.3fr) 5.5rem;
+  gap: var(--if-space-3);
+  padding: var(--if-space-2) var(--if-space-4);
+  border-bottom: 1px solid var(--if-color-border);
+  color: var(--if-color-ink-muted);
+  background: var(--if-color-surface-subtle);
+  font-size: 0.62rem;
+  font-weight: 760;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
 .incident-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
-  gap: 1rem;
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.incident-list > li {
+  min-width: 0;
+  border-bottom: 1px solid var(--if-color-border);
+}
+
+.incident-list > li:last-child {
+  border-bottom: 0;
+}
+
+@media (max-width: 54rem) {
+  .incident-list__columns {
+    display: none;
+  }
 }

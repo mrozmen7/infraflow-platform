@@ -1,22 +1,45 @@
 <section class="incident-page" aria-labelledby="incident-page-title">
   <header class="incident-page__header">
     <div>
-      <p class="eyebrow">Operations · Live queue</p>
-      <h1 id="incident-page-title">Incident workspace</h1>
-      <p class="lede">
-        Triage infrastructure events, keep operational focus, and acknowledge ownership.
-      </p>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <span>Operations</span>
+        <span aria-hidden="true">/</span>
+        <strong>Incidents</strong>
+      </nav>
+      <h1 id="incident-page-title">Incidents</h1>
+      <p class="lede">Triage live infrastructure events and coordinate operator response.</p>
     </div>
 
-    <div class="incident-page__summary" aria-live="polite">
-      <span>Current result</span>
-      <strong>{{ resultSummary() }}</strong>
-    </div>
+    <a class="create-link" routerLink="/incidents/new">
+      <span aria-hidden="true">+</span>
+      Report incident
+    </a>
   </header>
 
+  <dl class="operations-summary" aria-label="Current incident metrics">
+    <div>
+      <dt>Active incidents</dt>
+      <dd>{{ activeIncidentCount() }}</dd>
+    </div>
+    <div>
+      <dt>Critical open</dt>
+      <dd class="metric-critical">{{ criticalIncidentCount() }}</dd>
+    </div>
+    <div>
+      <dt>In progress</dt>
+      <dd>{{ inProgressIncidentCount() }}</dd>
+    </div>
+    <div>
+      <dt>Data source</dt>
+      <dd class="metric-source">
+        {{ incidentStore.loadSource() ?? 'Connecting' }}
+      </dd>
+    </div>
+  </dl>
+
   <app-incident-filter-bar
-    [searchTerm]="searchTerm()"
-    [severity]="severityFilter()"
+    [searchTerm]="incidentStore.searchTerm()"
+    [severity]="incidentStore.severityFilter()"
     (searchTermChanged)="updateSearchTerm($event)"
     (severityChanged)="updateSeverity($event)"
     (resetRequested)="resetFilters()"
@@ -24,28 +47,57 @@
 
   <p class="visually-hidden" aria-live="polite">{{ actionMessage() }}</p>
 
-  @if (incidentsResource.isLoading()) {
-    <div class="loading-state" role="status">
-      <span class="loading-state__indicator" aria-hidden="true"></span>
-      Loading incident operations…
-    </div>
-  } @else if (errorMessage()) {
-    <section class="error-state" role="alert" aria-labelledby="incident-error-title">
-      <h2 id="incident-error-title">Incident request failed</h2>
-      <p>{{ errorMessage() }}</p>
-      <button type="button" (click)="retryLoading()">Retry</button>
+  <div class="incident-workbench">
+    <section class="queue-panel" aria-labelledby="incident-queue-title">
+      <header class="panel-heading">
+        <div>
+          <p>Live queue</p>
+          <h2 id="incident-queue-title">Operational incidents</h2>
+        </div>
+        <span aria-live="polite">{{ incidentStore.resultSummary() }}</span>
+      </header>
+
+      @if (incidentStore.isLoading()) {
+        <div class="loading-state" role="status">
+          <span class="loading-state__indicator" aria-hidden="true"></span>
+          Loading incident operations…
+        </div>
+      } @else if (incidentStore.errorMessage(); as errorMessage) {
+        <section class="error-state" role="alert" aria-labelledby="incident-error-title">
+          <h2 id="incident-error-title">Incident request failed</h2>
+          <p>{{ errorMessage }}</p>
+          <button type="button" (click)="retryLoading()">Retry</button>
+        </section>
+      } @else if (incidentStore.incidents().length > 0) {
+        <app-incident-list
+          [incidents]="incidentStore.incidents()"
+          [selectedIncidentId]="incidentStore.selectedIncidentId()"
+          [pendingAcknowledgementId]="incidentStore.pendingAcknowledgementId()"
+          (selectRequested)="selectIncident($event)"
+          (acknowledgeRequested)="acknowledgeIncident($event)"
+        />
+      } @else {
+        <app-empty-state title="No incidents match these filters">
+          <p>Change the search or severity filter to return to the operational queue.</p>
+          <button empty-state-actions type="button" (click)="resetFilters()">Clear filters</button>
+        </app-empty-state>
+      }
     </section>
-  } @else if (incidents().length > 0) {
-    <app-incident-list
-      [incidents]="incidents()"
-      [selectedIncidentId]="selectedIncidentId()"
-      (selectRequested)="selectIncident($event)"
-      (acknowledgeRequested)="acknowledgeIncident($event)"
-    />
-  } @else {
-    <app-empty-state title="No incidents match these filters">
-      <p>Change the search or severity filter to return to the operational queue.</p>
-      <button empty-state-actions type="button" (click)="resetFilters()">Clear filters</button>
-    </app-empty-state>
-  }
+
+    <aside class="inspector-panel" aria-label="Selected incident details">
+      @if (selectedIncident(); as incident) {
+        <app-incident-inspector
+          [incident]="incident"
+          [acknowledgementPending]="incidentStore.pendingAcknowledgementId() === incident.id"
+          (acknowledgeRequested)="acknowledgeIncident($event)"
+        />
+      } @else {
+        <section class="inspector-empty">
+          <p>Incident inspector</p>
+          <h2>Select an incident</h2>
+          <span>Choose an item from the live queue to review its operational context.</span>
+        </section>
+      }
+    </aside>
+  </div>
 </section>

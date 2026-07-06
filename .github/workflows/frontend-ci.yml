@@ -24,7 +24,7 @@ concurrency:
 
 jobs:
   frontend-quality:
-    name: Test and production build
+    name: Architecture, guardrails, tests and production build
     runs-on: ubuntu-latest
     timeout-minutes: 10
     defaults:
@@ -45,11 +45,5 @@ jobs:
       - name: Install locked dependencies
         run: npm ci
 
-      - name: Check architecture boundaries
-        run: npm run test:architecture
-
-      - name: Run unit tests
-        run: npm test -- --watch=false
-
-      - name: Create production build
-        run: npm run build
+      - name: Run the canonical frontend quality gate
+        run: npm run quality

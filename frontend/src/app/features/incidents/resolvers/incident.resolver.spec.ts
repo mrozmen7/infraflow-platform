@@ -29,6 +29,7 @@ describe('incidentResolver', () => {
       search: () => Promise.resolve([]),
       findById: () => Promise.resolve(incident),
       save: () => Promise.resolve(incident),
+      create: (newIncident) => Promise.resolve({ ...incident, ...newIncident }),
     });
 
     const result = await TestBed.runInInjectionContext(() =>
@@ -43,6 +44,7 @@ describe('incidentResolver', () => {
       search: () => Promise.resolve([]),
       findById: () => Promise.resolve(undefined),
       save: () => Promise.resolve(incident),
+      create: (newIncident) => Promise.resolve({ ...incident, ...newIncident }),
     });
 
     const result = await TestBed.runInInjectionContext(() =>

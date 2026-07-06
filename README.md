@@ -7,12 +7,16 @@ Bu repository yalnızca çalışan bir ürün üretmek için değil; modern Angu
 ## Güncel durum
 
 - Aşama 1 - Modern Angular Temelleri: Tamamlandı
-- Sonraki: Aşama 2 / Modül 5 - Domain ve Feature Sınırları
+- Aşama 2 - İleri Angular Mimarisi: Tamamlandı
+- UI Foundation Sprint: Tamamlandı ve onaylandı
+- Aşama 3 / Modül 9 - AI-Ready Repository ve Guardrails: Tamamlandı
+- Güncel: Aşama 3 / Modül 10 - Kontrollü Geliştirme Döngüsü
+- Aşama 2.5 - Advanced Angular Performance Lab: Proje sonuna ertelendi
 - Frontend: Angular 22
 - Backend: Aşama 5'te eklenecek
 - Agent runtime: Aşama 4'te eklenecek
 
-## Aşama 1 çalışan özellikleri
+## Çalışan frontend özellikleri
 
 - Incident listeleme, arama ve Severity filtresi
 - Incident seçme ve acknowledgement akışı
@@ -22,7 +26,10 @@ Bu repository yalnızca çalışan bir ürün üretmek için değil; modern Angu
 - Route-scoped mock repository ve runtime feature guard
 - Signal, computed, effect, linkedSignal, RxJS ve resource state akışı
 - Erişilebilir app shell ve klavye davranışları
-- 8 test dosyasında 19 test
+- Signal Store, normalize state, cache, optimistic update ve rollback
+- Typed Signal Form ve cross-field validation
+- Global error reporting, CSP, accessibility ve bundle budgets
+- 18 test dosyasında 54 test
 
 ## Repository yapısı
 
@@ -49,16 +56,21 @@ app/
     └── work-orders/   Lazy feature sınırı
 ```
 
-Incident feature kendi domain tipi, data-access portu, route'ları, page'leri ve UI component'lerini birlikte tutar. Aşama 2'de bu sınırlar architecture fitness testleriyle güçlendirilecektir.
+Incident feature kendi domain, application, state, infrastructure, page ve UI sınırlarını
+birlikte tutar. Bu sınırlar architecture fitness testleriyle otomatik korunur.
 
 ## Eğitim navigasyonu
 
 - [Tam müfredat](docs/learning/curriculum-map.md)
 - [Güncel ilerleme](docs/learning/progress.md)
+- [Aşama 3 eğitim ve referans planı](docs/learning/phase-03-professional-agentic-engineering.md)
+- [Repository context map](docs/agentic-engineering/repository-context-map.md)
+- [Aşama 2.5: Advanced Angular Performance Lab](docs/learning/phase-02-5-advanced-angular-performance-lab.md)
 - [Aşama 1 özeti](docs/learning/phase-01-modern-angular.md)
 - [Modül 2: Component ve Template](docs/learning/module-02-component-template.md)
 - [Modül 3: DI ve Routing](docs/learning/module-03-dependency-injection-routing.md)
 - [Modül 4: Signals, RxJS ve Test](docs/learning/module-04-signals-rxjs-testing.md)
+- [Modül 9: AI-Ready Repository](docs/learning/module-09-ai-ready-repository.md)
 
 ## Gereksinimler
 
@@ -73,6 +85,7 @@ npm install
 npm start
 npm test -- --watch=false
 npm run build
+npm run quality
 ```
 
 ## Kalite kapısı

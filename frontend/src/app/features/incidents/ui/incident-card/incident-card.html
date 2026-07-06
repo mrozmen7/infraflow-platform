@@ -4,49 +4,48 @@
   [attr.data-severity]="incident().severity"
   [attr.aria-labelledby]="incident().id + '-title'"
 >
-  <header class="incident-card__header">
-    <p class="incident-card__id">{{ incident().id }}</p>
-    <div class="incident-card__badges">
-      <span class="incident-card__priority" [attr.aria-label]="'Priority ' + incident().priority">
-        {{ incident().priority }}
-      </span>
-      <span class="incident-card__severity">{{ incident().severity }}</span>
+  <section class="incident-card__identity">
+    <div class="incident-card__id-line">
+      <p class="incident-card__id">{{ incident().id }}</p>
+      <time [attr.datetime]="incident().reportedAt">
+        {{ incident().reportedAt | date: 'd MMM, HH:mm' : 'UTC' }} UTC
+      </time>
     </div>
-  </header>
-
-  <div class="incident-card__content">
     <h2 [id]="incident().id + '-title'">
       <a [routerLink]="['/incidents', incident().id]">{{ incident().title }}</a>
     </h2>
-    <p>{{ incident().location }}</p>
-    <p>
-      <time [attr.datetime]="incident().reportedAt">
-        {{ incident().reportedAt | date: 'd MMM y, HH:mm' : 'UTC' }} UTC
-      </time>
-    </p>
+    <p class="incident-card__location">{{ incident().location }} · {{ incident().assetId }}</p>
+
+    <ul class="incident-card__signals" aria-label="Operational signals">
+      @for (operationalSignal of incident().operationalSignals; track operationalSignal) {
+        <li>{{ operationalSignal }}</li>
+      } @empty {
+        <li>No operational signal reported</li>
+      }
+    </ul>
+  </section>
+
+  <div class="incident-card__classification">
+    <span class="incident-card__priority" [attr.aria-label]="'Priority ' + incident().priority">
+      {{ incident().priority }}
+    </span>
+    <span class="incident-card__severity">{{ incident().severity }}</span>
+    <p class="incident-card__guidance">{{ guidance() }}</p>
   </div>
 
-  <ul class="incident-card__signals" aria-label="Operational signals">
-    @for (operationalSignal of incident().operationalSignals; track operationalSignal) {
-      <li>{{ operationalSignal }}</li>
-    } @empty {
-      <li>No operational signal reported</li>
-    }
-  </ul>
-
-  <p class="incident-card__guidance">{{ guidance() }}</p>
-
-  <footer class="incident-card__footer">
+  <div class="incident-card__state">
+    <span class="status-indicator" aria-hidden="true"></span>
     <p class="incident-card__status">Status: {{ incident().status }}</p>
-    <div class="incident-card__actions">
-      <button type="button" class="button-secondary" (click)="selectRequested.emit(incident().id)">
-        Select
-      </button>
-      @if (canAcknowledge()) {
-        <button type="button" (click)="acknowledgeRequested.emit(incident().id)">
-          Acknowledge
-        </button>
-      }
-    </div>
-  </footer>
+  </div>
+
+  <div class="incident-card__actions">
+    <button type="button" class="button-secondary" (click)="selectRequested.emit(incident().id)">
+      {{ selected() ? 'Selected' : 'Inspect' }}
+    </button>
+    @if (acknowledgementPending()) {
+      <button type="button" disabled aria-label="Acknowledgement in progress">Acknowledging…</button>
+    } @else if (canAcknowledge()) {
+      <button type="button" (click)="acknowledgeRequested.emit(incident().id)">Acknowledge</button>
+    }
+  </div>
 </article>

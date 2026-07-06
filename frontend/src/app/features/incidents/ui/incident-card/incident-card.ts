@@ -13,6 +13,7 @@ import { canAcknowledgeIncident, Incident } from '../../domain/incident';
 export class IncidentCard {
   readonly incident = input.required<Incident>();
   readonly selected = input(false);
+  readonly acknowledgementPending = input(false);
 
   readonly acknowledgeRequested = output<string>();
   readonly selectRequested = output<string>();

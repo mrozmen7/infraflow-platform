@@ -46,7 +46,8 @@ for (const file of files) {
 
     if (
       (fileName.startsWith('features/incidents/pages/') ||
-        fileName.startsWith('features/incidents/ui/')) &&
+        fileName.startsWith('features/incidents/ui/') ||
+        fileName.startsWith('features/incidents/state/')) &&
       target.includes('/features/incidents/infrastructure/')
     ) {
       violations.push(

@@ -1,107 +1,71 @@
-import {
-  Component,
-  computed,
-  effect,
-  inject,
-  linkedSignal,
-  resource,
-  signal,
-  viewChild,
-} from '@angular/core';
+import { Component, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { RouterLink } from '@angular/router';
 
 import { EmptyState } from '../../../../shared/ui/empty-state/empty-state';
-import {
-  acknowledgeIncident as acknowledgeIncidentUseCase,
-  IncidentRepositoryPort,
-  searchIncidents,
-} from '../../application';
-import { Incident, IncidentQuery, IncidentSeverityFilter } from '../../domain/incident';
+import { IncidentSeverityFilter } from '../../domain/incident';
+import { IncidentStore } from '../../state/incident-store';
 import { IncidentFilterBar } from '../../ui/incident-filter-bar/incident-filter-bar';
+import { IncidentInspector } from '../../ui/incident-inspector/incident-inspector';
 import { IncidentList } from '../../ui/incident-list/incident-list';
 
 @Component({
   selector: 'app-incident-list-page',
-  imports: [EmptyState, IncidentFilterBar, IncidentList],
+  imports: [EmptyState, IncidentFilterBar, IncidentInspector, IncidentList, RouterLink],
   templateUrl: './incident-list-page.html',
   styleUrl: './incident-list-page.scss',
 })
 export class IncidentListPage {
-  private readonly incidentRepository = inject(IncidentRepositoryPort);
   private readonly title = inject(Title);
   private readonly filterBar = viewChild(IncidentFilterBar);
 
-  protected readonly searchTerm = signal('');
-  protected readonly severityFilter = signal<IncidentSeverityFilter>('All');
+  protected readonly incidentStore = inject(IncidentStore);
   protected readonly actionMessage = signal('');
-
-  private readonly debouncedSearchTerm = toSignal(
-    toObservable(this.searchTerm).pipe(debounceTime(250), distinctUntilChanged()),
-    { initialValue: '' },
+  protected readonly activeIncidentCount = computed(
+    () => this.incidentStore.incidents().filter((incident) => incident.status !== 'Resolved').length,
   );
-
-  private readonly incidentQuery = computed<IncidentQuery>(() => ({
-    searchTerm: this.debouncedSearchTerm().trim(),
-    severity: this.severityFilter(),
-  }));
-
-  protected readonly incidentsResource = resource({
-    params: () => this.incidentQuery(),
-    loader: ({ params, abortSignal }) =>
-      searchIncidents(this.incidentRepository, params, abortSignal),
-  });
-
-  protected readonly incidents = computed<readonly Incident[]>(() =>
-    this.incidentsResource.hasValue() ? this.incidentsResource.value() : [],
+  protected readonly criticalIncidentCount = computed(
+    () =>
+      this.incidentStore
+        .incidents()
+        .filter((incident) => incident.severity === 'Critical' && incident.status !== 'Resolved')
+        .length,
   );
-
-  protected readonly selectedIncidentId = linkedSignal<readonly Incident[], string | null>({
-    source: this.incidents,
-    computation: (incidents, previous) => {
-      const previousSelection = previous?.value;
-
-      return incidents.some((incident) => incident.id === previousSelection)
-        ? (previousSelection ?? null)
-        : (incidents[0]?.id ?? null);
-    },
-  });
-
-  protected readonly resultSummary = computed(() => {
-    const incidentCount = this.incidents().length;
-    return `${incidentCount} incident${incidentCount === 1 ? '' : 's'} found`;
-  });
-
-  protected readonly errorMessage = computed(() =>
-    this.incidentsResource.error() ? 'Incident data could not be loaded. Retry the request.' : '',
+  protected readonly inProgressIncidentCount = computed(
+    () =>
+      this.incidentStore.incidents().filter((incident) => incident.status === 'In Progress').length,
   );
+  protected readonly selectedIncident = computed(() => {
+    const selectedIncidentId = this.incidentStore.selectedIncidentId();
+    return (
+      this.incidentStore.incidents().find((incident) => incident.id === selectedIncidentId) ?? null
+    );
+  });
 
   private readonly updateDocumentTitle = effect(() => {
-    if (!this.incidentsResource.isLoading() && !this.incidentsResource.error()) {
-      this.title.setTitle(`${this.resultSummary()} · InfraFlow`);
+    if (!this.incidentStore.isLoading() && !this.incidentStore.errorMessage()) {
+      this.title.setTitle(`${this.incidentStore.resultSummary()} · InfraFlow`);
     }
   });
 
   protected updateSearchTerm(searchTerm: string): void {
-    this.searchTerm.set(searchTerm);
+    this.incidentStore.setSearchTerm(searchTerm);
     this.actionMessage.set('');
   }
 
   protected updateSeverity(severity: IncidentSeverityFilter): void {
-    this.severityFilter.set(severity);
+    this.incidentStore.setSeverityFilter(severity);
     this.actionMessage.set('');
   }
 
   protected resetFilters(): void {
-    this.searchTerm.set('');
-    this.severityFilter.set('All');
+    this.incidentStore.resetFilters();
     this.actionMessage.set('Filters reset.');
     this.filterBar()?.focusSearch();
   }
 
   protected selectIncident(incidentId: string): void {
-    this.selectedIncidentId.set(incidentId);
+    this.incidentStore.selectIncident(incidentId);
     this.actionMessage.set(`${incidentId} selected for operational review.`);
   }
 
@@ -109,9 +73,8 @@ export class IncidentListPage {
     this.actionMessage.set(`Acknowledging ${incidentId}…`);
 
     try {
-      await acknowledgeIncidentUseCase(this.incidentRepository, incidentId);
+      await this.incidentStore.acknowledge(incidentId);
       this.actionMessage.set(`${incidentId} acknowledged by the operator.`);
-      this.incidentsResource.reload();
     } catch {
       this.actionMessage.set(`${incidentId} could not be acknowledged.`);
     }
@@ -119,6 +82,6 @@ export class IncidentListPage {
 
   protected retryLoading(): void {
     this.actionMessage.set('Retrying incident request…');
-    this.incidentsResource.reload();
+    this.incidentStore.reload();
   }
 }

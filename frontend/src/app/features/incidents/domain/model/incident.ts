@@ -20,6 +20,16 @@ export interface Incident {
   readonly operationalSignals: readonly string[];
 }
 
+export interface NewIncident {
+  readonly title: string;
+  readonly description: string;
+  readonly location: string;
+  readonly assetId: string;
+  readonly severity: IncidentSeverity;
+  readonly priority: IncidentPriority;
+  readonly operationalSignals: readonly string[];
+}
+
 export interface IncidentQuery {
   readonly searchTerm: string;
   readonly severity: IncidentSeverityFilter;

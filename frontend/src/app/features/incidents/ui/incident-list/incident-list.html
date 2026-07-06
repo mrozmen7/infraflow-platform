@@ -1,9 +1,17 @@
+<div class="incident-list__columns" aria-hidden="true">
+  <span>Incident</span>
+  <span>Classification</span>
+  <span>Status</span>
+  <span>Action</span>
+</div>
+
 <ol class="incident-list" aria-label="Incident results">
   @for (incident of incidents(); track incident.id) {
     <li>
       <app-incident-card
         [incident]="incident"
         [selected]="selectedIncidentId() === incident.id"
+        [acknowledgementPending]="pendingAcknowledgementId() === incident.id"
         (acknowledgeRequested)="acknowledgeRequested.emit($event)"
         (selectRequested)="selectRequested.emit($event)"
       />

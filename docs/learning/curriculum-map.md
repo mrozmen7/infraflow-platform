@@ -139,6 +139,32 @@ Amaç: Büyüyen frontend'i domain sınırları, state, formlar ve kalite kapıl
 
 ---
 
+# Aşama 2.5: Advanced Angular Performance Lab
+
+Amaç: Frontend Masters `Advanced Angular: Performance & Enterprise State` kursunda
+eksik veya kısmi kalan ileri Angular konularını ürün kodunu gereksiz karmaşıklaştırmadan
+izole deneyler, gerçek InfraFlow uygulamaları ve ölçüm kanıtlarıyla tamamlamak.
+
+Bu bir ara uzmanlık aşamasıdır; mevcut 6 aşama ve 20 modül numaralandırmasını değiştirmez.
+
+1. OnPush, zoneless change detection ve profiling.
+2. `NgOptimizedImage`, responsive image ve custom loader.
+3. CSR, SSR, prerender, hydration ve render mode ADR'ı.
+4. `@defer`, viewport/interaction trigger ve defer testleri.
+5. Multi-slot projection, TabGroup, `contentChildren()` ve local DI.
+6. Host directives.
+7. RxJS concurrency operator'ları ve stream error placement.
+8. NgRx SignalStore custom features ve `rxMethod` uyumluluk çalışması.
+9. Component Harness ve ileri testing.
+10. Lighthouse, Angular DevTools ve network/bundle performans kanıtı.
+
+Detaylı plan: `docs/learning/phase-02-5-advanced-angular-performance-lab.md`
+
+Çıkış: Kurs başlıklarının uygulanmış veya bilinçli trade-off ile reddedilmiş olduğunu
+gösteren kod, test, ADR ve performans kanıt paketi.
+
+---
+
 # Aşama 3: Profesyonel Agentic Engineering
 
 Amaç: AI yardımını spesifikasyon, test, review ve güvenlik sınırlarıyla profesyonel sürece dönüştürmek.
@@ -147,10 +173,11 @@ Amaç: AI yardımını spesifikasyon, test, review ve güvenlik sınırlarıyla 
 
 1. Ajanın bağlam problemi.
 2. AGENTS.md ve kural hiyerarşisi.
-3. Specification, plan, ADR ve Definition of Done.
-4. Tekrarlanabilir skills ve doğrulama komutları.
-5. Sandbox, permission, secret ve prompt injection.
-6. Worktree ve izole görev ortamı.
+3. Specification, Acceptance Criteria ve Definition of Done.
+4. Implementation plan, ADR ve varsayımlar.
+5. Tekrarlanabilir doğrulama, quality gate ve evidence.
+6. Sandbox, permission, secret ve prompt injection.
+7. Worktree, izole görev ortamı ve final audit.
 
 Çıkış: Ajanın mimari sınırları ve yetkileri açıkça bildiği repository.
 

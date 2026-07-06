@@ -4,10 +4,13 @@ Durum değerleri: `Bekliyor`, `Devam ediyor`, `Review`, `Tamamlandı`.
 
 ## Güncel konum
 
-- Son tamamlanan: Aşama 2 / Modül 5 - Domain ve Feature Sınırları
-- Tamamlanan modüller: 1, 2, 3, 4 ve 5
-- Sonraki: Aşama 2 / Modül 6 - State Management ve Signal Store
-- Durum: Modül 5 tamamlandı; Modül 6 bekliyor
+- Son tamamlanan: Aşama 3 / Modül 9 - AI-Ready Repository ve Guardrails
+- Tamamlanan modüller: 1, 2, 3, 4, 5, 6, 7, 8 ve 9
+- Son tamamlanan ek çalışma: UI Foundation Sprint - kullanıcı tarafından onaylandı
+- Güncel: Aşama 3 / Modül 10 - Kontrollü Geliştirme Döngüsü
+- Son tamamlanan ders: Modül 9 / Ders 7 - Worktree, İzole Görev ve Modül 9 Finali
+- Aşama 3 eğitim ve referans planı: `phase-03-professional-agentic-engineering.md`
+- Durum: Aşama 2 final kontrolü tamamlandı; Advanced Angular Performance Lab proje sonuna ertelendi
 
 ## Modül 1 dersleri
 
@@ -62,13 +65,38 @@ Durum değerleri: `Bekliyor`, `Devam ediyor`, `Review`, `Tamamlandı`.
 - Angular 22.0.4.
 - Strict TypeScript ve strict template.
 - Standalone, zoneless, lazy routing, SCSS ve Vitest.
-- 12/12 test dosyası ve 30/30 test başarılı.
-- Architecture fitness check 40 TypeScript dosyasının bağımlılık yönlerini doğruluyor.
+- 18/18 test dosyası ve 54/54 test başarılı.
+- Architecture fitness check 57 TypeScript dosyasının bağımlılık yönlerini doğruluyor.
+- Frontend guardrail check 68 source dosyasını ve 3 negatif security proof'u güvenlik ve
+  erişilebilirlik açısından doğruluyor.
 - Production build başarılı ve lazy route chunk'ları üretildi.
 - `.nvmrc` Node.js 24.15 sürümünü sabitliyor; yerel geliştirmede `nvm use` kullanılmalıdır.
 - Mock Incident list/search/select/acknowledge/detail akışı çalışıyor.
+- Route-scoped Incident Store; normalize state, query cache, refresh, optimistic
+  acknowledgement ve rollback davranışlarını yönetiyor.
+- `/incidents/new` Signal Form; typed draft, schema validation, cross-field safety
+  rules, submit errors ve create akışını yönetiyor.
+- Production build otomatik CSP, route focus yönetimi, global error reporting ve
+  330/380 kB initial bundle budget ile korunuyor.
 
 ## 20 modül durumu
+
+Aşama 2.5, 20 modül numaralandırmasını değiştirmeyen ara uzmanlık laboratuvarıdır.
+
+| Aşama 2.5 Lab | Başlık | Durum |
+|---:|---|---|
+| 1 | OnPush, Zoneless ve Change Detection | Bekliyor |
+| 2 | Image Performance | Bekliyor |
+| 3 | SSR, Prerender, Hydration ve Render Modes | Bekliyor |
+| 4 | `@defer` ve Incremental Loading | Bekliyor |
+| 5 | Advanced UI Composition ve Local DI | Bekliyor |
+| 6 | Host Directives | Bekliyor |
+| 7 | RxJS Concurrency ve Stream Errors | Bekliyor |
+| 8 | NgRx SignalStore ve `rxMethod` | Bekliyor |
+| 9 | Component Harness ve Advanced Testing | Bekliyor |
+| 10 | Performance Evidence | Bekliyor |
+
+## Ana modüller
 
 | Modül | Başlık | Durum |
 |---:|---|---|
@@ -77,11 +105,11 @@ Durum değerleri: `Bekliyor`, `Devam ediyor`, `Review`, `Tamamlandı`.
 | 3 | Dependency Injection ve Routing | Tamamlandı |
 | 4 | Signals, RxJS ve Test Temelleri | Tamamlandı |
 | 5 | Domain ve Feature Sınırları | Tamamlandı |
-| 6 | State Management ve Signal Store | Bekliyor |
-| 7 | Signal Forms ve Kurumsal Formlar | Bekliyor |
-| 8 | Kaliteli Frontend | Bekliyor |
-| 9 | AI-Ready Repository ve Guardrails | Bekliyor |
-| 10 | Kontrollü Geliştirme Döngüsü | Bekliyor |
+| 6 | State Management ve Signal Store | Tamamlandı |
+| 7 | Signal Forms ve Kurumsal Formlar | Tamamlandı |
+| 8 | Kaliteli Frontend | Tamamlandı |
+| 9 | AI-Ready Repository ve Guardrails | Tamamlandı |
+| 10 | Kontrollü Geliştirme Döngüsü | Sıradaki |
 | 11 | İleri Ajan Akışları ve Legacy Refactoring | Bekliyor |
 | 12 | Agent Temelleri | Bekliyor |
 | 13 | AG-UI ve Angular Adapter | Bekliyor |

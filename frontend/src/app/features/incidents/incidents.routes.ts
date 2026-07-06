@@ -12,6 +12,14 @@ export const INCIDENT_ROUTES: Routes = [
       ),
   },
   {
+    path: 'new',
+    title: 'Report incident · InfraFlow',
+    loadComponent: () =>
+      import('./pages/incident-create-page/incident-create-page').then(
+        (module) => module.IncidentCreatePage,
+      ),
+  },
+  {
     path: ':incidentId',
     title: 'Incident detail · InfraFlow',
     resolve: {

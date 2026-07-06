@@ -71,4 +71,23 @@ describe('IncidentCard', () => {
     expect(element.querySelectorAll('button')).toHaveLength(1);
     expect(element.textContent).toContain('Status: Acknowledged');
   });
+
+  it('disables acknowledgement while the command is pending', async () => {
+    const fixture = TestBed.createComponent(IncidentCard);
+    fixture.componentRef.setInput('incident', {
+      ...criticalIncident,
+      status: 'Acknowledged',
+    });
+    fixture.componentRef.setInput('acknowledgementPending', true);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const element = fixture.nativeElement as HTMLElement;
+    const pendingButton = element.querySelector<HTMLButtonElement>(
+      'button[aria-label="Acknowledgement in progress"]',
+    );
+
+    expect(pendingButton?.disabled).toBe(true);
+    expect(pendingButton?.textContent).toContain('Acknowledging');
+  });
 });
