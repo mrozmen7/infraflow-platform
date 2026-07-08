@@ -1,115 +1,108 @@
 # InfraFlow Platform
 
-InfraFlow, kritik altyapı tesislerindeki arıza, varlık ve bakım işlerini yöneten eğitim amaçlı kurumsal referans projesidir.
+[![Frontend CI](https://github.com/mrozmen7/infraflow-platform/actions/workflows/frontend-ci.yml/badge.svg)](https://github.com/mrozmen7/infraflow-platform/actions/workflows/frontend-ci.yml)
+[![Backend CI](https://github.com/mrozmen7/infraflow-platform/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/mrozmen7/infraflow-platform/actions/workflows/backend-ci.yml)
 
-Bu repository yalnızca çalışan bir ürün üretmek için değil; modern Angular mimarisi, profesyonel AI destekli mühendislik, Agentic UI ve Spring Boot konularını kanıt üreterek öğrenmek için kullanılır.
+InfraFlow is a modular operations platform for critical infrastructure teams. It
+coordinates incident triage, asset context and work-order workflows through a modern
+Angular frontend, a Spring Boot modular monolith backend and a PostgreSQL persistence
+layer.
 
-## Güncel durum
+The system demonstrates domain-driven API design, signal-based frontend state,
+contract-first integration, transaction-safe backend workflows and production-oriented
+quality gates.
 
-- Aşama 1 - Modern Angular Temelleri: Tamamlandı
-- Aşama 2 - İleri Angular Mimarisi: Tamamlandı
-- UI Foundation Sprint: Tamamlandı ve onaylandı
-- Aşama 3 - Profesyonel Agentic Engineering (Modül 9–11): Tamamlandı
-- Güncel: Aşama 5 / Modül 21 - PostgreSQL, Transaction ve OpenAPI tamamlandı
-- Aşama 2.5 - Advanced Angular Performance Lab: Proje sonuna ertelendi
-- Frontend: Angular 22
-- Backend: Spring Boot 3.5.13 + Java 21 + PostgreSQL/Flyway/JPA eklendi
-- Agent runtime: Güvenli Agentic UI contract ve approval boundary eklendi
+## Product scope
 
-## Çalışan frontend özellikleri
+InfraFlow supports operators who need to react to infrastructure incidents without
+losing operational context:
 
-- Incident listeleme, arama ve Severity filtresi
-- Incident seçme ve acknowledgement akışı
-- Incident detay rotası ve resolver
-- Loading, error, empty ve success görünümleri
-- Lazy Incident/Asset/Work Order rotaları
-- Route-scoped mock repository ve runtime feature guard
-- Signal, computed, effect, linkedSignal, RxJS ve resource state akışı
-- Erişilebilir app shell ve klavye davranışları
-- Signal Store, normalize state, cache, optimistic update ve rollback
-- Incident response start ve persistence hatasında güvenli rollback
-- Desktop/mobile Playwright uçtan uca kullanıcı akışı
-- Characterization test ile korunan query cache refactoring
-- Typed Signal Form ve cross-field validation
-- Global error reporting, CSP, accessibility ve bundle budgets
-- 21 test dosyasında 73 test + 2 Playwright browser testi
+- monitor active incidents across tunnel and infrastructure assets
+- filter and inspect incident severity, priority, status and operational signals
+- acknowledge operator ownership before response coordination starts
+- draft work orders from incident context
+- expose a stable OpenAPI contract for frontend/backend integration
 
-## Repository yapısı
+## Screenshots
+
+### Incident operations console
+
+![Incident operations console](docs/assets/screenshots/incident-operations-console.png)
+
+### Guided incident action panel
+
+![Guided incident action panel](docs/assets/screenshots/incident-guidance-panel.png)
+
+## Architecture
 
 ```text
 infraflow-platform/
-├── frontend/      Angular uygulaması
-├── backend/       Spring Boot modular monolith backend
-├── agent-lab/     Güvenli agent runtime - daha sonra
-├── contracts/     OpenAPI, AG-UI ve A2UI sözleşmeleri
-├── infra/         Yerel altyapı ve container tanımları
-├── docs/          Ürün, mimari ve eğitim kararları
-└── AGENTS.md      AI destekli çalışma kuralları
+├── frontend/      Angular operations console
+├── backend/       Spring Boot modular monolith API
+├── contracts/     OpenAPI and integration contracts
+├── infra/         Local infrastructure definitions
+├── docs/          Architecture, domain and delivery documentation
+└── AGENTS.md      AI-assisted development operating rules
 ```
 
-## Frontend mimarisi
+### Frontend
+
+- Angular 22
+- Standalone components
+- Signals, computed state and resource-style loading flows
+- Route-scoped feature boundaries
+- Signal Store, normalized state and rollback-safe optimistic updates
+- Strict TypeScript, accessibility checks and architecture guardrails
 
 ```text
-app/
-├── core/              Uygulama geneli config ve hata sayfaları
-├── shared/ui/         Domain bağımsız tekrar kullanılabilir UI
+frontend/src/app/
+├── core/              application-wide configuration and shell concerns
+├── shared/ui/         domain-independent reusable UI
 └── features/
-    ├── incidents/     Çalışan Incident dikey dilimi
-    ├── assets/        Lazy feature sınırı
-    └── work-orders/   Lazy feature sınırı
+    ├── incidents/     active vertical slice
+    ├── assets/        lazy feature boundary
+    └── work-orders/   lazy feature boundary
 ```
 
-Incident feature kendi domain, application, state, infrastructure, page ve UI sınırlarını
-birlikte tutar. Bu sınırlar architecture fitness testleriyle otomatik korunur.
+### Backend
 
-## Eğitim navigasyonu
-
-- [Tam müfredat](docs/learning/curriculum-map.md)
-- [Güncel ilerleme](docs/learning/progress.md)
-- [Aşama 3 eğitim ve referans planı](docs/learning/phase-03-professional-agentic-engineering.md)
-- [Repository context map](docs/agentic-engineering/repository-context-map.md)
-- [Aşama 2.5: Advanced Angular Performance Lab](docs/learning/phase-02-5-advanced-angular-performance-lab.md)
-- [Aşama 1 özeti](docs/learning/phase-01-modern-angular.md)
-- [Modül 2: Component ve Template](docs/learning/module-02-component-template.md)
-- [Modül 3: DI ve Routing](docs/learning/module-03-dependency-injection-routing.md)
-- [Modül 4: Signals, RxJS ve Test](docs/learning/module-04-signals-rxjs-testing.md)
-- [Modül 9: AI-Ready Repository](docs/learning/module-09-ai-ready-repository.md)
-- [Modül 10: Kontrollü Geliştirme Döngüsü](docs/learning/module-10-controlled-development-loop.md)
-- [Modül 11: İleri Ajan Akışları ve Legacy Refactoring](docs/learning/module-11-advanced-agent-flows-legacy-refactoring.md)
-- [Modül 20: Spring Boot ve Modular Monolith](docs/learning/module-20-spring-boot-modular-monolith.md)
-- [Modül 21: PostgreSQL, Transaction ve OpenAPI](docs/learning/module-21-postgresql-transactions-openapi.md)
-- [Professional Agentic Engineering Handbook](docs/agentic-engineering/handbook.md)
-
-## Gereksinimler
-
-- Node.js 24.15.0 (`.nvmrc` ve `.node-version` ile sabitlenmiştir)
-- npm 11.6.0 veya uyumlu npm sürümü
 - Java 21
-- Docker Desktop veya uyumlu Docker runtime
+- Spring Boot 3.5
+- Modular monolith package structure
+- Spring MVC REST API
+- Bean Validation and standardized error responses
+- Spring Data JPA
+- PostgreSQL
+- Flyway migrations
+- Transaction boundaries in application services
+- OpenAPI/Swagger contract generation
 
-## Frontend komutları
-
-```bash
-cd frontend
-npm install
-npm start
-npm test -- --watch=false
-npm run build
-npm run quality
-npm run quality:full
+```text
+backend/src/main/java/com/infraflow/platform/
+├── incidents/
+│   ├── domain
+│   ├── application
+│   ├── infrastructure
+│   └── web
+├── workorders/
+│   ├── domain
+│   ├── application
+│   ├── infrastructure
+│   └── web
+└── shared/
+    ├── config
+    └── error
 ```
 
-## Backend komutları
+## API contract
 
-```bash
-docker compose -f infra/postgres/compose.yml up -d
+The current REST API contract is exported to:
 
-cd backend
-mvn spring-boot:run -Dspring-boot.run.profiles=local
-mvn test
+```text
+contracts/openapi/infraflow-api-v1.openapi.json
 ```
 
-Backend endpointleri:
+Main endpoints:
 
 - `GET /api/v1/incidents`
 - `GET /api/v1/incidents/{incidentId}`
@@ -121,17 +114,92 @@ Backend endpointleri:
 - `GET /v3/api-docs`
 - `GET /swagger-ui.html`
 
-OpenAPI contract:
+## Local setup
 
-- `contracts/openapi/infraflow-api-v1.openapi.json`
+Requirements:
 
-## Kalite kapısı
+- Node.js 24.15.0
+- npm 11.6 or compatible
+- Java 21
+- Docker Desktop or compatible Docker runtime
 
-Bir modül aşağıdakiler tamamlanmadan bitmiş sayılmaz:
+### Frontend
 
-1. Kavram açıklanmış olmalı.
-2. Kod veya doküman çıktısı bulunmalı.
-3. Normal, hata ve sınır durumları test edilmeli.
-4. Production build başarılı olmalı.
-5. Değişiklik birlikte incelenmeli.
-6. Mimari karar gerekiyorsa ADR yazılmalı.
+```bash
+cd frontend
+npm install
+npm start
+```
+
+Quality checks:
+
+```bash
+cd frontend
+npm test -- --watch=false
+npm run build
+npm run quality
+npm run quality:full
+```
+
+### Backend
+
+From the repository root:
+
+```bash
+docker compose -f infra/postgres/compose.yml up -d
+
+cd backend
+mvn spring-boot:run -Dspring-boot.run.profiles=local
+```
+
+Quality checks:
+
+```bash
+cd backend
+mvn test
+```
+
+Useful URLs:
+
+- Health: `http://localhost:8080/actuator/health`
+- OpenAPI JSON: `http://localhost:8080/v3/api-docs`
+- Swagger UI: `http://localhost:8080/swagger-ui.html`
+- Incidents API: `http://localhost:8080/api/v1/incidents`
+- Work Orders API: `http://localhost:8080/api/v1/work-orders`
+
+## Quality gates
+
+The project is protected by:
+
+- frontend unit tests
+- backend unit/API tests
+- Angular production build
+- architecture fitness checks
+- security and accessibility guardrails
+- Playwright browser flows
+- OpenAPI contract export
+- GitHub Actions CI pipelines
+
+## Advanced extensions
+
+InfraFlow also contains experimental extension points for AI-assisted operations:
+
+- Agentic UI contracts and safety boundaries
+- guided action-card rendering
+- human-in-the-loop approval patterns
+- future AG-UI/A2UI and MCP integration seams
+
+These extensions are kept behind the main enterprise frontend/backend architecture
+so the core system remains understandable, testable and operationally deterministic.
+
+## Documentation
+
+- Product language: [docs/domain/domain-language.md](docs/domain/domain-language.md)
+- UI foundation: [docs/design/ui-foundation.md](docs/design/ui-foundation.md)
+- OpenAPI contract: [contracts/openapi/infraflow-api-v1.openapi.json](contracts/openapi/infraflow-api-v1.openapi.json)
+- Development documentation: [docs/learning/](docs/learning/)
+- Agentic engineering notes: [docs/agentic-engineering/](docs/agentic-engineering/)
+
+## License
+
+MIT. See [LICENSE](LICENSE).
