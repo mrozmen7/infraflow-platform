@@ -9,7 +9,6 @@ import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OrderColumn;
@@ -54,7 +53,7 @@ class IncidentJpaEntity {
   @Column(name = "status", nullable = false, length = 30)
   private IncidentStatus status;
 
-  @ElementCollection(fetch = FetchType.EAGER)
+  @ElementCollection
   @CollectionTable(
     name = "incident_operational_signals",
     joinColumns = @JoinColumn(name = "incident_id")
