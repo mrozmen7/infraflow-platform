@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -63,6 +64,14 @@ class GlobalExceptionHandler {
     HttpServletRequest request
   ) {
     return error(HttpStatus.BAD_REQUEST, "Request body is malformed.", request, List.of());
+  }
+
+  @ExceptionHandler(AuthenticationException.class)
+  ResponseEntity<ApiError> handleAuthentication(
+    AuthenticationException exception,
+    HttpServletRequest request
+  ) {
+    return error(HttpStatus.UNAUTHORIZED, "Authentication failed.", request, List.of());
   }
 
   private ResponseEntity<ApiError> error(

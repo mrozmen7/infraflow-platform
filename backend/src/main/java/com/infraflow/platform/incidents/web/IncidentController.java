@@ -18,6 +18,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,6 +41,7 @@ class IncidentController {
   }
 
   @GetMapping
+  @PreAuthorize("hasAnyRole('OPERATOR', 'ADMIN')")
   @Operation(
     summary = "Search incidents",
     description = "Returns the current incident queue filtered by free text and optional severity."
@@ -57,6 +59,7 @@ class IncidentController {
   }
 
   @GetMapping("/{incidentId}")
+  @PreAuthorize("hasAnyRole('OPERATOR', 'ADMIN')")
   @Operation(summary = "Get incident by id")
   IncidentResponse get(
     @Parameter(example = "INC-2026-0001")
@@ -66,6 +69,7 @@ class IncidentController {
   }
 
   @PostMapping
+  @PreAuthorize("hasAnyRole('OPERATOR', 'ADMIN')")
   @Operation(
     summary = "Report a new incident",
     description = "Creates a new operations incident. The initial status is Open."
@@ -87,6 +91,7 @@ class IncidentController {
   }
 
   @PostMapping("/{incidentId}/acknowledge")
+  @PreAuthorize("hasAnyRole('OPERATOR', 'ADMIN')")
   @Operation(
     summary = "Acknowledge an incident",
     description = "Marks an open incident as seen by an operator without resolving the physical issue."
@@ -112,6 +117,7 @@ class IncidentController {
   }
 
   @PostMapping("/{incidentId}/start-response")
+  @PreAuthorize("hasAnyRole('OPERATOR', 'ADMIN')")
   @Operation(
     summary = "Start response workflow",
     description = "Moves an acknowledged incident into active response coordination."
@@ -134,6 +140,37 @@ class IncidentController {
     @PathVariable @Pattern(regexp = "INC-\\d{4}-\\d{4}") String incidentId
   ) {
     return IncidentResponse.from(incidentService.startResponse(new IncidentId(incidentId)));
+  }
+
+  @PostMapping("/{incidentId}/resolve")
+  @PreAuthorize("hasRole('ADMIN')")
+  @Operation(
+    summary = "Resolve an incident",
+    description = "Closes an incident after operational ownership and response have been verified. Admin only."
+  )
+  @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "Incident resolved"),
+    @ApiResponse(
+      responseCode = "403",
+      description = "Admin role is required",
+      content = @Content(schema = @Schema(implementation = ApiError.class))
+    ),
+    @ApiResponse(
+      responseCode = "404",
+      description = "Incident not found",
+      content = @Content(schema = @Schema(implementation = ApiError.class))
+    ),
+    @ApiResponse(
+      responseCode = "422",
+      description = "Workflow rule rejected the command",
+      content = @Content(schema = @Schema(implementation = ApiError.class))
+    )
+  })
+  IncidentResponse resolve(
+    @Parameter(example = "INC-2026-0001")
+    @PathVariable @Pattern(regexp = "INC-\\d{4}-\\d{4}") String incidentId
+  ) {
+    return IncidentResponse.from(incidentService.resolve(new IncidentId(incidentId)));
   }
 
   private Optional<IncidentSeverity> parseSeverityFilter(String severity) {

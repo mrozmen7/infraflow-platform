@@ -22,4 +22,12 @@ public final class IncidentWorkflowPolicy {
       );
     }
   }
+
+  public static void ensureCanResolve(Incident incident) {
+    if (incident.status() == IncidentStatus.RESOLVED) {
+      throw new BusinessRuleViolationException(
+        "Resolved incidents cannot be resolved again."
+      );
+    }
+  }
 }

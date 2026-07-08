@@ -58,6 +58,10 @@ public class IncidentService implements IncidentLookupPort {
     return incidentRepository.save(get(incidentId).startResponse());
   }
 
+  public Incident resolve(IncidentId incidentId) {
+    return incidentRepository.save(get(incidentId).resolve());
+  }
+
   @Override
   @Transactional(readOnly = true)
   public IncidentSummaryForWorkOrder getIncidentForWorkOrder(IncidentId incidentId) {

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,6 +27,7 @@ class WorkOrderControllerTests {
   private MockMvc mockMvc;
 
   @Test
+  @WithMockUser(roles = "OPERATOR")
   void listsSeedWorkOrders() throws Exception {
     mockMvc.perform(get("/api/v1/work-orders"))
       .andExpect(status().isOk())
@@ -35,6 +37,7 @@ class WorkOrderControllerTests {
   }
 
   @Test
+  @WithMockUser(roles = "OPERATOR")
   void draftsWorkOrderFromIncidentThroughExplicitModulePort() throws Exception {
     mockMvc.perform(post("/api/v1/work-orders/drafts")
         .contentType(MediaType.APPLICATION_JSON)
@@ -51,6 +54,7 @@ class WorkOrderControllerTests {
   }
 
   @Test
+  @WithMockUser(roles = "OPERATOR")
   void rejectsInvalidDraftRequest() throws Exception {
     mockMvc.perform(post("/api/v1/work-orders/drafts")
         .contentType(MediaType.APPLICATION_JSON)

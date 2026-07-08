@@ -38,3 +38,19 @@ infraflow:
     allowed-origins:
       - http://localhost:4200
       - http://127.0.0.1:4200
+  security:
+    jwt:
+      issuer: infraflow
+      secret: infraflow-local-development-secret-with-at-least-256-bits
+      access-token-ttl: PT15M
+      refresh-token-ttl: PT8H
+    users:
+      operator:
+        password: operator
+        roles:
+          - OPERATOR
+      admin:
+        password: admin
+        roles:
+          - ADMIN
+          - OPERATOR

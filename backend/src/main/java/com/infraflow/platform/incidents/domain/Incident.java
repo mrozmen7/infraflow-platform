@@ -40,6 +40,11 @@ public record Incident(
     return withStatus(IncidentStatus.IN_PROGRESS);
   }
 
+  public Incident resolve() {
+    IncidentWorkflowPolicy.ensureCanResolve(this);
+    return withStatus(IncidentStatus.RESOLVED);
+  }
+
   public Incident withStatus(IncidentStatus nextStatus) {
     return new Incident(
       id,

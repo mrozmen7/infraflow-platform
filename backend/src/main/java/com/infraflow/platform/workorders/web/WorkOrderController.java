@@ -15,6 +15,7 @@ import jakarta.validation.constraints.Pattern;
 import java.net.URI;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,6 +37,7 @@ class WorkOrderController {
   }
 
   @GetMapping
+  @PreAuthorize("hasAnyRole('OPERATOR', 'ADMIN')")
   @Operation(summary = "List work orders")
   List<WorkOrderResponse> findAll() {
     return workOrderService.findAll().stream()
@@ -44,6 +46,7 @@ class WorkOrderController {
   }
 
   @GetMapping("/{workOrderId}")
+  @PreAuthorize("hasAnyRole('OPERATOR', 'ADMIN')")
   @Operation(summary = "Get work order by id")
   WorkOrderResponse get(
     @Parameter(example = "WO-2026-0001")
@@ -53,6 +56,7 @@ class WorkOrderController {
   }
 
   @PostMapping("/drafts")
+  @PreAuthorize("hasAnyRole('OPERATOR', 'ADMIN')")
   @Operation(
     summary = "Draft a work order from an incident",
     description = "Creates a controlled work order draft from an existing incident context."

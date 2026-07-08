@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,6 +27,7 @@ class IncidentControllerTests {
   private MockMvc mockMvc;
 
   @Test
+  @WithMockUser(roles = "OPERATOR")
   void searchesIncidentsBySeverityAndSearchTerm() throws Exception {
     mockMvc.perform(get("/api/v1/incidents")
         .queryParam("searchTerm", "tunnel")
@@ -37,6 +39,7 @@ class IncidentControllerTests {
   }
 
   @Test
+  @WithMockUser(roles = "OPERATOR")
   void getsIncidentById() throws Exception {
     mockMvc.perform(get("/api/v1/incidents/INC-2026-0001"))
       .andExpect(status().isOk())
@@ -46,6 +49,7 @@ class IncidentControllerTests {
   }
 
   @Test
+  @WithMockUser(roles = "OPERATOR")
   void createsIncidentWithValidationAndLocationHeader() throws Exception {
     mockMvc.perform(post("/api/v1/incidents")
         .contentType(MediaType.APPLICATION_JSON)
@@ -67,6 +71,7 @@ class IncidentControllerTests {
   }
 
   @Test
+  @WithMockUser(roles = "OPERATOR")
   void rejectsInvalidIncidentRequestWithFieldErrors() throws Exception {
     mockMvc.perform(post("/api/v1/incidents")
         .contentType(MediaType.APPLICATION_JSON)
@@ -86,6 +91,7 @@ class IncidentControllerTests {
   }
 
   @Test
+  @WithMockUser(roles = "OPERATOR")
   void acknowledgesOpenIncident() throws Exception {
     mockMvc.perform(post("/api/v1/incidents/INC-2026-0001/acknowledge"))
       .andExpect(status().isOk())
@@ -93,6 +99,7 @@ class IncidentControllerTests {
   }
 
   @Test
+  @WithMockUser(roles = "OPERATOR")
   void protectsWorkflowRulesWithConflictResponse() throws Exception {
     mockMvc.perform(post("/api/v1/incidents/INC-2026-0002/acknowledge"))
       .andExpect(status().isConflict())
@@ -100,6 +107,7 @@ class IncidentControllerTests {
   }
 
   @Test
+  @WithMockUser(roles = "OPERATOR")
   void startsResponseForAcknowledgedIncident() throws Exception {
     mockMvc.perform(post("/api/v1/incidents/INC-2026-0003/start-response"))
       .andExpect(status().isOk())
@@ -107,9 +115,33 @@ class IncidentControllerTests {
   }
 
   @Test
+  @WithMockUser(roles = "OPERATOR")
   void returnsNotFoundForMissingIncident() throws Exception {
     mockMvc.perform(get("/api/v1/incidents/INC-2026-9999"))
       .andExpect(status().isNotFound())
       .andExpect(jsonPath("$.message").value("Incident INC-2026-9999 was not found."));
+  }
+
+  @Test
+  void rejectsUnauthenticatedIncidentAccess() throws Exception {
+    mockMvc.perform(get("/api/v1/incidents"))
+      .andExpect(status().isUnauthorized())
+      .andExpect(jsonPath("$.message").value("Authentication is required."));
+  }
+
+  @Test
+  @WithMockUser(roles = "OPERATOR")
+  void rejectsResolveForOperatorRole() throws Exception {
+    mockMvc.perform(post("/api/v1/incidents/INC-2026-0001/resolve"))
+      .andExpect(status().isForbidden())
+      .andExpect(jsonPath("$.message").value("Access is denied."));
+  }
+
+  @Test
+  @WithMockUser(roles = "ADMIN")
+  void allowsAdminToResolveIncident() throws Exception {
+    mockMvc.perform(post("/api/v1/incidents/INC-2026-0001/resolve"))
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("$.status").value("Resolved"));
   }
 }
