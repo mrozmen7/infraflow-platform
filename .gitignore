@@ -6,6 +6,8 @@ dist/
 coverage/
 .angular/
 backend/target/
+output/
+tmp/
 .env
 .env.*
 !.env.example
