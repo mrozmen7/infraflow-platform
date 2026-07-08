@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -42,6 +43,7 @@ class AuthController {
   }
 
   @PostMapping("/login")
+  @SecurityRequirements
   @Operation(summary = "Login with demo credentials")
   @ApiResponses({
     @ApiResponse(responseCode = "200", description = "JWT token pair issued"),
@@ -67,6 +69,7 @@ class AuthController {
   }
 
   @PostMapping("/refresh")
+  @SecurityRequirements
   @Operation(summary = "Refresh an access token")
   @ApiResponses({
     @ApiResponse(responseCode = "200", description = "New JWT token pair issued"),

@@ -104,7 +104,7 @@ class IncidentController {
       content = @Content(schema = @Schema(implementation = ApiError.class))
     ),
     @ApiResponse(
-      responseCode = "422",
+      responseCode = "409",
       description = "Workflow rule rejected the command",
       content = @Content(schema = @Schema(implementation = ApiError.class))
     )
@@ -130,7 +130,7 @@ class IncidentController {
       content = @Content(schema = @Schema(implementation = ApiError.class))
     ),
     @ApiResponse(
-      responseCode = "422",
+      responseCode = "409",
       description = "Workflow rule rejected the command",
       content = @Content(schema = @Schema(implementation = ApiError.class))
     )
@@ -161,7 +161,7 @@ class IncidentController {
       content = @Content(schema = @Schema(implementation = ApiError.class))
     ),
     @ApiResponse(
-      responseCode = "422",
+      responseCode = "409",
       description = "Workflow rule rejected the command",
       content = @Content(schema = @Schema(implementation = ApiError.class))
     )
