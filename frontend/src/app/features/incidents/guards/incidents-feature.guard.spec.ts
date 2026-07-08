@@ -30,6 +30,9 @@ describe('incidentsFeatureGuard', () => {
 function configureRuntimeConfig(incidentsEnabled: boolean): void {
   const runtimeConfig: AppRuntimeConfig = {
     apiBaseUrl: '/api',
+    dataAccess: {
+      incidents: 'mock',
+    },
     features: { incidents: incidentsEnabled },
   };
 

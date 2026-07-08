@@ -16,6 +16,7 @@ export interface IncidentStoreState {
   readonly lastLoadedAt: number | null;
   readonly loadSource: IncidentLoadSource | null;
   readonly pendingAcknowledgementId: IncidentId | null;
+  readonly pendingResponseStartId: IncidentId | null;
 }
 
 export function createInitialIncidentStoreState(): IncidentStoreState {
@@ -31,6 +32,7 @@ export function createInitialIncidentStoreState(): IncidentStoreState {
     lastLoadedAt: null,
     loadSource: null,
     pendingAcknowledgementId: null,
+    pendingResponseStartId: null,
   };
 }
 

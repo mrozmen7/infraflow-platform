@@ -46,6 +46,7 @@ describe('IncidentStoreState', () => {
       lastLoadedAt: null,
       loadSource: null,
       pendingAcknowledgementId: null,
+      pendingResponseStartId: null,
     });
     expect(firstState).not.toBe(secondState);
     expect(firstState.collection).not.toBe(secondState.collection);

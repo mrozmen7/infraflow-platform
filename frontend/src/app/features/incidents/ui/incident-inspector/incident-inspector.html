@@ -54,6 +54,14 @@
       <button type="button" disabled aria-label="Acknowledgement in progress">Acknowledging…</button>
     } @else if (canAcknowledge()) {
       <button type="button" (click)="acknowledgeRequested.emit(incident().id)">Acknowledge</button>
+    } @else if (responseStartPending()) {
+      <button type="button" disabled aria-label="Response start in progress">
+        Starting response…
+      </button>
+    } @else if (canStartResponse()) {
+      <button type="button" (click)="responseStartRequested.emit(incident().id)">
+        Start response
+      </button>
     }
   </footer>
 </article>

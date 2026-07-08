@@ -8,6 +8,7 @@ import type {
   NewIncident,
 } from '../domain/incident';
 import { IncidentStore } from './incident-store';
+import { IncidentResponseStartInProgressError } from './incident-store';
 
 const incidents: readonly Incident[] = [
   {
@@ -31,7 +32,7 @@ const incidents: readonly Incident[] = [
     reportedAt: '2026-07-04T08:05:00.000Z',
     severity: 'Medium',
     priority: 'P2',
-    status: 'Open',
+    status: 'Acknowledged',
     operationalSignals: ['Reading variance'],
   },
 ];
@@ -40,6 +41,7 @@ class FakeIncidentRepository implements IncidentRepositoryPort {
   readonly searchQueries: IncidentQuery[] = [];
   saveGate: Promise<void> | null = null;
   saveShouldFail = false;
+  saveCalls = 0;
 
   search(query: IncidentQuery): Promise<readonly Incident[]> {
     this.searchQueries.push(query);
@@ -55,6 +57,8 @@ class FakeIncidentRepository implements IncidentRepositoryPort {
   }
 
   async save(incident: Incident): Promise<Incident> {
+    this.saveCalls += 1;
+
     if (this.saveGate) {
       await this.saveGate;
     }
@@ -168,6 +172,55 @@ describe('IncidentStore', () => {
 
     expect(store.pendingAcknowledgementId()).toBeNull();
     expect(store.incidents()[0]?.status).toBe('Open');
+  });
+
+  it('starts response optimistically and confirms the saved status', async () => {
+    await vi.waitFor(() => expect(store.loadStatus()).toBe('loaded'));
+    let releaseSave = (): void => undefined;
+    repository.saveGate = new Promise<void>((resolve) => {
+      releaseSave = resolve;
+    });
+
+    const responseStart = store.startResponse('INC-STORE-002');
+
+    expect(store.pendingResponseStartId()).toBe('INC-STORE-002');
+    expect(store.incidents()[1]?.status).toBe('In Progress');
+
+    releaseSave();
+    await responseStart;
+
+    expect(store.pendingResponseStartId()).toBeNull();
+    expect(store.incidents()[1]?.status).toBe('In Progress');
+  });
+
+  it('rolls response start back when persistence fails', async () => {
+    await vi.waitFor(() => expect(store.loadStatus()).toBe('loaded'));
+    repository.saveShouldFail = true;
+
+    await expect(store.startResponse('INC-STORE-002')).rejects.toThrow(
+      'Simulated save failure',
+    );
+
+    expect(store.pendingResponseStartId()).toBeNull();
+    expect(store.incidents()[1]?.status).toBe('Acknowledged');
+  });
+
+  it('rejects a duplicate response start while one command is pending', async () => {
+    await vi.waitFor(() => expect(store.loadStatus()).toBe('loaded'));
+    let releaseSave = (): void => undefined;
+    repository.saveGate = new Promise<void>((resolve) => {
+      releaseSave = resolve;
+    });
+
+    const firstResponseStart = store.startResponse('INC-STORE-002');
+
+    await expect(store.startResponse('INC-STORE-002')).rejects.toBeInstanceOf(
+      IncidentResponseStartInProgressError,
+    );
+    expect(repository.saveCalls).toBe(1);
+
+    releaseSave();
+    await firstResponseStart;
   });
 
   it('adds a newly created incident to normalized state and selects it', async () => {

@@ -1,10 +1,11 @@
-# Contracts
+# InfraFlow Contracts
 
-Bu dizin frontend, backend ve agent runtime tarafından paylaşılan sürümlenmiş sözleşmeleri barındıracaktır.
+This folder stores machine-readable contracts shared between frontend, backend and
+future agent runtime boundaries.
 
-- OpenAPI: Angular ve Spring Boot arasındaki HTTP API
-- AG-UI: Angular ile agent runtime arasındaki event akışı
-- A2UI: İzinli generative UI yüzeyleri
+Current contract:
 
-İlk sözleşme Incident dikey diliminde oluşturulacaktır.
+- `openapi/infraflow-api-v1.openapi.json` - Spring Boot REST API contract
+
+Future contracts may include AG-UI/A2UI schemas and agent event protocols.
 

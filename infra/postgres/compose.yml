@@ -1,0 +1,22 @@
+name: infraflow
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: infraflow-postgres
+    environment:
+      POSTGRES_DB: infraflow
+      POSTGRES_USER: infraflow
+      POSTGRES_PASSWORD: infraflow
+    ports:
+      - '55432:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U infraflow -d infraflow']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    volumes:
+      - infraflow-postgres-data:/var/lib/postgresql/data
+
+volumes:
+  infraflow-postgres-data:

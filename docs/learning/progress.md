@@ -4,11 +4,13 @@ Durum değerleri: `Bekliyor`, `Devam ediyor`, `Review`, `Tamamlandı`.
 
 ## Güncel konum
 
-- Son tamamlanan: Aşama 3 / Modül 9 - AI-Ready Repository ve Guardrails
-- Tamamlanan modüller: 1, 2, 3, 4, 5, 6, 7, 8 ve 9
+- Son tamamlanan: Aşama 5 / Modül 21 - PostgreSQL, Transaction ve OpenAPI
+- Tamamlanan modüller: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 ve 21
 - Son tamamlanan ek çalışma: UI Foundation Sprint - kullanıcı tarafından onaylandı
-- Güncel: Aşama 3 / Modül 10 - Kontrollü Geliştirme Döngüsü
-- Son tamamlanan ders: Modül 9 / Ders 7 - Worktree, İzole Görev ve Modül 9 Finali
+- Güncel: Modül 21 backend persistence kontrolü tamamlandı; sıradaki Modül 22 - Enterprise Güvenlik ve Legacy Entegrasyon
+- Son tamamlanan ders: Modül 21 - PostgreSQL, Transaction ve OpenAPI
+- Modül 10: Kontrollü Geliştirme Döngüsü tamamlandı
+- Modül 11: İleri Ajan Akışları ve Legacy Refactoring tamamlandı
 - Aşama 3 eğitim ve referans planı: `phase-03-professional-agentic-engineering.md`
 - Durum: Aşama 2 final kontrolü tamamlandı; Advanced Angular Performance Lab proje sonuna ertelendi
 
@@ -65,9 +67,9 @@ Durum değerleri: `Bekliyor`, `Devam ediyor`, `Review`, `Tamamlandı`.
 - Angular 22.0.4.
 - Strict TypeScript ve strict template.
 - Standalone, zoneless, lazy routing, SCSS ve Vitest.
-- 18/18 test dosyası ve 54/54 test başarılı.
-- Architecture fitness check 57 TypeScript dosyasının bağımlılık yönlerini doğruluyor.
-- Frontend guardrail check 68 source dosyasını ve 3 negatif security proof'u güvenlik ve
+- 30/30 test dosyası ve 95/95 test başarılı.
+- Architecture fitness check 73 TypeScript dosyasının bağımlılık yönlerini doğruluyor.
+- Frontend guardrail check 85 source dosyasını ve 3 negatif security proof'u güvenlik ve
   erişilebilirlik açısından doğruluyor.
 - Production build başarılı ve lazy route chunk'ları üretildi.
 - `.nvmrc` Node.js 24.15 sürümünü sabitliyor; yerel geliştirmede `nvm use` kullanılmalıdır.
@@ -78,10 +80,37 @@ Durum değerleri: `Bekliyor`, `Devam ediyor`, `Review`, `Tamamlandı`.
   rules, submit errors ve create akışını yönetiyor.
 - Production build otomatik CSP, route focus yönetimi, global error reporting ve
   330/380 kB initial bundle budget ile korunuyor.
+- Desktop ve mobile Chromium Playwright akışları 2/2 başarılı.
+- Incident response start akışı domain/use case/store/UI/Page üzerinden optimistic update,
+  duplicate-command guard ve rollback ile çalışıyor.
+- Query cache davranışı characterization testlerle korunup ayrı sınıfa refactor edildi.
+- Agentic UI foundation eklendi: typed contract, incident adapter, Operations assistant
+  paneli, action-card intent modeli ve browser doğrulaması tamamlandı.
+- Agent state/event modeli eklendi: session state, reducer, event timeline ve
+  action-card-selected intent event'i çalışıyor.
+- Client-side tools eklendi: selected incident, visible queue ve approval boundary
+  read-only olarak okunuyor; tool eventleri timeline'a yazılıyor.
+- Guided recommendations eklendi: agent önerileri evidence ve priority ile
+  açıklanabilir hale geldi.
+- Generative UI render blocks eklendi: UI sadece izinli schema üzerinden
+  controlled block render ediyor.
+- Human-in-the-loop approval flow eklendi: approval-required kartlar pending
+  request üretir, approve/reject kararları event timeline'a yazılır.
+- Provider-neutral protocol adapter eklendi: iç agent state AG-UI/A2UI benzeri
+  event akışına çevrilebilir.
+- Safety evaluation eklendi: tool permission, high-risk approval, render schema
+  ve approval coverage kontrolleri panelde görünür.
+- Spring Boot backend foundation eklendi: modular monolith package boundary,
+  Incident/Work Order REST API, validation, global error handling, OpenAPI,
+  Actuator health ve Angular HTTP repository adapter seam hazırlandı.
+- PostgreSQL persistence eklendi: Flyway migration, JPA entity/mapper/repository
+  adapter, service transaction boundary, local Docker PostgreSQL ve exported
+  OpenAPI contract tamamlandı.
 
-## 20 modül durumu
+## Yol haritası durumu
 
-Aşama 2.5, 20 modül numaralandırmasını değiştirmeyen ara uzmanlık laboratuvarıdır.
+Aşama 2.5, ana yol haritasından bağımsız ara uzmanlık laboratuvarıdır. Bölüm 4,
+Agentic UI konusunu daha sağlıklı öğrenmek için 8 küçük modüle ayrılmıştır.
 
 | Aşama 2.5 Lab | Başlık | Durum |
 |---:|---|---|
@@ -109,14 +138,17 @@ Aşama 2.5, 20 modül numaralandırmasını değiştirmeyen ara uzmanlık labora
 | 7 | Signal Forms ve Kurumsal Formlar | Tamamlandı |
 | 8 | Kaliteli Frontend | Tamamlandı |
 | 9 | AI-Ready Repository ve Guardrails | Tamamlandı |
-| 10 | Kontrollü Geliştirme Döngüsü | Sıradaki |
-| 11 | İleri Ajan Akışları ve Legacy Refactoring | Bekliyor |
-| 12 | Agent Temelleri | Bekliyor |
-| 13 | AG-UI ve Angular Adapter | Bekliyor |
-| 14 | A2UI ve Generative UI | Bekliyor |
-| 15 | Human-in-the-Loop | Bekliyor |
-| 16 | MCP, Multimodal ve Agent Güvenliği | Bekliyor |
-| 17 | Spring Boot ve Modular Monolith | Bekliyor |
-| 18 | PostgreSQL, Transaction ve OpenAPI | Bekliyor |
-| 19 | Enterprise Güvenlik ve Legacy Entegrasyon | Bekliyor |
-| 20 | Entegrasyon, Delivery ve Production Readiness | Bekliyor |
+| 10 | Kontrollü Geliştirme Döngüsü | Tamamlandı |
+| 11 | İleri Ajan Akışları ve Legacy Refactoring | Tamamlandı |
+| 12 | Agentic UI Foundation | Tamamlandı |
+| 13 | Agent State & Event Model | Tamamlandı |
+| 14 | Client-side Tool Calling | Tamamlandı |
+| 15 | Agent Panel & Guided Recommendations | Tamamlandı |
+| 16 | Action Cards & Generative UI | Tamamlandı |
+| 17 | Human-in-the-Loop Approval Flow | Tamamlandı |
+| 18 | AG-UI / A2UI Adapter Layer | Tamamlandı |
+| 19 | Safety, Guardrails & Evaluation | Tamamlandı |
+| 20 | Spring Boot ve Modular Monolith | Tamamlandı |
+| 21 | PostgreSQL, Transaction ve OpenAPI | Tamamlandı |
+| 22 | Enterprise Güvenlik ve Legacy Entegrasyon | Bekliyor |
+| 23 | Entegrasyon, Delivery ve Production Readiness | Bekliyor |

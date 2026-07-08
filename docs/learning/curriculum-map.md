@@ -273,7 +273,7 @@ Amaç: Angular kullanıcı arayüzünü agent runtime'a gevşek bağlı ve güve
 
 Amaç: Doğrulanan frontend sözleşmelerini güvenli ve deterministik backend iş servislerine dönüştürmek.
 
-## Modül 17: Spring Boot ve Modular Monolith
+## Modül 20: Spring Boot ve Modular Monolith
 
 1. Java 21, JVM ve Spring Boot zihinsel modeli.
 2. Dependency Injection ve configuration.
@@ -284,7 +284,7 @@ Amaç: Doğrulanan frontend sözleşmelerini güvenli ve deterministik backend i
 
 Çıkış: HTTP'den bağımsız domain kuralları olan Incident backend modülü.
 
-## Modül 18: PostgreSQL, Transaction ve OpenAPI
+## Modül 21: PostgreSQL, Transaction ve OpenAPI
 
 1. Relational veri modeli ve PostgreSQL.
 2. Flyway migration.
@@ -296,7 +296,7 @@ Amaç: Doğrulanan frontend sözleşmelerini güvenli ve deterministik backend i
 
 Çıkış: Gerçek PostgreSQL üzerinde contract ve transaction davranışı test edilen API.
 
-## Modül 19: Enterprise Güvenlik ve Legacy Entegrasyon
+## Modül 22: Enterprise Güvenlik ve Legacy Entegrasyon
 
 1. Authentication ve authorization farkı.
 2. Keycloak, OIDC ve token akışı.
@@ -314,7 +314,7 @@ Amaç: Doğrulanan frontend sözleşmelerini güvenli ve deterministik backend i
 
 Amaç: Bütün katmanları üretim benzeri ortamda birleştirip şirket seviyesinde teslim kanıtı üretmek.
 
-## Modül 20: Entegrasyon, Delivery ve Production Readiness
+## Modül 23: Entegrasyon, Delivery ve Production Readiness
 
 1. Mock adapter'dan Spring Boot API'ye geçiş.
 2. OpenAPI'den generated Angular client.

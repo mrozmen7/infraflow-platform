@@ -84,20 +84,38 @@
       }
     </section>
 
-    <aside class="inspector-panel" aria-label="Selected incident details">
-      @if (selectedIncident(); as incident) {
-        <app-incident-inspector
-          [incident]="incident"
-          [acknowledgementPending]="incidentStore.pendingAcknowledgementId() === incident.id"
-          (acknowledgeRequested)="acknowledgeIncident($event)"
-        />
-      } @else {
-        <section class="inspector-empty">
-          <p>Incident inspector</p>
-          <h2>Select an incident</h2>
-          <span>Choose an item from the live queue to review its operational context.</span>
-        </section>
-      }
+    <aside class="side-rail" aria-label="Selected incident details and decision support">
+      <section class="inspector-panel" aria-label="Selected incident details">
+        @if (selectedIncident(); as incident) {
+          <app-incident-inspector
+            [incident]="incident"
+            [acknowledgementPending]="incidentStore.pendingAcknowledgementId() === incident.id"
+            [responseStartPending]="incidentStore.pendingResponseStartId() === incident.id"
+            (acknowledgeRequested)="acknowledgeIncident($event)"
+            (responseStartRequested)="startIncidentResponse($event)"
+          />
+        } @else {
+          <section class="inspector-empty">
+            <p>Incident inspector</p>
+            <h2>Select an incident</h2>
+            <span>Choose an item from the live queue to review its operational context.</span>
+          </section>
+        }
+      </section>
+
+      <app-incident-agent-panel
+        [snapshot]="agentSnapshot()"
+        [sessionState]="agentSessionState()"
+        [toolResults]="currentAgentToolResults()"
+        [recommendations]="agentRecommendations()"
+        [renderBlocks]="agentRenderBlocks()"
+        [approvalRequests]="currentApprovalRequests()"
+        [safetyEvaluation]="agentSafetyEvaluation()"
+        [protocolEvents]="agentProtocolEvents()"
+        (cardSelected)="reviewAgentAction($event)"
+        (toolsRequested)="runClientTools()"
+        (approvalDecisionRequested)="reviewAgentApproval($event.requestId, $event.decision)"
+      />
     </aside>
   </div>
 </section>

@@ -8,6 +8,7 @@ import {
   IncidentNotFoundError,
   IncidentRepositoryPort,
   searchIncidents,
+  startIncidentResponse as startIncidentResponseUseCase,
 } from '../application';
 import {
   acknowledgeIncident as applyAcknowledgement,
@@ -17,12 +18,17 @@ import {
   type IncidentSeverityFilter,
   type NewIncident,
   parseIncidentId,
+  startIncidentResponse as applyResponseStart,
 } from '../domain/incident';
 import {
   normalizeIncidents,
   selectAllIncidents,
   upsertIncident,
 } from './incident-entity-state';
+import {
+  IncidentQueryCache,
+  type IncidentQueryCacheEntry,
+} from './incident-query-cache';
 import {
   createInitialIncidentStoreState,
   type IncidentStoreState,
@@ -31,12 +37,7 @@ import {
 
 const INCIDENT_CACHE_TTL_MS = 30_000;
 
-interface IncidentCacheEntry {
-  readonly incidents: readonly Incident[];
-  readonly loadedAt: number;
-}
-
-interface IncidentLoadResult extends IncidentCacheEntry {
+interface IncidentLoadResult extends IncidentQueryCacheEntry {
   readonly source: 'network' | 'cache';
 }
 
@@ -47,11 +48,18 @@ export class IncidentAcknowledgementInProgressError extends Error {
   }
 }
 
+export class IncidentResponseStartInProgressError extends Error {
+  constructor(readonly pendingIncidentId: IncidentId) {
+    super(`Incident "${pendingIncidentId}" response start is already in progress.`);
+    this.name = 'IncidentResponseStartInProgressError';
+  }
+}
+
 @Injectable()
 export class IncidentStore {
   private readonly repository = inject(IncidentRepositoryPort);
   private readonly state = signal<IncidentStoreState>(createInitialIncidentStoreState());
-  private readonly incidentCache = new Map<string, IncidentCacheEntry>();
+  private readonly incidentCache = new IncidentQueryCache(INCIDENT_CACHE_TTL_MS);
 
   readonly searchTerm = computed(() => this.state().query.searchTerm);
   readonly severityFilter = computed(() => this.state().query.severity);
@@ -64,6 +72,9 @@ export class IncidentStore {
   readonly loadSource = computed(() => this.state().loadSource);
   readonly pendingAcknowledgementId = computed(
     () => this.state().pendingAcknowledgementId,
+  );
+  readonly pendingResponseStartId = computed(
+    () => this.state().pendingResponseStartId,
   );
   readonly resultSummary = computed(() => {
     const incidentCount = this.incidents().length;
@@ -187,6 +198,50 @@ export class IncidentStore {
     }
   }
 
+  async startResponse(rawIncidentId: string): Promise<void> {
+    const incidentId = parseIncidentId(rawIncidentId);
+    const currentState = this.state();
+    const currentIncident = currentState.collection.entities[incidentId];
+
+    if (!currentIncident) {
+      throw new IncidentNotFoundError(incidentId);
+    }
+
+    if (currentState.pendingResponseStartId) {
+      throw new IncidentResponseStartInProgressError(
+        currentState.pendingResponseStartId,
+      );
+    }
+
+    const optimisticIncident = applyResponseStart(currentIncident);
+
+    this.patchState({
+      collection: upsertIncident(currentState.collection, optimisticIncident),
+      pendingResponseStartId: incidentId,
+    });
+
+    try {
+      const savedIncident = await startIncidentResponseUseCase(
+        this.repository,
+        incidentId,
+      );
+
+      this.state.update((state) => ({
+        ...state,
+        collection: upsertIncident(state.collection, savedIncident),
+        pendingResponseStartId: null,
+      }));
+      this.incidentCache.clear();
+    } catch (error: unknown) {
+      this.state.update((state) => ({
+        ...state,
+        collection: upsertIncident(state.collection, currentIncident),
+        pendingResponseStartId: null,
+      }));
+      throw error;
+    }
+  }
+
   async createIncident(newIncident: NewIncident): Promise<Incident> {
     const createdIncident = await createIncidentUseCase(this.repository, newIncident);
 
@@ -201,7 +256,7 @@ export class IncidentStore {
   }
 
   reload(): void {
-    this.incidentCache.delete(this.createCacheKey(this.requestQuery()));
+    this.incidentCache.delete(this.requestQuery());
     this.incidentsResource.reload();
   }
 
@@ -209,10 +264,9 @@ export class IncidentStore {
     query: IncidentQuery,
     abortSignal: AbortSignal,
   ): Promise<IncidentLoadResult> {
-    const cacheKey = this.createCacheKey(query);
-    const cachedResult = this.incidentCache.get(cacheKey);
+    const cachedResult = this.incidentCache.get(query);
 
-    if (cachedResult && Date.now() - cachedResult.loadedAt < INCIDENT_CACHE_TTL_MS) {
+    if (cachedResult) {
       return {
         ...cachedResult,
         source: 'cache',
@@ -220,21 +274,12 @@ export class IncidentStore {
     }
 
     const incidents = await searchIncidents(this.repository, query, abortSignal);
-    const networkResult: IncidentCacheEntry = {
-      incidents,
-      loadedAt: Date.now(),
-    };
-
-    this.incidentCache.set(cacheKey, networkResult);
+    const networkResult = this.incidentCache.set(query, incidents);
 
     return {
       ...networkResult,
       source: 'network',
     };
-  }
-
-  private createCacheKey(query: IncidentQuery): string {
-    return `${query.searchTerm.toLocaleLowerCase()}::${query.severity}`;
   }
 
   private updateQuery(queryPatch: Partial<IncidentQuery>): void {

@@ -9,11 +9,13 @@ Durum: Aktif komut kataloğu
 | Amaç | Komut | Ne zaman? | Başarı kanıtı |
 |---|---|---|---|
 | Tam kalite kapısı | `npm run quality` | Her production/test/config görevi sonunda | Bütün alt adımlar exit code 0 |
+| Browser dahil tam kapı | `npm run quality:full` | Route veya gerçek kullanıcı akışı değiştiğinde | Quality + bütün Playwright projeleri başarılı |
 | Mimari sınır | `npm run test:architecture` | Import veya klasör bağımlılığı değiştiğinde | İhlal yok ve taranan dosya sayısı |
 | Güvenlik/erişilebilirlik koruması | `npm run test:guardrails` | TS/HTML değiştiğinde | Yasak pattern ve temel DOM ihlali yok |
 | Unit/component testleri | `npm test -- --watch=false` | Davranış değiştiğinde ve final gate'te | Bütün test dosyaları başarılı |
 | Production build | `npm run build` | Build/config/dependency ve final gate'te | Budget içinde production bundle |
 | Development server | `npm start` | Manuel browser incelemesinde | Route açılır; console hatası yok |
+| Uçtan uca browser testi | `npm run e2e` | Kritik user journey değiştiğinde | Desktop/mobile Playwright projeleri başarılı |
 
 ## Repository/doküman kontrolleri
 
@@ -38,4 +40,5 @@ Durum: Aktif komut kataloğu
 ## Kullanım kuralı
 
 Alt komutlar teşhis ve hızlı feedback içindir. Frontend görevinin final sonucu yalnız ilgili
-alt testle değil, `npm run quality` ve gerekiyorsa browser kanıtıyla teslim edilir.
+alt testle değil, `npm run quality`; route veya kullanıcı akışı değiştiğinde
+`npm run quality:full` ve browser kanıtıyla teslim edilir.

@@ -45,5 +45,8 @@ jobs:
       - name: Install locked dependencies
         run: npm ci
 
-      - name: Run the canonical frontend quality gate
-        run: npm run quality
+      - name: Install Chromium for Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Run the full frontend quality gate
+        run: npm run quality:full

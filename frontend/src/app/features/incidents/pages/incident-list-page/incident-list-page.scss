@@ -120,6 +120,14 @@ h1 {
   background: var(--if-color-surface);
 }
 
+.side-rail {
+  position: sticky;
+  top: var(--if-space-4);
+  display: grid;
+  gap: var(--if-space-4);
+  min-width: 0;
+}
+
 .panel-heading {
   display: flex;
   align-items: center;
@@ -145,11 +153,6 @@ h1 {
 .panel-heading > span {
   color: var(--if-color-ink-muted);
   font-size: 0.72rem;
-}
-
-.inspector-panel {
-  position: sticky;
-  top: var(--if-space-4);
 }
 
 .loading-state,
@@ -222,7 +225,7 @@ h1 {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .inspector-panel {
+  .side-rail {
     position: static;
   }
 }

@@ -78,6 +78,13 @@ Tam kalite kapısı:
 npm run quality
 ```
 
+Route veya gerçek kullanıcı akışı değiştiğinde browser-inclusive gate (tarayıcı dahil kalite
+kapısı) çalıştırılır:
+
+```bash
+npm run quality:full
+```
+
 Hızlı teşhis için alt komutlar ayrı çalıştırılabilir; final kanıt olarak tam kalite kapısı
 esastır:
 

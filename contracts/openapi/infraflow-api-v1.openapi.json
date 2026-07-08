@@ -1,0 +1,595 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "InfraFlow Operations API",
+    "description": "REST API for incidents, work orders and controlled operations workflows.",
+    "license": {
+      "name": "Learning project"
+    },
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Generated server url"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Incidents",
+      "description": "Operations incident triage and workflow commands"
+    },
+    {
+      "name": "Work orders",
+      "description": "Controlled work order drafting and inspection workflows"
+    }
+  ],
+  "paths": {
+    "/api/v1/work-orders/drafts": {
+      "post": {
+        "tags": [
+          "Work orders"
+        ],
+        "summary": "Draft a work order from an incident",
+        "description": "Creates a controlled work order draft from an existing incident context.",
+        "operationId": "draftFromIncident",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DraftWorkOrderRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Work order draft created",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOrderResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request validation failed",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Incident not found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/incidents": {
+      "get": {
+        "tags": [
+          "Incidents"
+        ],
+        "summary": "Search incidents",
+        "description": "Returns the current incident queue filtered by free text and optional severity.",
+        "operationId": "search",
+        "parameters": [
+          {
+            "name": "searchTerm",
+            "in": "query",
+            "description": "Free text filter for id, asset, location or title",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "severity",
+            "in": "query",
+            "description": "Severity filter. Use All, Critical, High, Medium or Low.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "All"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IncidentResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Incidents"
+        ],
+        "summary": "Report a new incident",
+        "description": "Creates a new operations incident. The initial status is Open.",
+        "operationId": "create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateIncidentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Incident created",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request validation failed",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/incidents/{incidentId}/start-response": {
+      "post": {
+        "tags": [
+          "Incidents"
+        ],
+        "summary": "Start response workflow",
+        "description": "Moves an acknowledged incident into active response coordination.",
+        "operationId": "startResponse",
+        "parameters": [
+          {
+            "name": "incidentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "INC-\\d{4}-\\d{4}"
+            },
+            "example": "INC-2026-0001"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Response workflow started",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidentResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Incident not found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Workflow rule rejected the command",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/incidents/{incidentId}/acknowledge": {
+      "post": {
+        "tags": [
+          "Incidents"
+        ],
+        "summary": "Acknowledge an incident",
+        "description": "Marks an open incident as seen by an operator without resolving the physical issue.",
+        "operationId": "acknowledge",
+        "parameters": [
+          {
+            "name": "incidentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "INC-\\d{4}-\\d{4}"
+            },
+            "example": "INC-2026-0001"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Incident acknowledged",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidentResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Incident not found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Workflow rule rejected the command",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/work-orders": {
+      "get": {
+        "tags": [
+          "Work orders"
+        ],
+        "summary": "List work orders",
+        "operationId": "findAll",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WorkOrderResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/work-orders/{workOrderId}": {
+      "get": {
+        "tags": [
+          "Work orders"
+        ],
+        "summary": "Get work order by id",
+        "operationId": "get",
+        "parameters": [
+          {
+            "name": "workOrderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "WO-\\d{4}-\\d{4}"
+            },
+            "example": "WO-2026-0001"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOrderResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/incidents/{incidentId}": {
+      "get": {
+        "tags": [
+          "Incidents"
+        ],
+        "summary": "Get incident by id",
+        "operationId": "get_1",
+        "parameters": [
+          {
+            "name": "incidentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "INC-\\d{4}-\\d{4}"
+            },
+            "example": "INC-2026-0001"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidentResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DraftWorkOrderRequest": {
+        "type": "object",
+        "properties": {
+          "incidentId": {
+            "type": "string",
+            "example": "INC-2026-0001",
+            "minLength": 1,
+            "pattern": "INC-\\d{4}-\\d{4}"
+          }
+        },
+        "required": [
+          "incidentId"
+        ]
+      },
+      "ApiError": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApiFieldError"
+            }
+          }
+        }
+      },
+      "ApiFieldError": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "WorkOrderResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "incidentId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "assetId": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "P1",
+              "P2",
+              "P3",
+              "P4"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "Draft",
+              "Ready",
+              "In Progress",
+              "Done"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CreateIncidentRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Transformer smoke detected",
+            "maxLength": 120,
+            "minLength": 0
+          },
+          "description": {
+            "type": "string",
+            "example": "Smoke and a burnt smell were reported near the north tunnel transformer room.",
+            "maxLength": 1000,
+            "minLength": 0
+          },
+          "location": {
+            "type": "string",
+            "example": "North Tunnel · KM 3.0",
+            "maxLength": 160,
+            "minLength": 0
+          },
+          "assetId": {
+            "type": "string",
+            "example": "TRF-NT-003",
+            "maxLength": 40,
+            "minLength": 0
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "Low",
+              "Medium",
+              "High",
+              "Critical"
+            ],
+            "example": "Critical"
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "P1",
+              "P2",
+              "P3",
+              "P4"
+            ],
+            "example": "P1"
+          },
+          "operationalSignals": {
+            "type": "array",
+            "example": [
+              "Smoke detected",
+              "Lighting unavailable",
+              "Traffic active"
+            ],
+            "items": {
+              "type": "string",
+              "maxLength": 120,
+              "minLength": 0
+            }
+          }
+        },
+        "required": [
+          "assetId",
+          "description",
+          "location",
+          "priority",
+          "severity",
+          "title"
+        ]
+      },
+      "IncidentResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "assetId": {
+            "type": "string"
+          },
+          "reportedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "Low",
+              "Medium",
+              "High",
+              "Critical"
+            ]
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "P1",
+              "P2",
+              "P3",
+              "P4"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "Open",
+              "Acknowledged",
+              "In Progress",
+              "Resolved"
+            ]
+          },
+          "operationalSignals": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -5,7 +5,7 @@ node_modules/
 dist/
 coverage/
 .angular/
+backend/target/
 .env
 .env.*
 !.env.example
-

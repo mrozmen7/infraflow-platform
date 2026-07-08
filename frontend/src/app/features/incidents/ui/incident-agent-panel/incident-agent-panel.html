@@ -1,0 +1,234 @@
+<section class="agent-panel" aria-labelledby="incident-agent-panel-title">
+  <header class="agent-panel__header">
+    <div>
+      <p>Decision support</p>
+      <h2 id="incident-agent-panel-title">Operations assistant</h2>
+    </div>
+    <span>{{ modeLabel() }} · {{ statusLabel() }}</span>
+  </header>
+
+  @if (snapshot(); as snapshot) {
+    <div class="agent-panel__context" aria-label="Assistant context">
+      @for (item of snapshot.context; track item.label) {
+        <div>
+          <span>{{ item.label }}</span>
+          <strong>{{ item.value }}</strong>
+        </div>
+      }
+    </div>
+
+    <section class="agent-panel__tools" aria-label="Client-side tools">
+      <div class="agent-panel__tools-heading">
+        <div>
+          <p>Client-side tools</p>
+          <h3>Read-only context checks</h3>
+        </div>
+        <button type="button" (click)="requestTools()">Run client tools</button>
+      </div>
+
+      @if (toolResults().length > 0) {
+        <ul>
+          @for (result of toolResults(); track result.id) {
+            <li>
+              <span>{{ result.permission }}</span>
+              <strong>{{ result.title }}</strong>
+              <p>{{ result.summary }}</p>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="agent-panel__tools-empty">
+          No client-side tools have been called for this session yet.
+        </p>
+      }
+    </section>
+
+    <section class="agent-panel__tools" aria-label="Guided recommendations">
+      <div class="agent-panel__tools-heading">
+        <div>
+          <p>Guided recommendations</p>
+          <h3>Operator guidance</h3>
+        </div>
+      </div>
+
+      @if (recommendations().length > 0) {
+        <ul>
+          @for (recommendation of recommendations(); track recommendation.id) {
+            <li>
+              <span>{{ recommendation.priority }}</span>
+              <strong>{{ recommendation.title }}</strong>
+              <p>{{ recommendation.summary }}</p>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="agent-panel__tools-empty">
+          No recommendation has been generated for this session yet.
+        </p>
+      }
+    </section>
+
+    <section class="agent-panel__tools" aria-label="Generated UI blocks">
+      <div class="agent-panel__tools-heading">
+        <div>
+          <p>Generative UI</p>
+          <h3>Controlled render blocks</h3>
+        </div>
+      </div>
+
+      @if (renderBlocks().length > 0) {
+        <ul>
+          @for (block of renderBlocks(); track block.id) {
+            <li>
+              <span>{{ block.type }}</span>
+              <strong>{{ block.title }}</strong>
+              <p>{{ block.body }}</p>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="agent-panel__tools-empty">
+          Generated UI blocks will appear after recommendations or approval requests exist.
+        </p>
+      }
+    </section>
+
+    @if (approvalRequests().length > 0) {
+      <section class="agent-panel__tools agent-panel__tools--approval" aria-label="Approval queue">
+        <div class="agent-panel__tools-heading">
+          <div>
+            <p>Human-in-the-loop</p>
+            <h3>Approval queue</h3>
+          </div>
+          <span>{{ pendingApprovalRequests().length }} pending</span>
+        </div>
+
+        <ul>
+          @for (request of approvalRequests(); track request.id) {
+            <li>
+              <span>{{ request.status }}</span>
+              <strong>{{ request.title }}</strong>
+              <p>{{ request.summary }}</p>
+
+              @if (request.status === 'pending') {
+                <div class="agent-panel__actions">
+                  <button type="button" (click)="decideApproval(request, 'approved')">
+                    Approve
+                  </button>
+                  <button
+                    class="agent-panel__button-secondary"
+                    type="button"
+                    (click)="decideApproval(request, 'rejected')"
+                  >
+                    Reject
+                  </button>
+                </div>
+              } @else {
+                <p class="agent-panel__tools-empty">
+                  Decision recorded by {{ request.decidedBy ?? 'operator' }}.
+                </p>
+              }
+            </li>
+          }
+        </ul>
+      </section>
+    }
+
+    <ul class="agent-panel__cards" aria-label="Suggested operational actions">
+      @for (card of snapshot.cards; track card.id) {
+        <li
+          class="action-card"
+          [class.action-card--high-risk]="isHighRisk(card)"
+          [class.action-card--approval]="card.requiresApproval"
+        >
+          <div class="action-card__meta">
+            <span>{{ card.riskLevel }}</span>
+            @if (card.requiresApproval) {
+              <strong>Human approval</strong>
+            } @else {
+              <strong>Operator controlled</strong>
+            }
+          </div>
+
+          <h3>{{ card.title }}</h3>
+          <p>{{ card.summary }}</p>
+
+          <ul class="action-card__evidence" aria-label="Evidence">
+            @for (evidence of card.evidence; track evidence) {
+              <li>{{ evidence }}</li>
+            }
+          </ul>
+
+          <button
+            type="button"
+            [disabled]="!!card.disabledReason"
+            (click)="selectCard(card)"
+          >
+            @if (card.requiresApproval) {
+              Review approval path
+            } @else {
+              Review action
+            }
+          </button>
+        </li>
+      }
+    </ul>
+
+    <footer class="agent-panel__guardrails">
+      <p>Guardrails</p>
+      <ul>
+        @for (note of snapshot.safetyNotes; track note) {
+          <li>{{ note }}</li>
+        }
+      </ul>
+    </footer>
+
+    @if (safetyEvaluation(); as evaluation) {
+      <section class="agent-panel__tools" aria-label="Safety evaluation">
+        <div class="agent-panel__tools-heading">
+          <div>
+            <p>Safety evaluation</p>
+            <h3>{{ evaluation.status }} · score {{ evaluation.score }}</h3>
+          </div>
+        </div>
+
+        <ul>
+          @for (check of evaluation.checks; track check.id) {
+            <li>
+              <span>{{ check.status }}</span>
+              <strong>{{ check.title }}</strong>
+              <p>{{ check.message }}</p>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+
+    <section class="agent-panel__tools" aria-label="Protocol adapter">
+      <div class="agent-panel__tools-heading">
+        <div>
+          <p>Protocol adapter</p>
+          <h3>AG-UI/A2UI bridge</h3>
+        </div>
+      </div>
+      <p class="agent-panel__tools-empty">{{ protocolSummary() }}</p>
+    </section>
+
+    <section class="agent-panel__timeline" aria-label="Agent event timeline">
+      <p>Event timeline</p>
+      <ol>
+        @for (event of recentEvents(); track event.id) {
+          <li>
+            <span>{{ event.type }}</span>
+            <strong>{{ event.summary }}</strong>
+          </li>
+        }
+      </ol>
+    </section>
+  } @else {
+    <div class="agent-panel__empty">
+      <h3>No incident selected</h3>
+      <p>Select an incident to build a safe assistant context.</p>
+    </div>
+  }
+</section>

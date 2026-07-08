@@ -36,12 +36,26 @@ const incidents: readonly Incident[] = [
     status: 'In Progress',
     operationalSignals: [],
   },
+  {
+    id: 'INC-TEST-003',
+    title: 'Emergency phone response pending',
+    description: 'The acknowledged incident requires an active response.',
+    location: 'South Tunnel',
+    assetId: 'TEL-003',
+    reportedAt: '2026-06-30T13:42:00.000Z',
+    severity: 'Medium',
+    priority: 'P2',
+    status: 'Acknowledged',
+    operationalSignals: ['Field confirmation pending'],
+  },
 ];
 
 class FakeIncidentRepository implements IncidentRepositoryPort {
   acknowledgedIncidentId = '';
+  responseStartedIncidentId = '';
   searchResult = incidents;
   searchShouldFail = false;
+  saveShouldFail = false;
 
   search(query: IncidentQuery): Promise<readonly Incident[]> {
     if (this.searchShouldFail) {
@@ -60,7 +74,17 @@ class FakeIncidentRepository implements IncidentRepositoryPort {
   }
 
   save(incident: Incident): Promise<Incident> {
-    this.acknowledgedIncidentId = incident.id;
+    if (this.saveShouldFail) {
+      return Promise.reject(new Error('Simulated save failure'));
+    }
+
+    if (incident.status === 'Acknowledged') {
+      this.acknowledgedIncidentId = incident.id;
+    }
+
+    if (incident.status === 'In Progress') {
+      this.responseStartedIncidentId = incident.id;
+    }
     this.searchResult = this.searchResult.map((current) =>
       current.id === incident.id ? incident : current,
     );
@@ -101,8 +125,8 @@ describe('IncidentListPage', () => {
 
     const element = fixture.nativeElement as HTMLElement;
 
-    expect(element.querySelectorAll('app-incident-card')).toHaveLength(2);
-    expect(element.textContent).toContain('2 incidents found');
+    expect(element.querySelectorAll('app-incident-card')).toHaveLength(3);
+    expect(element.textContent).toContain('3 incidents found');
     expect(element.querySelector('.incident-card--selected')?.textContent).toContain(
       'INC-TEST-001',
     );
@@ -110,6 +134,96 @@ describe('IncidentListPage', () => {
     expect(element.querySelector('app-incident-inspector')?.textContent).toContain(
       'Transformer smoke detected',
     );
+    expect(element.querySelector('app-incident-agent-panel')?.textContent).toContain(
+      'Operations assistant',
+    );
+    expect(element.querySelector('app-incident-agent-panel')?.textContent).toContain(
+      'Request supervisor approval',
+    );
+    expect(element.querySelector('app-incident-agent-panel')?.textContent).toContain(
+      'Event timeline',
+    );
+  });
+
+  it('reviews assistant action cards as operator-controlled intents', async () => {
+    const fixture = TestBed.createComponent(IncidentListPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    [...element.querySelectorAll<HTMLButtonElement>('app-incident-agent-panel button')]
+      .find((button) => button.textContent?.includes('Review action'))
+      ?.click();
+    fixture.detectChanges();
+
+    expect(element.querySelector('p.visually-hidden')?.textContent).toContain(
+      'Review operational context selected.',
+    );
+    expect(element.querySelector('app-incident-agent-panel')?.textContent).toContain(
+      'Action selected: Review operational context',
+    );
+    expect(repository.acknowledgedIncidentId).toBe('');
+    expect(repository.responseStartedIncidentId).toBe('');
+  });
+
+  it('runs read-only client-side tools and records tool events without mutating incidents', async () => {
+    const fixture = TestBed.createComponent(IncidentListPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    [...element.querySelectorAll<HTMLButtonElement>('app-incident-agent-panel button')]
+      .find((button) => button.textContent?.includes('Run client tools'))
+      ?.click();
+    fixture.detectChanges();
+
+    expect(element.querySelector('p.visually-hidden')?.textContent).toContain(
+      '3 read-only client-side tools completed.',
+    );
+    expect(element.querySelector('app-incident-agent-panel')?.textContent).toContain(
+      'Read selected incident',
+    );
+    expect(element.querySelector('app-incident-agent-panel')?.textContent).toContain(
+      'tool-result-received',
+    );
+    expect(repository.acknowledgedIncidentId).toBe('');
+    expect(repository.responseStartedIncidentId).toBe('');
+  });
+
+  it('creates a human approval request for high-risk assistant actions without mutating incidents', async () => {
+    const fixture = TestBed.createComponent(IncidentListPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    [...element.querySelectorAll<HTMLButtonElement>('app-incident-agent-panel button')]
+      .find((button) => button.textContent?.includes('Review approval path'))
+      ?.click();
+    fixture.detectChanges();
+
+    expect(element.querySelector('app-incident-agent-panel')?.textContent).toContain(
+      'Approval queue',
+    );
+    expect(element.querySelector('app-incident-agent-panel')?.textContent).toContain(
+      'pending',
+    );
+
+    [...element.querySelectorAll<HTMLButtonElement>('app-incident-agent-panel button')]
+      .find((button) => button.textContent?.includes('Approve'))
+      ?.click();
+    fixture.detectChanges();
+
+    expect(element.querySelector('p.visually-hidden')?.textContent).toContain(
+      'approval approved',
+    );
+    expect(element.querySelector('app-incident-agent-panel')?.textContent).toContain(
+      'approved',
+    );
+    expect(repository.acknowledgedIncidentId).toBe('');
+    expect(repository.responseStartedIncidentId).toBe('');
   });
 
   it('delegates acknowledgement to the injected repository', async () => {
@@ -125,6 +239,56 @@ describe('IncidentListPage', () => {
     await fixture.whenStable();
 
     expect(repository.acknowledgedIncidentId).toBe('INC-TEST-001');
+  });
+
+  it('starts response from the Inspector and updates shared state and metrics', async () => {
+    const fixture = TestBed.createComponent(IncidentListPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    const thirdCard = element.querySelectorAll<HTMLElement>('app-incident-card')[2];
+    thirdCard.querySelector<HTMLButtonElement>('.button-secondary')?.click();
+    fixture.detectChanges();
+
+    const startButton = [...element.querySelectorAll<HTMLButtonElement>('app-incident-inspector button')]
+      .find((button) => button.textContent?.includes('Start response'));
+    expect(startButton).toBeTruthy();
+
+    startButton?.click();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(repository.responseStartedIncidentId).toBe('INC-TEST-003');
+    expect(element.querySelector('app-incident-inspector')?.textContent).toContain('In Progress');
+    expect(thirdCard.textContent).toContain('Status: In Progress');
+    expect(element.querySelector('.operations-summary div:nth-child(3) dd')?.textContent).toContain('2');
+  });
+
+  it('announces response start failure and rolls the selected Incident back', async () => {
+    repository.saveShouldFail = true;
+    const fixture = TestBed.createComponent(IncidentListPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    const thirdCard = element.querySelectorAll<HTMLElement>('app-incident-card')[2];
+    thirdCard.querySelector<HTMLButtonElement>('.button-secondary')?.click();
+    fixture.detectChanges();
+
+    [...element.querySelectorAll<HTMLButtonElement>('app-incident-inspector button')]
+      .find((button) => button.textContent?.includes('Start response'))
+      ?.click();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(element.querySelector('p.visually-hidden')?.textContent).toContain(
+      'INC-TEST-003 response could not be started.',
+    );
+    expect(element.querySelector('app-incident-inspector')?.textContent).toContain('Acknowledged');
+    expect(thirdCard.textContent).toContain('Status: Acknowledged');
   });
 
   it('renders an actionable empty state when no incident matches', async () => {
