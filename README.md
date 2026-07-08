@@ -9,8 +9,8 @@ Angular frontend, a Spring Boot modular monolith backend and a PostgreSQL persis
 layer.
 
 The system demonstrates domain-driven API design, signal-based frontend state,
-contract-first integration, transaction-safe backend workflows and production-oriented
-quality gates.
+contract-first integration, JWT-secured backend workflows, transaction-safe audit
+logging, optimistic concurrency control and production-oriented quality gates.
 
 ## Product scope
 
@@ -75,6 +75,11 @@ frontend/src/app/
 - PostgreSQL
 - Flyway migrations
 - Transaction boundaries in application services
+- Spring Security JWT authentication
+- Role-based authorization with `OPERATOR` and `ADMIN`
+- Optimistic locking for concurrent incident updates
+- Transaction-safe audit logging for rejected workflow commands
+- Explicit query fetch boundaries for N+1 prevention
 - OpenAPI/Swagger contract generation
 
 ```text
@@ -90,8 +95,10 @@ backend/src/main/java/com/infraflow/platform/
 │   ├── infrastructure
 │   └── web
 └── shared/
+    ├── audit
     ├── config
-    └── error
+    ├── error
+    └── security
 ```
 
 ## API contract
@@ -104,15 +111,25 @@ contracts/openapi/infraflow-api-v1.openapi.json
 
 Main endpoints:
 
+- `POST /api/v1/auth/login`
+- `POST /api/v1/auth/refresh`
 - `GET /api/v1/incidents`
 - `GET /api/v1/incidents/{incidentId}`
 - `POST /api/v1/incidents`
 - `POST /api/v1/incidents/{incidentId}/acknowledge`
 - `POST /api/v1/incidents/{incidentId}/start-response`
+- `POST /api/v1/incidents/{incidentId}/resolve`
 - `GET /api/v1/work-orders`
 - `POST /api/v1/work-orders/drafts`
 - `GET /v3/api-docs`
 - `GET /swagger-ui.html`
+
+Authorization model:
+
+- `OPERATOR`: read queues, report incidents, acknowledge and start response workflows
+- `ADMIN`: all operator capabilities plus incident resolution
+- stale writes return conflict semantics through JPA optimistic locking
+- rejected workflow commands are still recorded in the audit log
 
 ## Local setup
 
@@ -173,6 +190,8 @@ The project is protected by:
 
 - frontend unit tests
 - backend unit/API tests
+- JWT authentication and role-based authorization tests
+- optimistic locking and audit rollback tests
 - Angular production build
 - architecture fitness checks
 - security and accessibility guardrails
@@ -196,6 +215,8 @@ so the core system remains understandable, testable and operationally determinis
 
 - Product language: [docs/domain/domain-language.md](docs/domain/domain-language.md)
 - UI foundation: [docs/design/ui-foundation.md](docs/design/ui-foundation.md)
+- Backend hardening evidence: [docs/evidence/backend-enterprise-hardening.md](docs/evidence/backend-enterprise-hardening.md)
+- Security/concurrency/query ADR: [docs/architecture/adr/0005-backend-security-concurrency-and-query-boundaries.md](docs/architecture/adr/0005-backend-security-concurrency-and-query-boundaries.md)
 - OpenAPI contract: [contracts/openapi/infraflow-api-v1.openapi.json](contracts/openapi/infraflow-api-v1.openapi.json)
 - Development documentation: [docs/learning/](docs/learning/)
 - Agentic engineering notes: [docs/agentic-engineering/](docs/agentic-engineering/)
