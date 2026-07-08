@@ -78,7 +78,8 @@ class InMemoryIncidentRepository implements IncidentRepository {
       IncidentSeverity.CRITICAL,
       IncidentPriority.P1,
       IncidentStatus.OPEN,
-      List.of("Smoke detected", "Lighting unavailable", "Traffic active")
+      List.of("Smoke detected", "Lighting unavailable", "Traffic active"),
+      0L
     ));
     save(new Incident(
       new IncidentId("INC-2026-0002"),
@@ -90,7 +91,8 @@ class InMemoryIncidentRepository implements IncidentRepository {
       IncidentSeverity.HIGH,
       IncidentPriority.P2,
       IncidentStatus.IN_PROGRESS,
-      List.of("Sensor mismatch", "Fallback sensor active")
+      List.of("Sensor mismatch", "Fallback sensor active"),
+      0L
     ));
     save(new Incident(
       new IncidentId("INC-2026-0003"),
@@ -102,7 +104,8 @@ class InMemoryIncidentRepository implements IncidentRepository {
       IncidentSeverity.MEDIUM,
       IncidentPriority.P3,
       IncidentStatus.ACKNOWLEDGED,
-      List.of()
+      List.of(),
+      0L
     ));
   }
 }

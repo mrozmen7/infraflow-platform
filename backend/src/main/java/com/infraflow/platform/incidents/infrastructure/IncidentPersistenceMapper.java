@@ -20,7 +20,8 @@ final class IncidentPersistenceMapper {
       entity.severity(),
       entity.priority(),
       entity.status(),
-      entity.operationalSignals()
+      entity.operationalSignals(),
+      entity.version()
     );
   }
 
@@ -35,7 +36,8 @@ final class IncidentPersistenceMapper {
       incident.severity(),
       incident.priority(),
       incident.status(),
-      incident.operationalSignals()
+      incident.operationalSignals(),
+      incident.version()
     );
   }
 }

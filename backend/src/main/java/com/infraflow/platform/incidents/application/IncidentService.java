@@ -3,10 +3,14 @@ package com.infraflow.platform.incidents.application;
 import com.infraflow.platform.incidents.domain.Incident;
 import com.infraflow.platform.incidents.domain.IncidentId;
 import com.infraflow.platform.incidents.domain.IncidentStatus;
+import com.infraflow.platform.shared.audit.AuditLogService;
+import com.infraflow.platform.shared.audit.AuditOutcome;
 import com.infraflow.platform.shared.error.ResourceNotFoundException;
+import com.infraflow.platform.shared.security.CurrentActorProvider;
 import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.function.Function;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,10 +19,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class IncidentService implements IncidentLookupPort {
 
   private final IncidentRepository incidentRepository;
+  private final AuditLogService auditLogService;
+  private final CurrentActorProvider actorProvider;
   private final Clock clock;
 
-  public IncidentService(IncidentRepository incidentRepository, Clock clock) {
+  public IncidentService(
+    IncidentRepository incidentRepository,
+    AuditLogService auditLogService,
+    CurrentActorProvider actorProvider,
+    Clock clock
+  ) {
     this.incidentRepository = incidentRepository;
+    this.auditLogService = auditLogService;
+    this.actorProvider = actorProvider;
     this.clock = clock;
   }
 
@@ -44,22 +57,48 @@ public class IncidentService implements IncidentLookupPort {
       command.severity(),
       command.priority(),
       IncidentStatus.OPEN,
-      command.operationalSignals()
+      command.operationalSignals(),
+      null
     );
 
-    return incidentRepository.save(incident);
+    Incident saved = incidentRepository.save(incident);
+    auditLogService.record(
+      actorProvider.currentActor(),
+      "INCIDENT_CREATE",
+      "INCIDENT",
+      saved.id().value(),
+      AuditOutcome.SUCCESS,
+      "Incident was created."
+    );
+
+    return saved;
   }
 
   public Incident acknowledge(IncidentId incidentId) {
-    return incidentRepository.save(get(incidentId).acknowledge());
+    return transition(
+      incidentId,
+      "INCIDENT_ACKNOWLEDGE",
+      Incident::acknowledge,
+      "Incident was acknowledged."
+    );
   }
 
   public Incident startResponse(IncidentId incidentId) {
-    return incidentRepository.save(get(incidentId).startResponse());
+    return transition(
+      incidentId,
+      "INCIDENT_START_RESPONSE",
+      Incident::startResponse,
+      "Incident response workflow was started."
+    );
   }
 
   public Incident resolve(IncidentId incidentId) {
-    return incidentRepository.save(get(incidentId).resolve());
+    return transition(
+      incidentId,
+      "INCIDENT_RESOLVE",
+      Incident::resolve,
+      "Incident was resolved."
+    );
   }
 
   @Override
@@ -75,5 +114,38 @@ public class IncidentService implements IncidentLookupPort {
       incident.assetId().value(),
       incident.priority()
     );
+  }
+
+  private Incident transition(
+    IncidentId incidentId,
+    String action,
+    Function<Incident, Incident> transition,
+    String successMessage
+  ) {
+    String actor = actorProvider.currentActor();
+    try {
+      Incident saved = incidentRepository.save(transition.apply(get(incidentId)));
+      auditLogService.record(
+        actor,
+        action,
+        "INCIDENT",
+        saved.id().value(),
+        AuditOutcome.SUCCESS,
+        successMessage
+      );
+
+      return saved;
+    } catch (RuntimeException exception) {
+      auditLogService.record(
+        actor,
+        action,
+        "INCIDENT",
+        incidentId.value(),
+        AuditOutcome.REJECTED,
+        exception.getMessage()
+      );
+
+      throw exception;
+    }
   }
 }

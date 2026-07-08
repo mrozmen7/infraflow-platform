@@ -17,7 +17,8 @@ public record IncidentResponse(
   IncidentSeverity severity,
   IncidentPriority priority,
   IncidentStatus status,
-  List<String> operationalSignals
+  List<String> operationalSignals,
+  Long version
 ) {
 
   static IncidentResponse from(Incident incident) {
@@ -31,7 +32,8 @@ public record IncidentResponse(
       incident.severity(),
       incident.priority(),
       incident.status(),
-      incident.operationalSignals()
+      incident.operationalSignals(),
+      incident.version()
     );
   }
 }

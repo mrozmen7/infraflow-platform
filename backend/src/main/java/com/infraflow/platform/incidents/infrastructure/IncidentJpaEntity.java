@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +63,10 @@ class IncidentJpaEntity {
   @Column(name = "signal", nullable = false, length = 120)
   private List<String> operationalSignals = new ArrayList<>();
 
+  @Version
+  @Column(name = "version")
+  private Long version;
+
   protected IncidentJpaEntity() {
   }
 
@@ -75,7 +80,8 @@ class IncidentJpaEntity {
     IncidentSeverity severity,
     IncidentPriority priority,
     IncidentStatus status,
-    List<String> operationalSignals
+    List<String> operationalSignals,
+    Long version
   ) {
     this.id = id;
     this.title = title;
@@ -87,6 +93,7 @@ class IncidentJpaEntity {
     this.priority = priority;
     this.status = status;
     this.operationalSignals = new ArrayList<>(operationalSignals);
+    this.version = version;
   }
 
   String id() {
@@ -127,5 +134,9 @@ class IncidentJpaEntity {
 
   List<String> operationalSignals() {
     return List.copyOf(operationalSignals);
+  }
+
+  Long version() {
+    return version;
   }
 }

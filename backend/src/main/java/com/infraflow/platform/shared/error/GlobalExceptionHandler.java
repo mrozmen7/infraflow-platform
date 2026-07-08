@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -29,6 +30,19 @@ class GlobalExceptionHandler {
     HttpServletRequest request
   ) {
     return error(HttpStatus.CONFLICT, exception.getMessage(), request, List.of());
+  }
+
+  @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+  ResponseEntity<ApiError> handleOptimisticLocking(
+    ObjectOptimisticLockingFailureException exception,
+    HttpServletRequest request
+  ) {
+    return error(
+      HttpStatus.CONFLICT,
+      "The record was changed by another transaction. Reload and try again.",
+      request,
+      List.of()
+    );
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)

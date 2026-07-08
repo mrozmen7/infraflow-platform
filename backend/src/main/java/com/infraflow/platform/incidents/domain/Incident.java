@@ -14,7 +14,8 @@ public record Incident(
   IncidentSeverity severity,
   IncidentPriority priority,
   IncidentStatus status,
-  List<String> operationalSignals
+  List<String> operationalSignals,
+  Long version
 ) {
 
   public Incident {
@@ -56,7 +57,8 @@ public record Incident(
       severity,
       priority,
       nextStatus,
-      operationalSignals
+      operationalSignals,
+      version
     );
   }
 

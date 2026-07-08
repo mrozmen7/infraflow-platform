@@ -55,7 +55,8 @@ class IncidentWorkflowPolicyTests {
       IncidentSeverity.CRITICAL,
       IncidentPriority.P1,
       status,
-      List.of("Smoke detected")
+      List.of("Smoke detected"),
+      0L
     );
   }
 }
