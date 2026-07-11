@@ -5,20 +5,41 @@ export interface AppRuntimeConfig {
   readonly dataAccess: {
     readonly incidents: 'mock' | 'http';
   };
+  readonly authentication: {
+    readonly mode: 'disabled' | 'jwt';
+  };
   readonly features: {
     readonly incidents: boolean;
   };
 }
 
+export const MOCK_APP_RUNTIME_CONFIG = Object.freeze<AppRuntimeConfig>({
+  apiBaseUrl: '/api',
+  dataAccess: {
+    incidents: 'mock',
+  },
+  authentication: {
+    mode: 'disabled',
+  },
+  features: {
+    incidents: true,
+  },
+});
+
+export const HTTP_APP_RUNTIME_CONFIG = Object.freeze<AppRuntimeConfig>({
+  apiBaseUrl: '/api',
+  dataAccess: {
+    incidents: 'http',
+  },
+  authentication: {
+    mode: 'jwt',
+  },
+  features: {
+    incidents: true,
+  },
+});
+
 export const APP_RUNTIME_CONFIG = new InjectionToken<AppRuntimeConfig>('APP_RUNTIME_CONFIG', {
   providedIn: 'root',
-  factory: () => ({
-    apiBaseUrl: '/api',
-    dataAccess: {
-      incidents: 'mock',
-    },
-    features: {
-      incidents: true,
-    },
-  }),
+  factory: () => MOCK_APP_RUNTIME_CONFIG,
 });

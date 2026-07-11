@@ -33,6 +33,9 @@ function configureRuntimeConfig(incidentsEnabled: boolean): void {
     dataAccess: {
       incidents: 'mock',
     },
+    authentication: {
+      mode: 'disabled',
+    },
     features: { incidents: incidentsEnabled },
   };
 

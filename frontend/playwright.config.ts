@@ -11,7 +11,7 @@ export default defineConfig({
     ['html', { open: 'never', outputFolder: 'playwright-report' }],
   ],
   use: {
-    baseURL: 'http://localhost:4200',
+    baseURL: 'http://localhost:4201',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
@@ -27,9 +27,9 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npm start',
-    url: 'http://localhost:4200/incidents',
-    reuseExistingServer: !process.env['CI'],
+    command: 'npm run start:mock -- --port 4201',
+    url: 'http://localhost:4201/incidents',
+    reuseExistingServer: false,
     timeout: 120_000,
   },
 });

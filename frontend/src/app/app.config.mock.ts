@@ -4,14 +4,14 @@ import { provideRouter, withComponentInputBinding } from '@angular/router';
 
 import { routes } from './app.routes';
 import { authTokenInterceptor } from './core/auth/auth-token.interceptor';
-import { APP_RUNTIME_CONFIG, HTTP_APP_RUNTIME_CONFIG } from './core/config/app-runtime-config';
+import { APP_RUNTIME_CONFIG, MOCK_APP_RUNTIME_CONFIG } from './core/config/app-runtime-config';
 import { provideErrorObservability } from './core/observability/provide-error-observability';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     ...provideErrorObservability(),
-    { provide: APP_RUNTIME_CONFIG, useValue: HTTP_APP_RUNTIME_CONFIG },
+    { provide: APP_RUNTIME_CONFIG, useValue: MOCK_APP_RUNTIME_CONFIG },
     provideHttpClient(withInterceptors([authTokenInterceptor])),
     provideRouter(routes, withComponentInputBinding()),
   ],

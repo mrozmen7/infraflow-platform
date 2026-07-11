@@ -62,6 +62,17 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "mock": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/app/app.config.ts",
+                  "with": "src/app/app.config.mock.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -73,7 +84,11 @@
               "buildTarget": "infraflow-web:build:production"
             },
             "development": {
-              "buildTarget": "infraflow-web:build:development"
+              "buildTarget": "infraflow-web:build:development",
+              "proxyConfig": "proxy.conf.json"
+            },
+            "mock": {
+              "buildTarget": "infraflow-web:build:mock"
             }
           },
           "defaultConfiguration": "development"

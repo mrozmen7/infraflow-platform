@@ -10,6 +10,9 @@ const runtimeConfig: AppRuntimeConfig = {
   dataAccess: {
     incidents: 'http',
   },
+  authentication: {
+    mode: 'jwt',
+  },
   features: {
     incidents: true,
   },

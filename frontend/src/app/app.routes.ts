@@ -5,6 +5,7 @@ import {
   provideIncidentDataAccess,
   provideIncidentStore,
 } from './features/incidents/public-api';
+import { authenticationGuard } from './core/auth/authentication.guard';
 
 export const routes: Routes = [
   {
@@ -13,20 +14,28 @@ export const routes: Routes = [
     redirectTo: 'incidents',
   },
   {
+    path: 'login',
+    title: 'Sign in · InfraFlow',
+    loadComponent: () =>
+      import('./features/auth/login-page/login-page').then((module) => module.LoginPage),
+  },
+  {
     path: 'incidents',
-    canMatch: [incidentsFeatureGuard],
+    canMatch: [authenticationGuard, incidentsFeatureGuard],
     providers: [provideIncidentDataAccess(), provideIncidentStore()],
     loadChildren: () =>
       import('./features/incidents/incidents.routes').then((module) => module.INCIDENT_ROUTES),
   },
   {
     path: 'assets',
+    canMatch: [authenticationGuard],
     title: 'Assets · InfraFlow',
     loadComponent: () =>
       import('./features/assets/assets-page').then((module) => module.AssetsPage),
   },
   {
     path: 'work-orders',
+    canMatch: [authenticationGuard],
     title: 'Work orders · InfraFlow',
     loadComponent: () =>
       import('./features/work-orders/work-orders-page').then((module) => module.WorkOrdersPage),
