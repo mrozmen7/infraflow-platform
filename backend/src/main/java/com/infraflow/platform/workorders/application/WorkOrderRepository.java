@@ -11,6 +11,8 @@ public interface WorkOrderRepository {
 
   Optional<WorkOrder> findById(WorkOrderId workOrderId);
 
+  Optional<WorkOrder> findByIncidentId(String incidentId);
+
   WorkOrder save(WorkOrder workOrder);
 
   WorkOrderId nextIdentity();

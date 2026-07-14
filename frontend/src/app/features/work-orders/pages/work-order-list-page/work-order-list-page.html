@@ -1,0 +1,12 @@
+<section class="work-order-page" aria-labelledby="work-orders-title">
+  <header class="page-header"><div><p class="eyebrow">Maintenance execution · controlled workflow</p><h1 id="work-orders-title">Work orders</h1><p>Turn verified incident context into an accountable field response.</p></div><span>{{ workOrders.value()?.length ?? 0 }} in queue</span></header>
+
+  <section class="draft-panel" aria-labelledby="draft-title"><div><p class="eyebrow">New controlled draft</p><h2 id="draft-title">Draft from an incident</h2><p>The backend resolves the incident context, asset and priority. The browser never invents operational data.</p></div><div class="draft-form"><label for="draft-incident-id">Incident ID</label><input id="draft-incident-id" [value]="draftIncidentId()" (input)="updateDraftIncident($event)" placeholder="INC-2026-0001" /><button type="button" (click)="createDraft()" [disabled]="drafting()">{{ drafting() ? 'Creating draft…' : 'Create draft' }}</button></div>@if (draftMessage()) { <p class="success-message" role="status">{{ draftMessage() }}</p> } @if (draftError()) { <p class="error-message" role="alert">{{ draftError() }}</p> }</section>
+
+  <section class="work-order-panel" aria-live="polite">
+    @if (workOrders.isLoading()) { <p class="state-message">Loading work-order queue…</p> }
+    @else if (workOrders.error()) { <div class="error-state"><strong>Work orders could not be loaded.</strong><button type="button" (click)="workOrders.reload()">Retry</button></div> }
+    @else if ((workOrders.value()?.length ?? 0) === 0) { <p class="state-message">No work orders are currently available.</p> }
+    @else { <ol class="work-order-list" aria-label="Work order results">@for (workOrder of workOrders.value(); track workOrder.id) { <li><a [routerLink]="['/work-orders', workOrder.id]" class="work-order-row"><span class="work-order-id">{{ workOrder.id }}</span><span><strong>{{ workOrder.title }}</strong><small>{{ workOrder.incidentId }} · {{ workOrder.assetId }} · {{ workOrder.location }}</small></span><span class="priority">{{ workOrder.priority }}</span><span class="status">{{ workOrder.status }}</span><time [attr.datetime]="workOrder.createdAt">{{ workOrder.createdAt | date: 'd MMM y, HH:mm' : 'UTC' }} UTC</time></a></li> }</ol> }
+  </section>
+</section>

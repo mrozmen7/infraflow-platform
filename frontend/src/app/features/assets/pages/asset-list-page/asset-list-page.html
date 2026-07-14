@@ -1,0 +1,39 @@
+<section class="asset-page" aria-labelledby="assets-title">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Asset registry · operational source of truth</p>
+      <h1 id="assets-title">Infrastructure assets</h1>
+      <p>Inspect the managed equipment that incidents and work orders reference.</p>
+    </div>
+    <span class="count">{{ assets.value()?.length ?? 0 }} registered</span>
+  </header>
+
+  <label class="search-control">
+    <span>Search assets</span>
+    <input type="search" [value]="searchTerm()" (input)="updateSearch($event)" placeholder="ID, name, type or location" />
+  </label>
+
+  <section class="asset-panel" aria-live="polite">
+    @if (assets.isLoading()) {
+      <p class="state-message">Loading asset registry…</p>
+    } @else if (assets.error()) {
+      <div class="error-state"><strong>Asset registry could not be loaded.</strong><button type="button" (click)="assets.reload()">Retry</button></div>
+    } @else if ((assets.value()?.length ?? 0) === 0) {
+      <p class="state-message">No assets match this search.</p>
+    } @else {
+      <ol class="asset-list" aria-label="Asset results">
+        @for (asset of assets.value(); track asset.id) {
+          <li>
+            <a [routerLink]="['/assets', asset.id]" class="asset-row">
+              <span class="asset-id">{{ asset.id }}</span>
+              <span><strong>{{ asset.name }}</strong><small>{{ asset.type }} · {{ asset.location }}</small></span>
+              <span class="status" [attr.data-status]="asset.status">{{ asset.status }}</span>
+              <span class="criticality">{{ asset.criticality }}</span>
+              <time [attr.datetime]="asset.lastInspectedAt">{{ asset.lastInspectedAt | date: 'd MMM y' : 'UTC' }}</time>
+            </a>
+          </li>
+        }
+      </ol>
+    }
+  </section>
+</section>

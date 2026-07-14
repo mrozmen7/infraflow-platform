@@ -77,12 +77,31 @@ class WorkOrderController {
   ResponseEntity<WorkOrderResponse> draftFromIncident(
     @Valid @RequestBody DraftWorkOrderRequest request
   ) {
-    WorkOrderResponse response = WorkOrderResponse.from(
-      workOrderService.draftFromIncident(request.toCommand())
-    );
+    var result = workOrderService.draftFromIncident(request.toCommand());
+    WorkOrderResponse response = WorkOrderResponse.from(result.workOrder());
 
-    return ResponseEntity
-      .created(URI.create("/api/v1/work-orders/" + response.id()))
-      .body(response);
+    if (!result.created()) {
+      return ResponseEntity.ok(response);
+    }
+
+    return ResponseEntity.created(URI.create("/api/v1/work-orders/" + response.id())).body(response);
+  }
+
+  @PostMapping("/{workOrderId}/ready")
+  @PreAuthorize("hasAnyRole('OPERATOR', 'ADMIN')")
+  WorkOrderWorkflowResponse moveToReady(@PathVariable @Pattern(regexp = "WO-\\d{4}-\\d{4}") String workOrderId) {
+    return WorkOrderWorkflowResponse.from("READY", workOrderService.moveToReady(new WorkOrderId(workOrderId)));
+  }
+
+  @PostMapping("/{workOrderId}/start")
+  @PreAuthorize("hasAnyRole('OPERATOR', 'ADMIN')")
+  WorkOrderWorkflowResponse start(@PathVariable @Pattern(regexp = "WO-\\d{4}-\\d{4}") String workOrderId) {
+    return WorkOrderWorkflowResponse.from("IN_PROGRESS", workOrderService.start(new WorkOrderId(workOrderId)));
+  }
+
+  @PostMapping("/{workOrderId}/complete")
+  @PreAuthorize("hasRole('ADMIN')")
+  WorkOrderWorkflowResponse complete(@PathVariable @Pattern(regexp = "WO-\\d{4}-\\d{4}") String workOrderId) {
+    return WorkOrderWorkflowResponse.from("DONE", workOrderService.complete(new WorkOrderId(workOrderId)));
   }
 }

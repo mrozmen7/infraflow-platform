@@ -40,6 +40,13 @@ class InMemoryWorkOrderRepository implements WorkOrderRepository {
   }
 
   @Override
+  public Optional<WorkOrder> findByIncidentId(String incidentId) {
+    return workOrders.values().stream()
+      .filter(workOrder -> workOrder.incidentId().value().equals(incidentId))
+      .findFirst();
+  }
+
+  @Override
   public WorkOrder save(WorkOrder workOrder) {
     workOrders.put(workOrder.id(), workOrder);
     return workOrder;

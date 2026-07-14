@@ -6,6 +6,8 @@ import {
   provideIncidentStore,
 } from './features/incidents/public-api';
 import { authenticationGuard } from './core/auth/authentication.guard';
+import { provideAssetDataAccess } from './features/assets/public-api';
+import { provideWorkOrderDataAccess } from './features/work-orders/public-api';
 
 export const routes: Routes = [
   {
@@ -29,16 +31,16 @@ export const routes: Routes = [
   {
     path: 'assets',
     canMatch: [authenticationGuard],
-    title: 'Assets · InfraFlow',
-    loadComponent: () =>
-      import('./features/assets/assets-page').then((module) => module.AssetsPage),
+    providers: [provideAssetDataAccess()],
+    loadChildren: () =>
+      import('./features/assets/assets.routes').then((module) => module.ASSET_ROUTES),
   },
   {
     path: 'work-orders',
     canMatch: [authenticationGuard],
-    title: 'Work orders · InfraFlow',
-    loadComponent: () =>
-      import('./features/work-orders/work-orders-page').then((module) => module.WorkOrdersPage),
+    providers: [provideWorkOrderDataAccess()],
+    loadChildren: () =>
+      import('./features/work-orders/work-orders.routes').then((module) => module.WORK_ORDER_ROUTES),
   },
   {
     path: 'feature-unavailable',

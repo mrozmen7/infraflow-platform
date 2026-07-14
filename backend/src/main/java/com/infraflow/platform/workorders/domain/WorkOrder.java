@@ -2,6 +2,7 @@ package com.infraflow.platform.workorders.domain;
 
 import com.infraflow.platform.incidents.domain.IncidentId;
 import com.infraflow.platform.incidents.domain.IncidentPriority;
+import com.infraflow.platform.shared.error.BusinessRuleViolationException;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
@@ -35,5 +36,20 @@ public record WorkOrder(
     }
 
     return value.trim();
+  }
+
+  public WorkOrder moveTo(WorkOrderStatus nextStatus) {
+    Objects.requireNonNull(nextStatus, "Next status is required.");
+
+    if (!status.canTransitionTo(nextStatus)) {
+      throw new BusinessRuleViolationException(
+        "Work order %s cannot move from %s to %s."
+          .formatted(id.value(), status.apiValue(), nextStatus.apiValue())
+      );
+    }
+
+    return new WorkOrder(
+      id, incidentId, title, description, assetId, location, priority, nextStatus, createdAt
+    );
   }
 }

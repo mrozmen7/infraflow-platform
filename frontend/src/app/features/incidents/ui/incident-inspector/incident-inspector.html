@@ -50,6 +50,9 @@
 
   <footer>
     <a [routerLink]="['/incidents', incident().id]">Open full record</a>
+    <a [routerLink]="['/work-orders']" [queryParams]="{ incidentId: incident().id }">
+      Draft work order
+    </a>
     @if (acknowledgementPending()) {
       <button type="button" disabled aria-label="Acknowledgement in progress">Acknowledging…</button>
     } @else if (canAcknowledge()) {

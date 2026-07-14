@@ -18,4 +18,13 @@ public enum WorkOrderStatus {
   public String apiValue() {
     return apiValue;
   }
+
+  public boolean canTransitionTo(WorkOrderStatus next) {
+    return switch (this) {
+      case DRAFT -> next == READY;
+      case READY -> next == IN_PROGRESS;
+      case IN_PROGRESS -> next == DONE;
+      case DONE -> false;
+    };
+  }
 }

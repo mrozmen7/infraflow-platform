@@ -47,10 +47,76 @@ class WorkOrderControllerTests {
           }
           """))
       .andExpect(status().isCreated())
-      .andExpect(header().string("Location", "/api/v1/work-orders/WO-2026-0002"))
+      .andExpect(header().string("Location", "/api/v1/work-orders/WO-2026-1000"))
       .andExpect(jsonPath("$.incidentId").value("INC-2026-0001"))
       .andExpect(jsonPath("$.assetId").value("TRF-NT-003"))
       .andExpect(jsonPath("$.status").value("Draft"));
+  }
+
+  @Test
+  @WithMockUser(roles = "OPERATOR")
+  void allocatesDistinctWorkOrderIdentitiesForConsecutiveDrafts() throws Exception {
+    mockMvc.perform(post("/api/v1/work-orders/drafts")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("""
+          { "incidentId": "INC-2026-0001" }
+          """))
+      .andExpect(status().isCreated())
+      .andExpect(header().string("Location", "/api/v1/work-orders/WO-2026-1000"));
+
+    mockMvc.perform(post("/api/v1/work-orders/drafts")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("""
+          { "incidentId": "INC-2026-0002" }
+          """))
+      .andExpect(status().isCreated())
+      .andExpect(header().string("Location", "/api/v1/work-orders/WO-2026-1001"));
+
+    mockMvc.perform(get("/api/v1/work-orders"))
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("$", hasSize(3)));
+  }
+
+  @Test
+  @WithMockUser(roles = "OPERATOR")
+  void reusesExistingDraftWhenTheSameIncidentIsSubmittedAgain() throws Exception {
+    mockMvc.perform(post("/api/v1/work-orders/drafts")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{ \"incidentId\": \"INC-2026-0001\" }"))
+      .andExpect(status().isCreated());
+
+    mockMvc.perform(post("/api/v1/work-orders/drafts")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{ \"incidentId\": \"INC-2026-0001\" }"))
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("$.id").value("WO-2026-1000"));
+  }
+
+  @Test
+  @WithMockUser(roles = "OPERATOR")
+  void movesAWorkOrderThroughTheOperatorWorkflow() throws Exception {
+    mockMvc.perform(post("/api/v1/work-orders/WO-2026-0001/ready"))
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("$.workOrder.status").value("Ready"));
+
+    mockMvc.perform(post("/api/v1/work-orders/WO-2026-0001/start"))
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("$.workOrder.status").value("In Progress"));
+
+    mockMvc.perform(post("/api/v1/work-orders/WO-2026-0001/complete"))
+      .andExpect(status().isForbidden());
+  }
+
+  @Test
+  @WithMockUser(roles = "ADMIN")
+  void permitsOnlyAdministratorsToCompleteWorkOrders() throws Exception {
+    mockMvc.perform(post("/api/v1/work-orders/WO-2026-0001/ready"))
+      .andExpect(status().isOk());
+    mockMvc.perform(post("/api/v1/work-orders/WO-2026-0001/start"))
+      .andExpect(status().isOk());
+    mockMvc.perform(post("/api/v1/work-orders/WO-2026-0001/complete"))
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("$.workOrder.status").value("Done"));
   }
 
   @Test

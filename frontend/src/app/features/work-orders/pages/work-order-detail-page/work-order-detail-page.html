@@ -1,0 +1,13 @@
+<article class="work-order-detail">
+  <a routerLink="/work-orders" class="back-link">← Work-order queue</a>
+  <header><p>{{ workOrder().id }} · {{ workOrder().status }}</p><h1>{{ workOrder().title }}</h1><span>{{ workOrder().priority }}</span></header>
+  <p class="description">{{ workOrder().description }}</p>
+  <dl><div><dt>Source incident</dt><dd><a [routerLink]="['/incidents', workOrder().incidentId]">{{ workOrder().incidentId }}</a></dd></div><div><dt>Asset</dt><dd><a [routerLink]="['/assets', workOrder().assetId]">{{ workOrder().assetId }}</a></dd></div><div><dt>Location</dt><dd>{{ workOrder().location }}</dd></div><div><dt>Created</dt><dd><time [attr.datetime]="workOrder().createdAt">{{ workOrder().createdAt | date: 'd MMM y, HH:mm' : 'UTC' }} UTC</time></dd></div></dl>
+  <section><h2>Workflow status</h2><p>{{ workOrder().status }} — the backend is the authorization boundary (yetkilendirme sınırı).</p>
+    @if (workflowError()) { <p role="alert">{{ workflowError() }}</p> }
+    @if (workOrder().status === 'Draft') { <button type="button" (click)="move('ready')" [disabled]="processing()">Move to ready</button> }
+    @if (workOrder().status === 'Ready') { <button type="button" (click)="move('start')" [disabled]="processing()">Start work</button> }
+    @if (workOrder().status === 'In Progress' && isAdmin) { <button type="button" (click)="move('complete')" [disabled]="processing()">Complete work (Admin)</button> }
+    @if (workOrder().status === 'In Progress' && !isAdmin) { <p>Completion requires an Administrator role.</p> }
+  </section>
+</article>

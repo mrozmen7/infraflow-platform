@@ -1,0 +1,6 @@
+<article class="asset-detail" [attr.data-status]="asset().status">
+  <a routerLink="/assets" class="back-link">← Asset registry</a>
+  <header><p>{{ asset().id }} · {{ asset().type }}</p><h1>{{ asset().name }}</h1><span>{{ asset().status }}</span></header>
+  <dl><div><dt>Location</dt><dd>{{ asset().location }}</dd></div><div><dt>Criticality</dt><dd>{{ asset().criticality }}</dd></div><div><dt>Operational status</dt><dd>{{ asset().status }}</dd></div><div><dt>Last inspection</dt><dd><time [attr.datetime]="asset().lastInspectedAt">{{ asset().lastInspectedAt | date: 'd MMM y, HH:mm' : 'UTC' }} UTC</time></dd></div></dl>
+  <section><h2>Operational boundary</h2><p>This registry establishes equipment context. Incident and Work Order workflows remain separate, auditable records linked by the asset identifier.</p></section>
+</article>
