@@ -1,0 +1,1 @@
+{"schemaVersion":"0.1","server":"infraflow-agent-tools","mode":"contract-only","tools":[{"name":"incident.read","risk":"read-only","requiresApproval":false},{"name":"work-order.draft","risk":"medium","requiresApproval":true},{"name":"incident.resolve","risk":"critical","requiresApproval":true}]}

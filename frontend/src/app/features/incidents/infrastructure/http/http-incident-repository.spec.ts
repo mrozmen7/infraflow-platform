@@ -9,6 +9,8 @@ const runtimeConfig: AppRuntimeConfig = {
   apiBaseUrl: '/api',
   dataAccess: {
     incidents: 'http',
+    assets: 'http',
+    workOrders: 'http',
   },
   authentication: {
     mode: 'jwt',

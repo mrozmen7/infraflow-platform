@@ -226,9 +226,21 @@
       </ol>
     </section>
   } @else {
-    <div class="agent-panel__empty">
+    @if (loading()) {
+      <div class="agent-panel__empty" aria-live="polite">
+        <h3>Loading decision support</h3>
+        <p>Retrieving a provider-neutral advisory proposal for the selected incident.</p>
+      </div>
+    } @else if (errorMessage()) {
+      <div class="agent-panel__empty" role="alert">
+        <h3>Decision support unavailable</h3>
+        <p>{{ errorMessage() }}</p>
+      </div>
+    } @else {
+      <div class="agent-panel__empty">
       <h3>No incident selected</h3>
       <p>Select an incident to build a safe assistant context.</p>
-    </div>
+      </div>
+    }
   }
 </section>

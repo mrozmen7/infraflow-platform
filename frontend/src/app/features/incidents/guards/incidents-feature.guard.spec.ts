@@ -32,6 +32,8 @@ function configureRuntimeConfig(incidentsEnabled: boolean): void {
     apiBaseUrl: '/api',
     dataAccess: {
       incidents: 'mock',
+      assets: 'mock',
+      workOrders: 'mock',
     },
     authentication: {
       mode: 'disabled',

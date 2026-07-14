@@ -21,6 +21,8 @@ import {
 })
 export class IncidentAgentPanel {
   readonly snapshot = input<AgentSessionSnapshot | null>(null);
+  readonly loading = input(false);
+  readonly errorMessage = input('');
   readonly sessionState = input<AgentSessionState | null>(null);
   readonly toolResults = input<readonly AgentToolResult[]>([]);
   readonly recommendations = input<readonly AgentRecommendation[]>([]);

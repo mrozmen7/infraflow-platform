@@ -1,7 +1,11 @@
 import { provideRouter } from '@angular/router';
 import { TestBed } from '@angular/core/testing';
 
-import { IncidentRepositoryPort } from '../../application';
+import {
+  buildIncidentAgentSnapshot,
+  IncidentAgentSessionPort,
+  IncidentRepositoryPort,
+} from '../../application';
 import {
   Incident,
   IncidentId,
@@ -101,6 +105,18 @@ class FakeIncidentRepository implements IncidentRepositoryPort {
   }
 }
 
+class FakeIncidentAgentSessionRepository implements IncidentAgentSessionPort {
+  propose(incident: Incident): Promise<NonNullable<ReturnType<typeof buildIncidentAgentSnapshot>>> {
+    const snapshot = buildIncidentAgentSnapshot(incident);
+
+    if (!snapshot) {
+      return Promise.reject(new Error('Expected incident agent snapshot.'));
+    }
+
+    return Promise.resolve(snapshot);
+  }
+}
+
 describe('IncidentListPage', () => {
   let repository: FakeIncidentRepository;
 
@@ -113,6 +129,7 @@ describe('IncidentListPage', () => {
         provideRouter([]),
         IncidentStore,
         { provide: IncidentRepositoryPort, useValue: repository },
+        { provide: IncidentAgentSessionPort, useClass: FakeIncidentAgentSessionRepository },
       ],
     }).compileComponents();
   });

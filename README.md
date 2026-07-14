@@ -18,9 +18,10 @@ InfraFlow supports operators who need to react to infrastructure incidents witho
 losing operational context:
 
 - monitor active incidents across tunnel and infrastructure assets
+- maintain a searchable asset registry as the operational source of truth for equipment context
 - filter and inspect incident severity, priority, status and operational signals
 - acknowledge operator ownership before response coordination starts
-- draft work orders from incident context
+- draft and inspect work orders derived from verified incident context
 - expose a stable OpenAPI contract for frontend/backend integration
 
 ## Screenshots
@@ -59,9 +60,9 @@ frontend/src/app/
 ├── core/              application-wide configuration and shell concerns
 ├── shared/ui/         domain-independent reusable UI
 └── features/
-    ├── incidents/     active vertical slice
-    ├── assets/        lazy feature boundary
-    └── work-orders/   lazy feature boundary
+    ├── incidents/     incident triage and workflow slice
+    ├── assets/        asset-registry read-model slice
+    └── work-orders/   controlled maintenance workflow slice
 ```
 
 ### Backend
@@ -85,6 +86,11 @@ frontend/src/app/
 ```text
 backend/src/main/java/com/infraflow/platform/
 ├── incidents/
+│   ├── domain
+│   ├── application
+│   ├── infrastructure
+│   └── web
+├── assets/
 │   ├── domain
 │   ├── application
 │   ├── infrastructure
@@ -119,7 +125,10 @@ Main endpoints:
 - `POST /api/v1/incidents/{incidentId}/acknowledge`
 - `POST /api/v1/incidents/{incidentId}/start-response`
 - `POST /api/v1/incidents/{incidentId}/resolve`
+- `GET /api/v1/assets`
+- `GET /api/v1/assets/{assetId}`
 - `GET /api/v1/work-orders`
+- `GET /api/v1/work-orders/{workOrderId}`
 - `POST /api/v1/work-orders/drafts`
 - `GET /v3/api-docs`
 - `GET /swagger-ui.html`
@@ -182,6 +191,7 @@ Useful URLs:
 - OpenAPI JSON: `http://localhost:8080/v3/api-docs`
 - Swagger UI: `http://localhost:8080/swagger-ui.html`
 - Incidents API: `http://localhost:8080/api/v1/incidents`
+- Assets API: `http://localhost:8080/api/v1/assets`
 - Work Orders API: `http://localhost:8080/api/v1/work-orders`
 
 ## Quality gates
@@ -208,6 +218,8 @@ InfraFlow also contains experimental extension points for AI-assisted operations
 - human-in-the-loop approval patterns
 - future AG-UI/A2UI and MCP integration seams
 
+The current Agent Session endpoint is a provider-neutral mock runtime, protected by JWT and audit logged. It is consumed through an Angular application port; it does not call an external model or execute an operational mutation.
+
 These extensions are kept behind the main enterprise frontend/backend architecture
 so the core system remains understandable, testable and operationally deterministic.
 
@@ -216,6 +228,7 @@ so the core system remains understandable, testable and operationally determinis
 - Product language: [docs/domain/domain-language.md](docs/domain/domain-language.md)
 - UI foundation: [docs/design/ui-foundation.md](docs/design/ui-foundation.md)
 - Backend hardening evidence: [docs/evidence/backend-enterprise-hardening.md](docs/evidence/backend-enterprise-hardening.md)
+- Asset and work-order integration evidence: [docs/evidence/asset-and-work-order-vertical-slices.md](docs/evidence/asset-and-work-order-vertical-slices.md)
 - Security/concurrency/query ADR: [docs/architecture/adr/0005-backend-security-concurrency-and-query-boundaries.md](docs/architecture/adr/0005-backend-security-concurrency-and-query-boundaries.md)
 - OpenAPI contract: [contracts/openapi/infraflow-api-v1.openapi.json](contracts/openapi/infraflow-api-v1.openapi.json)
 - Development documentation: [docs/learning/](docs/learning/)

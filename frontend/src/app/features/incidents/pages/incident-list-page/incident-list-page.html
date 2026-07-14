@@ -105,6 +105,8 @@
 
       <app-incident-agent-panel
         [snapshot]="agentSnapshot()"
+        [loading]="agentSessionLoading()"
+        [errorMessage]="agentSessionError()"
         [sessionState]="agentSessionState()"
         [toolResults]="currentAgentToolResults()"
         [recommendations]="agentRecommendations()"

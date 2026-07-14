@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, effect, inject, resource, signal, viewChild } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 
@@ -24,7 +24,10 @@ import {
   toAgentProtocolEvents,
 } from '../../../../core/agentic/domain';
 import { EmptyState } from '../../../../shared/ui/empty-state/empty-state';
-import { buildIncidentAgentSnapshot, buildIncidentClientToolResults } from '../../application';
+import {
+  buildIncidentClientToolResults,
+  IncidentAgentSessionPort,
+} from '../../application';
 import { IncidentSeverityFilter } from '../../domain/incident';
 import { IncidentStore } from '../../state/incident-store';
 import { IncidentAgentPanel } from '../../ui/incident-agent-panel/incident-agent-panel';
@@ -48,6 +51,7 @@ import { IncidentList } from '../../ui/incident-list/incident-list';
 export class IncidentListPage {
   private readonly title = inject(Title);
   private readonly filterBar = viewChild(IncidentFilterBar);
+  private readonly incidentAgentSession = inject(IncidentAgentSessionPort);
 
   protected readonly incidentStore = inject(IncidentStore);
   protected readonly actionMessage = signal('');
@@ -74,8 +78,18 @@ export class IncidentListPage {
       this.incidentStore.incidents().find((incident) => incident.id === selectedIncidentId) ?? null
     );
   });
+  private readonly agentSessionResource = resource({
+    params: () => this.selectedIncident() ?? undefined,
+    loader: ({ params, abortSignal }) => this.incidentAgentSession.propose(params, abortSignal),
+  });
   protected readonly agentSnapshot = computed(() =>
-    buildIncidentAgentSnapshot(this.selectedIncident()),
+    this.agentSessionResource.hasValue() ? this.agentSessionResource.value() : null,
+  );
+  protected readonly agentSessionLoading = computed(() => this.agentSessionResource.isLoading());
+  protected readonly agentSessionError = computed(() =>
+    this.agentSessionResource.error()
+      ? 'Decision support is temporarily unavailable. Review the incident directly and retry.'
+      : '',
   );
   protected readonly agentSessionState = computed(() => {
     const snapshot = this.agentSnapshot();

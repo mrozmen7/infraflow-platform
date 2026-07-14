@@ -1,4 +1,5 @@
 export { IncidentRepositoryPort } from './ports/incident-repository.port';
+export { IncidentAgentSessionPort } from './ports/incident-agent-session.port';
 export { buildIncidentAgentSnapshot } from './agentic/build-incident-agent-snapshot';
 export {
   buildIncidentClientToolResults,
