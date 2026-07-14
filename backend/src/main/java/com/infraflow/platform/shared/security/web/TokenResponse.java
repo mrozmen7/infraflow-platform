@@ -5,8 +5,6 @@ import java.util.List;
 public record TokenResponse(
   String tokenType,
   String accessToken,
-  String refreshToken,
   List<String> roles
 ) {
 }
-

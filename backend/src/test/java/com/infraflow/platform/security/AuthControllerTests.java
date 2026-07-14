@@ -7,8 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -25,11 +24,8 @@ class AuthControllerTests {
   @Autowired
   private MockMvc mockMvc;
 
-  @Autowired
-  private ObjectMapper objectMapper;
-
   @Test
-  void logsInOperatorAndReturnsJwtPair() throws Exception {
+  void logsInOperatorAndSetsHttpOnlyRefreshCookie() throws Exception {
     mockMvc.perform(post("/api/v1/auth/login")
         .contentType(MediaType.APPLICATION_JSON)
         .content("""
@@ -41,7 +37,10 @@ class AuthControllerTests {
       .andExpect(status().isOk())
       .andExpect(jsonPath("$.tokenType").value("Bearer"))
       .andExpect(jsonPath("$.accessToken", not(blankOrNullString())))
-      .andExpect(jsonPath("$.refreshToken", not(blankOrNullString())))
+      .andExpect(jsonPath("$.refreshToken").doesNotExist())
+      .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.header().string(
+        "Set-Cookie", org.hamcrest.Matchers.containsString("HttpOnly")
+      ))
       .andExpect(jsonPath("$.roles", hasItem("OPERATOR")));
   }
 
@@ -60,8 +59,8 @@ class AuthControllerTests {
   }
 
   @Test
-  void refreshesTokenPair() throws Exception {
-    String loginResponse = mockMvc.perform(post("/api/v1/auth/login")
+  void refreshesAccessTokenFromHttpOnlyCookie() throws Exception {
+    String setCookie = mockMvc.perform(post("/api/v1/auth/login")
         .contentType(MediaType.APPLICATION_JSON)
         .content("""
           {
@@ -70,20 +69,11 @@ class AuthControllerTests {
           }
           """))
       .andExpect(status().isOk())
-      .andReturn()
-      .getResponse()
-      .getContentAsString();
-
-    JsonNode json = objectMapper.readTree(loginResponse);
-    String refreshToken = json.get("refreshToken").asText();
+      .andReturn().getResponse().getHeader("Set-Cookie");
+    String refreshToken = setCookie.substring("infraflow_refresh=".length(), setCookie.indexOf(';'));
 
     mockMvc.perform(post("/api/v1/auth/refresh")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content("""
-          {
-            "refreshToken": "%s"
-          }
-          """.formatted(refreshToken)))
+        .cookie(new Cookie("infraflow_refresh", refreshToken)))
       .andExpect(status().isOk())
       .andExpect(jsonPath("$.tokenType").value("Bearer"))
       .andExpect(jsonPath("$.accessToken", not(blankOrNullString())))
@@ -91,4 +81,3 @@ class AuthControllerTests {
       .andExpect(jsonPath("$.roles", hasItem("OPERATOR")));
   }
 }
-

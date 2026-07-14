@@ -4,6 +4,8 @@ export interface AppRuntimeConfig {
   readonly apiBaseUrl: string;
   readonly dataAccess: {
     readonly incidents: 'mock' | 'http';
+    readonly assets: 'mock' | 'http';
+    readonly workOrders: 'mock' | 'http';
   };
   readonly authentication: {
     readonly mode: 'disabled' | 'jwt';
@@ -17,6 +19,8 @@ export const MOCK_APP_RUNTIME_CONFIG = Object.freeze<AppRuntimeConfig>({
   apiBaseUrl: '/api',
   dataAccess: {
     incidents: 'mock',
+    assets: 'mock',
+    workOrders: 'mock',
   },
   authentication: {
     mode: 'disabled',
@@ -30,6 +34,8 @@ export const HTTP_APP_RUNTIME_CONFIG = Object.freeze<AppRuntimeConfig>({
   apiBaseUrl: '/api',
   dataAccess: {
     incidents: 'http',
+    assets: 'http',
+    workOrders: 'http',
   },
   authentication: {
     mode: 'jwt',

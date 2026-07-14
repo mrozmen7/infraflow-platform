@@ -12,7 +12,6 @@ export type AuthSession = {
 type TokenResponse = {
   readonly tokenType: unknown;
   readonly accessToken: unknown;
-  readonly refreshToken: unknown;
   readonly roles: unknown;
 };
 

@@ -35,7 +35,6 @@ describe('AuthSessionStore', () => {
     request.flush({
       tokenType: 'Bearer',
       accessToken: 'mock-token',
-      refreshToken: 'mock-refresh',
       roles: ['OPERATOR'],
     });
 
@@ -74,6 +73,9 @@ describe('AuthSessionStore', () => {
     await login;
 
     sessionStore.logout();
+    const logoutRequest = httpTestingController.expectOne('/api/v1/auth/logout');
+    expect(logoutRequest.request.method).toBe('POST');
+    logoutRequest.flush(null);
 
     expect(sessionStore.isAuthenticated()).toBe(false);
     expect(sessionStore.session()).toBeNull();

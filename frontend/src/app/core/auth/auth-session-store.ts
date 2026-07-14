@@ -32,6 +32,20 @@ export class AuthSessionStore {
 
   logout(): void {
     this.sessionSource.set(null);
+    void firstValueFrom(this.http.post(`${this.runtimeConfig.apiBaseUrl}/v1/auth/logout`, {}, { withCredentials: true }))
+      .catch(() => undefined);
+  }
+
+  async restore(): Promise<void> {
+    if (this.runtimeConfig.authentication.mode === 'disabled') return;
+    try {
+      const refreshed = await firstValueFrom(this.http.post<unknown>(
+        `${this.runtimeConfig.apiBaseUrl}/v1/auth/refresh`, {}, { withCredentials: true },
+      ));
+      this.sessionSource.set(toAuthSession(refreshed));
+    } catch {
+      this.sessionSource.set(null);
+    }
   }
 
   hasRole(role: string): boolean {

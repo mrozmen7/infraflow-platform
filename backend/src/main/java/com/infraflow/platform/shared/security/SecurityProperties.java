@@ -8,6 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "infraflow.security")
 public record SecurityProperties(
   Jwt jwt,
+  boolean refreshCookieSecure,
   Map<String, DemoUser> users
 ) {
 
@@ -25,4 +26,3 @@ public record SecurityProperties(
   ) {
   }
 }
-
