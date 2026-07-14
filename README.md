@@ -157,6 +157,22 @@ npm install
 npm start
 ```
 
+### Start the complete local stack
+
+For the normal development workflow, start PostgreSQL, Spring Boot and Angular together from the
+repository root. The script waits until the API health endpoint is ready and then starts Angular on
+the stable `http://localhost:4200` address.
+
+```bash
+./infra/local/start-local.sh
+```
+
+Use a second terminal only when you want to stop the API process started by the script:
+
+```bash
+./infra/local/stop-local.sh
+```
+
 Quality checks:
 
 ```bash

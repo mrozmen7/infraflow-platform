@@ -50,5 +50,5 @@ function toLoginErrorMessage(error: unknown): string {
     return 'The username or password is not valid.';
   }
 
-  return 'The sign-in service is unavailable. Try again or contact operations support.';
+  return 'The local sign-in service is unavailable. Start the full local stack with ./infra/local/start-local.sh, then try again.';
 }
