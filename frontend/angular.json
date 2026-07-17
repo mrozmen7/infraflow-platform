@@ -73,6 +73,34 @@
                   "with": "src/app/app.config.mock.ts"
                 }
               ]
+            },
+            "pages-demo": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "330kB",
+                  "maximumError": "380kB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                },
+                {
+                  "type": "bundle",
+                  "name": "incident-create-page",
+                  "maximumWarning": "85kB",
+                  "maximumError": "100kB"
+                }
+              ],
+              "outputHashing": "all",
+              "baseHref": "/infraflow-platform/",
+              "fileReplacements": [
+                {
+                  "replace": "src/app/app.config.ts",
+                  "with": "src/app/app.config.pages-demo.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -89,6 +117,9 @@
             },
             "mock": {
               "buildTarget": "infraflow-web:build:mock"
+            },
+            "pages-demo": {
+              "buildTarget": "infraflow-web:build:pages-demo"
             }
           },
           "defaultConfiguration": "development"

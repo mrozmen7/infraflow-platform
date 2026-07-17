@@ -1,0 +1,23 @@
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { provideRouter, withComponentInputBinding, withHashLocation } from '@angular/router';
+
+import { routes } from './app.routes';
+import { authTokenInterceptor } from './core/auth/auth-token.interceptor';
+import { APP_RUNTIME_CONFIG, MOCK_APP_RUNTIME_CONFIG } from './core/config/app-runtime-config';
+import { provideErrorObservability } from './core/observability/provide-error-observability';
+
+/**
+ * Browser-only portfolio demo (yalnız tarayıcıda çalışan demo): mock repository
+ * (örnek veriyi bellekte sağlayan adapter) kullanır, backend çağrısı yapmaz. Hash route
+ * (URL fragmentine dayalı yönlendirme), statik GitHub Pages sunucusunda navigasyonu korur.
+ */
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideBrowserGlobalErrorListeners(),
+    ...provideErrorObservability(),
+    { provide: APP_RUNTIME_CONFIG, useValue: MOCK_APP_RUNTIME_CONFIG },
+    provideHttpClient(withInterceptors([authTokenInterceptor])),
+    provideRouter(routes, withComponentInputBinding(), withHashLocation()),
+  ],
+};

@@ -36,6 +36,16 @@ ng build
 
 This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
 
+## Static portfolio demo
+
+To build the browser-only portfolio demo, run:
+
+```bash
+npm run build:pages-demo
+```
+
+This browser-only demo (yalnız tarayıcıda çalışan demo) uses the existing mock repositories and disabled authentication. It does not call the Spring Boot API, connect to PostgreSQL, or expose JWT credentials. Hash-based routes (URL fragmentine dayalı yönlendirme) keep navigation functional when the static build is hosted by GitHub Pages.
+
 ## Running unit tests
 
 To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:

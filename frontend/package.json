@@ -6,6 +6,7 @@
     "start": "ng serve",
     "start:mock": "ng serve --configuration mock",
     "build": "ng build",
+    "build:pages-demo": "ng build --configuration pages-demo",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "test:architecture": "node scripts/check-architecture.mjs",
