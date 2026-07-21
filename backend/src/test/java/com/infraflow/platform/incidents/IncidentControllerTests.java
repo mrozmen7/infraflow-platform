@@ -19,11 +19,13 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.infraflow.platform.support.PostgresIntegrationTest;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class IncidentControllerTests {
+class IncidentControllerTests extends PostgresIntegrationTest {
 
   @Autowired
   private MockMvc mockMvc;

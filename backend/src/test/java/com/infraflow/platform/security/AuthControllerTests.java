@@ -24,10 +24,12 @@ import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.infraflow.platform.support.PostgresIntegrationTest;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class AuthControllerTests {
+class AuthControllerTests extends PostgresIntegrationTest {
 
   @Autowired
   private MockMvc mockMvc;

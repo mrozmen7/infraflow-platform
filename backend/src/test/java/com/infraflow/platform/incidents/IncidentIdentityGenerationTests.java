@@ -10,10 +10,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
+import com.infraflow.platform.support.PostgresIntegrationTest;
+
 @SpringBootTest
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class IncidentIdentityGenerationTests {
+class IncidentIdentityGenerationTests extends PostgresIntegrationTest {
 
   @Autowired
   private IncidentRepository incidentRepository;

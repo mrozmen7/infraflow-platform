@@ -13,10 +13,12 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.infraflow.platform.support.PostgresIntegrationTest;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class AssetControllerTests {
+class AssetControllerTests extends PostgresIntegrationTest {
   @Autowired private MockMvc mockMvc;
 
   @Test @WithMockUser(roles = "OPERATOR")
