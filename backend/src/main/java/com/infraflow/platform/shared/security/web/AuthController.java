@@ -2,6 +2,7 @@ package com.infraflow.platform.shared.security.web;
 
 import com.infraflow.platform.shared.error.ApiError;
 import com.infraflow.platform.shared.security.JwtTokenService;
+import com.infraflow.platform.shared.security.RefreshTokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -35,17 +36,20 @@ class AuthController {
 
   private final AuthenticationManager authenticationManager;
   private final JwtTokenService tokenService;
+  private final RefreshTokenService refreshTokenService;
   private final JwtDecoder jwtDecoder;
   private final SecurityProperties securityProperties;
 
   AuthController(
     AuthenticationManager authenticationManager,
     JwtTokenService tokenService,
+    RefreshTokenService refreshTokenService,
     JwtDecoder jwtDecoder,
     SecurityProperties securityProperties
   ) {
     this.authenticationManager = authenticationManager;
     this.tokenService = tokenService;
+    this.refreshTokenService = refreshTokenService;
     this.jwtDecoder = jwtDecoder;
     this.securityProperties = securityProperties;
   }
@@ -67,6 +71,7 @@ class AuthController {
     );
 
     JwtTokenService.TokenPair tokenPair = tokenService.issueFor(authentication);
+    refreshTokenService.registerIssued(authentication.getName(), tokenPair);
 
     writeRefreshCookie(response, tokenPair.refreshToken());
     return new TokenResponse("Bearer", tokenPair.accessToken(), roles(authentication));
@@ -101,6 +106,7 @@ class AuthController {
 
     List<String> roles = refreshToken.getClaimAsStringList("roles");
     JwtTokenService.TokenPair tokenPair = tokenService.issue(refreshToken.getSubject(), roles);
+    refreshTokenService.rotate(refreshTokenValue, tokenPair);
 
     writeRefreshCookie(response, tokenPair.refreshToken());
     return new TokenResponse("Bearer", tokenPair.accessToken(), roles);
@@ -108,8 +114,14 @@ class AuthController {
 
   @PostMapping("/logout")
   @SecurityRequirements
-  @Operation(summary = "Clear the refresh-token cookie")
-  void logout(HttpServletResponse response) {
+  @Operation(summary = "Revoke the refresh token and clear its cookie")
+  void logout(
+    @CookieValue(name = "infraflow_refresh", required = false) String refreshTokenValue,
+    HttpServletResponse response
+  ) {
+    if (refreshTokenValue != null && !refreshTokenValue.isBlank()) {
+      refreshTokenService.revoke(refreshTokenValue);
+    }
     response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie("").maxAge(0).build().toString());
   }
 

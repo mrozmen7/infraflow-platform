@@ -43,7 +43,8 @@ public class JwtTokenService {
   public TokenPair issue(String subject, List<String> roles) {
     return new TokenPair(
       token(subject, roles, "access", securityProperties.jwt().accessTokenTtl()),
-      token(subject, roles, "refresh", securityProperties.jwt().refreshTokenTtl())
+      token(subject, roles, "refresh", securityProperties.jwt().refreshTokenTtl()),
+      Instant.now(clock).plus(securityProperties.jwt().refreshTokenTtl())
     );
   }
 
@@ -59,6 +60,7 @@ public class JwtTokenService {
       .issuedAt(now)
       .expiresAt(now.plus(ttl))
       .subject(subject)
+      .id(java.util.UUID.randomUUID().toString())
       .claim("typ", type)
       .claim("roles", roles)
       .build();
@@ -69,6 +71,6 @@ public class JwtTokenService {
     )).getTokenValue();
   }
 
-  public record TokenPair(String accessToken, String refreshToken) {
+  public record TokenPair(String accessToken, String refreshToken, Instant refreshTokenExpiresAt) {
   }
 }
