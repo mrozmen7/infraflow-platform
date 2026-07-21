@@ -50,6 +50,9 @@ infraflow:
     allowed-origins:
       - http://localhost:4200
       - http://127.0.0.1:4200
+      # Full-stack compose frontend (nginx on host port 18088).
+      - http://localhost:18088
+      - http://127.0.0.1:18088
   security:
     # false is only for local HTTP development. Production must set this to true over HTTPS.
     refresh-cookie-secure: false
