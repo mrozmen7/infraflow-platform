@@ -1,71 +1,88 @@
-<a class="skip-link" href="#main-content">Skip to main content</a>
+<a class="skip-link" href="#main-content">{{ 'app.skipLink' | translate }}</a>
 
 <div class="app-shell">
-  <aside class="app-sidebar" aria-label="InfraFlow application navigation">
-    <a class="brand" routerLink="/incidents" aria-label="InfraFlow operations home">
+  <aside class="app-sidebar" [attr.aria-label]="'app.sidebarAria' | translate">
+    <a class="brand" routerLink="/incidents" [attr.aria-label]="'app.brandHomeAria' | translate">
       <span class="brand__mark" aria-hidden="true">
         <span>IF</span>
       </span>
       <span class="brand__copy">
         <strong>InfraFlow</strong>
-        <small>Operations console</small>
+        <small>{{ 'app.brandTagline' | translate }}</small>
       </span>
     </a>
 
     <div class="app-sidebar__context">
-      <span>Workspace</span>
-      <strong>Critical infrastructure</strong>
+      <span>{{ 'app.workspaceLabel' | translate }}</span>
+      <strong>{{ 'app.workspaceValue' | translate }}</strong>
     </div>
 
-    <nav class="primary-navigation" aria-label="Primary navigation">
+    <nav class="primary-navigation" [attr.aria-label]="'app.navigationAria' | translate">
       <a routerLink="/incidents" routerLinkActive="active" ariaCurrentWhenActive="page">
         <span class="nav-icon" aria-hidden="true">IN</span>
-        <span>Incidents</span>
+        <span>{{ 'navigation.incidents' | translate }}</span>
       </a>
       <a routerLink="/assets" routerLinkActive="active" ariaCurrentWhenActive="page">
         <span class="nav-icon" aria-hidden="true">AS</span>
-        <span>Assets</span>
+        <span>{{ 'navigation.assets' | translate }}</span>
       </a>
       <a routerLink="/work-orders" routerLinkActive="active" ariaCurrentWhenActive="page">
         <span class="nav-icon" aria-hidden="true">WO</span>
-        <span>Work orders</span>
+        <span>{{ 'navigation.workOrders' | translate }}</span>
       </a>
     </nav>
 
     <section class="system-status" aria-labelledby="system-status-title">
       <div>
         <span class="status-indicator" aria-hidden="true"></span>
-        <h2 id="system-status-title">Systems nominal</h2>
+        <h2 id="system-status-title">{{ 'app.systemStatusTitle' | translate }}</h2>
       </div>
-      <p>Operational data services connected</p>
+      <p>{{ 'app.systemStatusDescription' | translate }}</p>
     </section>
   </aside>
 
   <section class="app-workspace">
     <header class="app-topbar">
       <div class="site-context">
-        <span>Active site</span>
-        <strong>North Tunnel Network</strong>
+        <span>{{ 'app.activeSiteLabel' | translate }}</span>
+        <strong>{{ 'app.activeSiteValue' | translate }}</strong>
       </div>
 
-      <dl class="shift-context" aria-label="Current operational context">
+      <dl class="shift-context" [attr.aria-label]="'app.contextAria' | translate">
         <div>
-          <dt>Shift</dt>
-          <dd>Alpha · 06:00–14:00</dd>
+          <dt>{{ 'app.shiftLabel' | translate }}</dt>
+          <dd>{{ 'app.shiftValue' | translate }}</dd>
         </div>
         <div>
-          <dt>Environment</dt>
-          <dd>Training</dd>
+          <dt>{{ 'app.environmentLabel' | translate }}</dt>
+          <dd>{{ 'app.environmentValue' | translate }}</dd>
         </div>
       </dl>
+
+      <div
+        class="language-switcher"
+        role="group"
+        [attr.aria-label]="'app.languageSwitcherLabel' | translate"
+      >
+        @for (language of supportedLanguages; track language) {
+          <button
+            type="button"
+            [class.language-switcher__option--active]="activeLanguage() === language"
+            [attr.aria-pressed]="activeLanguage() === language"
+            (click)="selectLanguage(language)"
+          >
+            {{ language === 'de' ? 'DE' : 'EN' }}
+          </button>
+        }
+      </div>
     </header>
 
     @if (isNavigating()) {
       <div
         class="navigation-progress"
         role="progressbar"
-        aria-label="Loading page"
-        aria-valuetext="Navigation in progress"
+        [attr.aria-label]="'app.navigationLoading' | translate"
+        [attr.aria-valuetext]="'app.navigationInProgress' | translate"
       ></div>
     }
 
@@ -74,8 +91,8 @@
     </main>
 
     <footer class="app-footer">
-      <span>InfraFlow learning environment</span>
-      <span>Angular 22 · Quality gates active</span>
+      <span>{{ 'app.footerEnvironment' | translate }}</span>
+      <span>{{ 'app.footerStack' | translate }}</span>
     </footer>
   </section>
 </div>

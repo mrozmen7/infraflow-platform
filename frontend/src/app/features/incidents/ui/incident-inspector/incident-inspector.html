@@ -1,7 +1,7 @@
 <article class="incident-inspector" [attr.data-severity]="incident().severity">
   <header>
     <div>
-      <p class="inspector-label">Incident inspector</p>
+      <p class="inspector-label">{{ 'incidents.inspector.label' | translate }}</p>
       <p class="incident-id">{{ incident().id }}</p>
     </div>
     <span class="status">{{ incident().status }}</span>
@@ -15,15 +15,15 @@
 
   <dl class="incident-facts">
     <div>
-      <dt>Asset</dt>
+      <dt>{{ 'incidents.inspector.asset' | translate }}</dt>
       <dd>{{ incident().assetId }}</dd>
     </div>
     <div>
-      <dt>Location</dt>
+      <dt>{{ 'incidents.inspector.location' | translate }}</dt>
       <dd>{{ incident().location }}</dd>
     </div>
     <div>
-      <dt>Reported</dt>
+      <dt>{{ 'incidents.inspector.reported' | translate }}</dt>
       <dd>
         <time [attr.datetime]="incident().reportedAt">
           {{ incident().reportedAt | date: 'd MMM y, HH:mm' : 'UTC' }} UTC
@@ -33,37 +33,49 @@
   </dl>
 
   <section class="operational-signals" aria-labelledby="operational-signals-title">
-    <h3 id="operational-signals-title">Operational signals</h3>
+    <h3 id="operational-signals-title">{{ 'incidents.inspector.signalsTitle' | translate }}</h3>
     <ul>
       @for (operationalSignal of incident().operationalSignals; track operationalSignal) {
         <li>{{ operationalSignal }}</li>
       } @empty {
-        <li>No operational signal reported</li>
+        <li>{{ 'incidents.inspector.noSignals' | translate }}</li>
       }
     </ul>
   </section>
 
   <section class="operator-note" aria-labelledby="operator-note-title">
-    <h3 id="operator-note-title">Operator guidance</h3>
-    <p>Verify field conditions and linked asset state before advancing the incident workflow.</p>
+    <h3 id="operator-note-title">{{ 'incidents.inspector.guidanceTitle' | translate }}</h3>
+    <p>{{ 'incidents.inspector.guidanceText' | translate }}</p>
   </section>
 
   <footer>
-    <a [routerLink]="['/incidents', incident().id]">Open full record</a>
+    <a [routerLink]="['/incidents', incident().id]">{{ 'incidents.inspector.openFullRecord' | translate }}</a>
     <a [routerLink]="['/work-orders']" [queryParams]="{ incidentId: incident().id }">
-      Draft work order
+      {{ 'incidents.inspector.draftWorkOrder' | translate }}
     </a>
     @if (acknowledgementPending()) {
-      <button type="button" disabled aria-label="Acknowledgement in progress">Acknowledging…</button>
+      <button
+        type="button"
+        disabled
+        [attr.aria-label]="'incidents.inspector.acknowledgementInProgress' | translate"
+      >
+        {{ 'incidents.inspector.acknowledging' | translate }}
+      </button>
     } @else if (canAcknowledge()) {
-      <button type="button" (click)="acknowledgeRequested.emit(incident().id)">Acknowledge</button>
+      <button type="button" (click)="acknowledgeRequested.emit(incident().id)">
+        {{ 'incidents.inspector.acknowledge' | translate }}
+      </button>
     } @else if (responseStartPending()) {
-      <button type="button" disabled aria-label="Response start in progress">
-        Starting response…
+      <button
+        type="button"
+        disabled
+        [attr.aria-label]="'incidents.inspector.responseStartInProgress' | translate"
+      >
+        {{ 'incidents.inspector.startingResponse' | translate }}
       </button>
     } @else if (canStartResponse()) {
       <button type="button" (click)="responseStartRequested.emit(incident().id)">
-        Start response
+        {{ 'incidents.inspector.startResponse' | translate }}
       </button>
     }
   </footer>

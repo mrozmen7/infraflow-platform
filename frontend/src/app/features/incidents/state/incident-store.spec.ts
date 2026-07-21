@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
+import { provideTranslateTesting, useEnglishTranslations } from '../../../../testing/translate-testing';
 import { IncidentRepositoryPort } from '../application';
 import type {
   Incident,
@@ -99,10 +100,12 @@ describe('IncidentStore', () => {
     repository = new FakeIncidentRepository();
     TestBed.configureTestingModule({
       providers: [
+        ...provideTranslateTesting(),
         IncidentStore,
         { provide: IncidentRepositoryPort, useValue: repository },
       ],
     });
+    useEnglishTranslations();
     store = TestBed.inject(IncidentStore);
   });
 

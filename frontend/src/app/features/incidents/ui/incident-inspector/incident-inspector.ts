@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, computed, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import {
   canAcknowledgeIncident,
@@ -10,7 +11,7 @@ import {
 
 @Component({
   selector: 'app-incident-inspector',
-  imports: [DatePipe, RouterLink],
+  imports: [DatePipe, RouterLink, TranslatePipe],
   templateUrl: './incident-inspector.html',
   styleUrl: './incident-inspector.scss',
 })

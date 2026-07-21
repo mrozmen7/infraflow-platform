@@ -1,11 +1,12 @@
 import { Component, input, output } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { Incident } from '../../domain/incident';
 import { IncidentCard } from '../incident-card/incident-card';
 
 @Component({
   selector: 'app-incident-list',
-  imports: [IncidentCard],
+  imports: [IncidentCard, TranslatePipe],
   templateUrl: './incident-list.html',
   styleUrl: './incident-list.scss',
 })

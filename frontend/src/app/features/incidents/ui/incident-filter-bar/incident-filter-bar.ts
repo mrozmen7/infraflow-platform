@@ -1,9 +1,11 @@
 import { Component, ElementRef, input, output, viewChild } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { IncidentSeverityFilter, incidentSeverities } from '../../domain/incident';
 
 @Component({
   selector: 'app-incident-filter-bar',
+  imports: [TranslatePipe],
   templateUrl: './incident-filter-bar.html',
   styleUrl: './incident-filter-bar.scss',
 })

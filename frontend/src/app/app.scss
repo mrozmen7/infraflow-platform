@@ -50,6 +50,28 @@
 .shift-context { display: flex; gap: clamp(1rem, 3vw, 2rem); margin: 0; }
 .shift-context div { display: grid; gap: 0.15rem; }
 .shift-context dd { margin: 0; font-size: 0.75rem; font-weight: 700; }
+.language-switcher {
+  display: inline-flex;
+  overflow: hidden;
+  border: 1px solid var(--if-color-border);
+  border-radius: 0.55rem;
+}
+.language-switcher button {
+  padding: 0.35rem 0.7rem;
+  border: 0;
+  background: transparent;
+  color: var(--if-color-ink-muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+.language-switcher button + button { border-left: 1px solid var(--if-color-border); }
+.language-switcher button:hover { color: var(--if-color-primary); }
+.language-switcher .language-switcher__option--active {
+  background: var(--if-color-primary);
+  color: var(--if-color-surface);
+}
 .navigation-progress {
   width: 100%;
   height: 2px;

@@ -1,12 +1,16 @@
 import { TestBed } from '@angular/core/testing';
 
+import { provideTranslateTesting, useEnglishTranslations } from '../../../../../testing/translate-testing';
 import { IncidentFilterBar } from './incident-filter-bar';
 
 describe('IncidentFilterBar', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [IncidentFilterBar],
+      providers: [...provideTranslateTesting()],
     }).compileComponents();
+
+    useEnglishTranslations();
   });
 
   it('emits typed filter changes', async () => {

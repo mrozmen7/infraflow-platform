@@ -1,6 +1,7 @@
 import { provideRouter } from '@angular/router';
 import { TestBed } from '@angular/core/testing';
 
+import { provideTranslateTesting, useEnglishTranslations } from '../../../../../testing/translate-testing';
 import type { Incident } from '../../domain/incident';
 import { IncidentInspector } from './incident-inspector';
 
@@ -21,8 +22,10 @@ describe('IncidentInspector', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [IncidentInspector],
-      providers: [provideRouter([])],
+      providers: [provideRouter([]), ...provideTranslateTesting()],
     }).compileComponents();
+
+    useEnglishTranslations();
   });
 
   it('offers response start only for an acknowledged Incident and emits its id', () => {

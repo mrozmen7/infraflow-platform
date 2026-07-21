@@ -16,17 +16,20 @@
     </h2>
     <p class="incident-card__location">{{ incident().location }} · {{ incident().assetId }}</p>
 
-    <ul class="incident-card__signals" aria-label="Operational signals">
+    <ul class="incident-card__signals" [attr.aria-label]="'incidents.card.signalsAria' | translate">
       @for (operationalSignal of incident().operationalSignals; track operationalSignal) {
         <li>{{ operationalSignal }}</li>
       } @empty {
-        <li>No operational signal reported</li>
+        <li>{{ 'incidents.card.noSignals' | translate }}</li>
       }
     </ul>
   </section>
 
   <div class="incident-card__classification">
-    <span class="incident-card__priority" [attr.aria-label]="'Priority ' + incident().priority">
+    <span
+      class="incident-card__priority"
+      [attr.aria-label]="'incidents.card.priorityAria' | translate: { priority: incident().priority }"
+    >
       {{ incident().priority }}
     </span>
     <span class="incident-card__severity">{{ incident().severity }}</span>
@@ -35,17 +38,27 @@
 
   <div class="incident-card__state">
     <span class="status-indicator" aria-hidden="true"></span>
-    <p class="incident-card__status">Status: {{ incident().status }}</p>
+    <p class="incident-card__status">
+      {{ 'incidents.card.status' | translate: { status: incident().status } }}
+    </p>
   </div>
 
   <div class="incident-card__actions">
     <button type="button" class="button-secondary" (click)="selectRequested.emit(incident().id)">
-      {{ selected() ? 'Selected' : 'Inspect' }}
+      {{ (selected() ? 'incidents.card.selected' : 'incidents.card.inspect') | translate }}
     </button>
     @if (acknowledgementPending()) {
-      <button type="button" disabled aria-label="Acknowledgement in progress">Acknowledging…</button>
+      <button
+        type="button"
+        disabled
+        [attr.aria-label]="'incidents.card.acknowledgementInProgress' | translate"
+      >
+        {{ 'incidents.card.acknowledging' | translate }}
+      </button>
     } @else if (canAcknowledge()) {
-      <button type="button" (click)="acknowledgeRequested.emit(incident().id)">Acknowledge</button>
+      <button type="button" (click)="acknowledgeRequested.emit(incident().id)">
+        {{ 'incidents.card.acknowledge' | translate }}
+      </button>
     }
   </div>
 </article>

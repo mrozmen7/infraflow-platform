@@ -1,6 +1,9 @@
 import { Component, computed, effect, inject, resource, signal, viewChild } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Title } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { map, merge } from 'rxjs';
 
 import {
   AgentActionCard,
@@ -44,14 +47,25 @@ import { IncidentList } from '../../ui/incident-list/incident-list';
     IncidentInspector,
     IncidentList,
     RouterLink,
+    TranslatePipe,
   ],
   templateUrl: './incident-list-page.html',
   styleUrl: './incident-list-page.scss',
 })
 export class IncidentListPage {
   private readonly title = inject(Title);
+  private readonly translate = inject(TranslateService);
   private readonly filterBar = viewChild(IncidentFilterBar);
   private readonly incidentAgentSession = inject(IncidentAgentSessionPort);
+
+  // Re-evaluates translated derivations when the active language changes.
+  private readonly activeLanguage = toSignal(
+    merge(
+      this.translate.onLangChange.pipe(map((event) => event.lang)),
+      this.translate.onTranslationChange.pipe(map((event) => event.lang)),
+    ),
+    { initialValue: this.translate.getCurrentLang() ?? '' },
+  );
 
   protected readonly incidentStore = inject(IncidentStore);
   protected readonly actionMessage = signal('');
@@ -86,11 +100,13 @@ export class IncidentListPage {
     this.agentSessionResource.hasValue() ? this.agentSessionResource.value() : null,
   );
   protected readonly agentSessionLoading = computed(() => this.agentSessionResource.isLoading());
-  protected readonly agentSessionError = computed(() =>
-    this.agentSessionResource.error()
-      ? 'Decision support is temporarily unavailable. Review the incident directly and retry.'
-      : '',
-  );
+  protected readonly agentSessionError = computed(() => {
+    this.activeLanguage();
+
+    return this.agentSessionResource.error()
+      ? this.translate.instant('incidents.agent.unavailable')
+      : '';
+  });
   protected readonly agentSessionState = computed(() => {
     const snapshot = this.agentSnapshot();
 
@@ -173,41 +189,43 @@ export class IncidentListPage {
 
   protected resetFilters(): void {
     this.incidentStore.resetFilters();
-    this.actionMessage.set('Filters reset.');
+    this.actionMessage.set(this.translate.instant('incidents.actions.filtersReset'));
     this.filterBar()?.focusSearch();
   }
 
   protected selectIncident(incidentId: string): void {
     this.incidentStore.selectIncident(incidentId);
-    this.actionMessage.set(`${incidentId} selected for operational review.`);
+    this.actionMessage.set(this.translate.instant('incidents.actions.selected', { id: incidentId }));
   }
 
   protected async acknowledgeIncident(incidentId: string): Promise<void> {
-    this.actionMessage.set(`Acknowledging ${incidentId}…`);
+    this.actionMessage.set(this.translate.instant('incidents.actions.acknowledging', { id: incidentId }));
 
     try {
       await this.incidentStore.acknowledge(incidentId);
-      this.actionMessage.set(`${incidentId} acknowledged by the operator.`);
+      this.actionMessage.set(this.translate.instant('incidents.actions.acknowledged', { id: incidentId }));
     } catch {
-      this.actionMessage.set(`${incidentId} could not be acknowledged.`);
+      this.actionMessage.set(this.translate.instant('incidents.actions.acknowledgeFailed', { id: incidentId }));
     }
   }
 
   protected async startIncidentResponse(incidentId: string): Promise<void> {
-    this.actionMessage.set(`Starting response for ${incidentId}…`);
+    this.actionMessage.set(this.translate.instant('incidents.actions.responseStarting', { id: incidentId }));
 
     try {
       await this.incidentStore.startResponse(incidentId);
-      this.actionMessage.set(`${incidentId} response started by the operator.`);
+      this.actionMessage.set(this.translate.instant('incidents.actions.responseStarted', { id: incidentId }));
     } catch {
-      this.actionMessage.set(`${incidentId} response could not be started.`);
+      this.actionMessage.set(this.translate.instant('incidents.actions.responseStartFailed', { id: incidentId }));
     }
   }
 
   protected reviewAgentAction(card: AgentActionCard): void {
-    const approvalMessage = card.requiresApproval
-      ? 'Approval path will be reviewed before execution.'
-      : 'Operator remains in control before execution.';
+    const approvalMessage = this.translate.instant(
+      card.requiresApproval
+        ? 'incidents.actions.approvalReview'
+        : 'incidents.actions.operatorControl',
+    );
     const snapshot = this.agentSnapshot();
 
     if (snapshot) {
@@ -236,7 +254,12 @@ export class IncidentListPage {
       ]);
     }
 
-    this.actionMessage.set(`${card.title} selected. ${approvalMessage}`);
+    this.actionMessage.set(
+      this.translate.instant('incidents.actions.cardSelected', {
+        title: card.title,
+        approvalMessage,
+      }),
+    );
   }
 
   protected reviewAgentApproval(
@@ -249,7 +272,7 @@ export class IncidentListPage {
     );
 
     if (!snapshot || !request || request.status !== 'pending') {
-      this.actionMessage.set('Approval request is no longer pending.');
+      this.actionMessage.set(this.translate.instant('incidents.actions.approvalNoLongerPending'));
       return;
     }
 
@@ -264,7 +287,12 @@ export class IncidentListPage {
       ...events,
       createAgentApprovalDecisionEvent(snapshot, decidedRequest, decision),
     ]);
-    this.actionMessage.set(`${decidedRequest.title} approval ${decision}.`);
+    this.actionMessage.set(
+      this.translate.instant('incidents.actions.approvalDecided', {
+        title: decidedRequest.title,
+        decision,
+      }),
+    );
   }
 
   protected runClientTools(): void {
@@ -272,7 +300,7 @@ export class IncidentListPage {
     const selectedIncident = this.selectedIncident();
 
     if (!snapshot || !selectedIncident) {
-      this.actionMessage.set('Client-side tools need a selected incident.');
+      this.actionMessage.set(this.translate.instant('incidents.actions.toolsNeedSelection'));
       return;
     }
 
@@ -310,21 +338,23 @@ export class IncidentListPage {
         ? [createAgentSafetyEvaluatedEvent(snapshot, safetyEvaluation, at)]
         : []),
     ]);
-    this.actionMessage.set(`${results.length} read-only client-side tools completed.`);
+    this.actionMessage.set(
+      this.translate.instant('incidents.actions.toolsCompleted', { count: results.length }),
+    );
   }
 
   protected retryLoading(): void {
-    this.actionMessage.set('Retrying incident request…');
+    this.actionMessage.set(this.translate.instant('incidents.actions.retrying'));
     this.incidentStore.reload();
   }
 
   protected goToPreviousPage(): void {
     this.incidentStore.previousPage();
-    this.actionMessage.set('Previous incident page requested.');
+    this.actionMessage.set(this.translate.instant('incidents.actions.previousPage'));
   }
 
   protected goToNextPage(): void {
     this.incidentStore.nextPage();
-    this.actionMessage.set('Next incident page requested.');
+    this.actionMessage.set(this.translate.instant('incidents.actions.nextPage'));
   }
 }

@@ -1,6 +1,7 @@
 import { provideRouter } from '@angular/router';
 import { TestBed } from '@angular/core/testing';
 
+import { provideTranslateTesting, useEnglishTranslations } from '../../../../../testing/translate-testing';
 import {
   buildIncidentAgentSnapshot,
   IncidentAgentSessionPort,
@@ -135,12 +136,15 @@ describe('IncidentListPage', () => {
     await TestBed.configureTestingModule({
       imports: [IncidentListPage],
       providers: [
+        ...provideTranslateTesting(),
         provideRouter([]),
         IncidentStore,
         { provide: IncidentRepositoryPort, useValue: repository },
         { provide: IncidentAgentSessionPort, useClass: FakeIncidentAgentSessionRepository },
       ],
     }).compileComponents();
+
+    useEnglishTranslations();
   });
 
   it('renders resource results and keeps a valid linked selection', async () => {

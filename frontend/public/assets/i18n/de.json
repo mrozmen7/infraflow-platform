@@ -1,0 +1,151 @@
+{
+  "app": {
+    "skipLink": "Zum Hauptinhalt springen",
+    "sidebarAria": "InfraFlow-Anwendungsnavigation",
+    "brandHomeAria": "InfraFlow-Betriebsstartseite",
+    "brandTagline": "Betriebskonsole",
+    "workspaceLabel": "Arbeitsbereich",
+    "workspaceValue": "Kritische Infrastruktur",
+    "navigationAria": "Hauptnavigation",
+    "systemStatusTitle": "Systeme nominal",
+    "systemStatusDescription": "Operative Datendienste verbunden",
+    "activeSiteLabel": "Aktive Anlage",
+    "activeSiteValue": "Nordtunnelnetz",
+    "contextAria": "Aktueller operativer Kontext",
+    "shiftLabel": "Schicht",
+    "shiftValue": "Alpha · 06:00–14:00",
+    "environmentLabel": "Umgebung",
+    "environmentValue": "Training",
+    "navigationLoading": "Seite wird geladen",
+    "navigationInProgress": "Navigation läuft",
+    "footerEnvironment": "InfraFlow-Lernumgebung",
+    "footerStack": "Angular 22 · Qualitätsgates aktiv",
+    "languageSwitcherLabel": "Sprache"
+  },
+  "navigation": {
+    "incidents": "Störungen",
+    "assets": "Anlagen",
+    "workOrders": "Arbeitsaufträge"
+  },
+  "login": {
+    "eyebrow": "InfraFlow-Betriebskonsole",
+    "title": "Melden Sie sich beim operativen Arbeitsbereich an",
+    "summary": "Ihre Rolle steuert, welche Störungsworkflows Sie ausführen dürfen. Kritische Aktionen bleiben durch das Backend autorisiert.",
+    "username": "Benutzername",
+    "password": "Passwort",
+    "submit": "Anmelden",
+    "submitting": "Anmeldung läuft…",
+    "invalidCredentials": "Der Benutzername oder das Passwort ist ungültig.",
+    "serviceUnavailable": "Der lokale Anmeldedienst ist nicht verfügbar. Starten Sie den vollständigen lokalen Stack mit ./infra/local/start-local.sh und versuchen Sie es erneut."
+  },
+  "incidents": {
+    "breadcrumbOperations": "Betrieb",
+    "title": "Störungen",
+    "lede": "Sichten Sie live eingehende Infrastrukturereignisse und koordinieren Sie die Reaktion der Operatoren.",
+    "reportIncident": "Störung melden",
+    "metrics": {
+      "aria": "Aktuelle Störungskennzahlen",
+      "active": "Aktive Störungen",
+      "critical": "Kritisch offen",
+      "inProgress": "In Bearbeitung",
+      "dataSource": "Datenquelle",
+      "connecting": "Verbindung wird aufgebaut"
+    },
+    "filters": {
+      "aria": "Störungsfilter",
+      "searchLabel": "Störungen suchen",
+      "searchPlaceholder": "ID, Anlage, Standort oder Titel",
+      "severityLabel": "Schweregrad",
+      "allSeverities": "Alle",
+      "reset": "Filter zurücksetzen"
+    },
+    "queue": {
+      "liveQueue": "Live-Warteschlange",
+      "title": "Operative Störungen",
+      "resultsAria": "Störungsergebnisse",
+      "loading": "Störungsbetrieb wird geladen…",
+      "errorTitle": "Störungsanfrage fehlgeschlagen",
+      "retry": "Erneut versuchen",
+      "resultSummaryOne": "{{count}} Störung gefunden",
+      "resultSummaryMany": "{{count}} Störungen gefunden"
+    },
+    "list": {
+      "incident": "Störung",
+      "classification": "Klassifikation",
+      "status": "Status",
+      "action": "Aktion"
+    },
+    "card": {
+      "status": "Status: {{status}}",
+      "inspect": "Prüfen",
+      "selected": "Ausgewählt",
+      "acknowledge": "Quittieren",
+      "acknowledging": "Wird quittiert…",
+      "acknowledgementInProgress": "Quittierung läuft",
+      "noSignals": "Kein operatives Signal gemeldet",
+      "signalsAria": "Operative Signale",
+      "priorityAria": "Priorität {{priority}}",
+      "guidance": {
+        "critical": "Sofortige Sicherheitsmassnahme erforderlich",
+        "high": "Dringende operative Prüfung erforderlich",
+        "medium": "Operative Inspektion einplanen",
+        "low": "Während des Regelbetriebs überwachen"
+      }
+    },
+    "inspector": {
+      "label": "Störungsdetails",
+      "panelAria": "Details der ausgewählten Störung",
+      "emptyTitle": "Wählen Sie eine Störung",
+      "emptyDescription": "Wählen Sie einen Eintrag aus der Live-Warteschlange, um den operativen Kontext zu prüfen.",
+      "asset": "Anlage",
+      "location": "Standort",
+      "reported": "Gemeldet",
+      "signalsTitle": "Operative Signale",
+      "noSignals": "Kein operatives Signal gemeldet",
+      "guidanceTitle": "Hinweise für Operatoren",
+      "guidanceText": "Prüfen Sie die Feldbedingungen und den Zustand der verknüpften Anlage, bevor Sie den Störungsworkflow fortführen.",
+      "openFullRecord": "Vollständigen Datensatz öffnen",
+      "draftWorkOrder": "Arbeitsauftrag entwerfen",
+      "acknowledge": "Quittieren",
+      "acknowledging": "Wird quittiert…",
+      "acknowledgementInProgress": "Quittierung läuft",
+      "startResponse": "Bearbeitung starten",
+      "startingResponse": "Bearbeitung wird gestartet…",
+      "responseStartInProgress": "Bearbeitungsstart läuft"
+    },
+    "empty": {
+      "title": "Keine Störungen entsprechen diesen Filtern",
+      "description": "Passen Sie die Suche oder den Schweregradfilter an, um zur operativen Warteschlange zurückzukehren.",
+      "clearFilters": "Filter löschen"
+    },
+    "pagination": {
+      "aria": "Seiten der Störungsergebnisse",
+      "previous": "Zurück",
+      "next": "Weiter",
+      "pageIndicator": "Seite {{page}} von {{total}}"
+    },
+    "actions": {
+      "filtersReset": "Filter zurückgesetzt.",
+      "selected": "{{id}} für die operative Prüfung ausgewählt.",
+      "acknowledging": "{{id}} wird quittiert…",
+      "acknowledged": "{{id}} wurde durch den Operator quittiert.",
+      "acknowledgeFailed": "{{id}} konnte nicht quittiert werden.",
+      "responseStarting": "Die Bearbeitung von {{id}} wird gestartet…",
+      "responseStarted": "Die Bearbeitung von {{id}} wurde durch den Operator gestartet.",
+      "responseStartFailed": "Die Bearbeitung von {{id}} konnte nicht gestartet werden.",
+      "retrying": "Die Störungsanfrage wird erneut versucht…",
+      "previousPage": "Vorherige Störungsseite angefordert.",
+      "nextPage": "Nächste Störungsseite angefordert.",
+      "cardSelected": "{{title}} ausgewählt. {{approvalMessage}}",
+      "approvalReview": "Der Genehmigungspfad wird vor der Ausführung geprüft.",
+      "operatorControl": "Der Operator behält vor der Ausführung die Kontrolle.",
+      "approvalNoLongerPending": "Die Genehmigungsanfrage ist nicht mehr offen.",
+      "approvalDecided": "Genehmigung für {{title}}: {{decision}}.",
+      "toolsNeedSelection": "Client-seitige Werkzeuge benötigen eine ausgewählte Störung.",
+      "toolsCompleted": "{{count}} schreibgeschützte client-seitige Werkzeuge abgeschlossen."
+    },
+    "agent": {
+      "unavailable": "Die Entscheidungsunterstützung ist vorübergehend nicht verfügbar. Prüfen Sie die Störung direkt und versuchen Sie es erneut."
+    }
+  }
+}

@@ -2,37 +2,37 @@
   <header class="incident-page__header">
     <div>
       <nav class="breadcrumb" aria-label="Breadcrumb">
-        <span>Operations</span>
+        <span>{{ 'incidents.breadcrumbOperations' | translate }}</span>
         <span aria-hidden="true">/</span>
-        <strong>Incidents</strong>
+        <strong>{{ 'incidents.title' | translate }}</strong>
       </nav>
-      <h1 id="incident-page-title">Incidents</h1>
-      <p class="lede">Triage live infrastructure events and coordinate operator response.</p>
+      <h1 id="incident-page-title">{{ 'incidents.title' | translate }}</h1>
+      <p class="lede">{{ 'incidents.lede' | translate }}</p>
     </div>
 
     <a class="create-link" routerLink="/incidents/new">
       <span aria-hidden="true">+</span>
-      Report incident
+      {{ 'incidents.reportIncident' | translate }}
     </a>
   </header>
 
-  <dl class="operations-summary" aria-label="Current incident metrics">
+  <dl class="operations-summary" [attr.aria-label]="'incidents.metrics.aria' | translate">
     <div>
-      <dt>Active incidents</dt>
+      <dt>{{ 'incidents.metrics.active' | translate }}</dt>
       <dd>{{ activeIncidentCount() }}</dd>
     </div>
     <div>
-      <dt>Critical open</dt>
+      <dt>{{ 'incidents.metrics.critical' | translate }}</dt>
       <dd class="metric-critical">{{ criticalIncidentCount() }}</dd>
     </div>
     <div>
-      <dt>In progress</dt>
+      <dt>{{ 'incidents.metrics.inProgress' | translate }}</dt>
       <dd>{{ inProgressIncidentCount() }}</dd>
     </div>
     <div>
-      <dt>Data source</dt>
+      <dt>{{ 'incidents.metrics.dataSource' | translate }}</dt>
       <dd class="metric-source">
-        {{ incidentStore.loadSource() ?? 'Connecting' }}
+        {{ incidentStore.loadSource() ?? ('incidents.metrics.connecting' | translate) }}
       </dd>
     </div>
   </dl>
@@ -51,8 +51,8 @@
     <section class="queue-panel" aria-labelledby="incident-queue-title">
       <header class="panel-heading">
         <div>
-          <p>Live queue</p>
-          <h2 id="incident-queue-title">Operational incidents</h2>
+          <p>{{ 'incidents.queue.liveQueue' | translate }}</p>
+          <h2 id="incident-queue-title">{{ 'incidents.queue.title' | translate }}</h2>
         </div>
         <span aria-live="polite">{{ incidentStore.resultSummary() }}</span>
       </header>
@@ -60,13 +60,13 @@
       @if (incidentStore.isLoading()) {
         <div class="loading-state" role="status">
           <span class="loading-state__indicator" aria-hidden="true"></span>
-          Loading incident operations…
+          {{ 'incidents.queue.loading' | translate }}
         </div>
       } @else if (incidentStore.errorMessage(); as errorMessage) {
         <section class="error-state" role="alert" aria-labelledby="incident-error-title">
-          <h2 id="incident-error-title">Incident request failed</h2>
+          <h2 id="incident-error-title">{{ 'incidents.queue.errorTitle' | translate }}</h2>
           <p>{{ errorMessage }}</p>
-          <button type="button" (click)="retryLoading()">Retry</button>
+          <button type="button" (click)="retryLoading()">{{ 'incidents.queue.retry' | translate }}</button>
         </section>
       } @else if (incidentStore.incidents().length > 0) {
         <app-incident-list
@@ -78,36 +78,38 @@
         />
 
         @if (incidentStore.totalPages() > 1) {
-          <nav class="pagination" aria-label="Incident result pages">
+          <nav class="pagination" [attr.aria-label]="'incidents.pagination.aria' | translate">
             <button
               type="button"
               (click)="goToPreviousPage()"
               [disabled]="!incidentStore.hasPreviousPage()"
             >
-              Previous
+              {{ 'incidents.pagination.previous' | translate }}
             </button>
             <span aria-live="polite">
-              Page {{ incidentStore.page() + 1 }} of {{ incidentStore.totalPages() }}
+              {{ 'incidents.pagination.pageIndicator' | translate: { page: incidentStore.page() + 1, total: incidentStore.totalPages() } }}
             </span>
             <button
               type="button"
               (click)="goToNextPage()"
               [disabled]="!incidentStore.hasNextPage()"
             >
-              Next
+              {{ 'incidents.pagination.next' | translate }}
             </button>
           </nav>
         }
       } @else {
-        <app-empty-state title="No incidents match these filters">
-          <p>Change the search or severity filter to return to the operational queue.</p>
-          <button empty-state-actions type="button" (click)="resetFilters()">Clear filters</button>
+        <app-empty-state [title]="'incidents.empty.title' | translate">
+          <p>{{ 'incidents.empty.description' | translate }}</p>
+          <button empty-state-actions type="button" (click)="resetFilters()">
+            {{ 'incidents.empty.clearFilters' | translate }}
+          </button>
         </app-empty-state>
       }
     </section>
 
     <aside class="side-rail" aria-label="Selected incident details and decision support">
-      <section class="inspector-panel" aria-label="Selected incident details">
+      <section class="inspector-panel" [attr.aria-label]="'incidents.inspector.panelAria' | translate">
         @if (selectedIncident(); as incident) {
           <app-incident-inspector
             [incident]="incident"
@@ -118,9 +120,9 @@
           />
         } @else {
           <section class="inspector-empty">
-            <p>Incident inspector</p>
-            <h2>Select an incident</h2>
-            <span>Choose an item from the live queue to review its operational context.</span>
+            <p>{{ 'incidents.inspector.label' | translate }}</p>
+            <h2>{{ 'incidents.inspector.emptyTitle' | translate }}</h2>
+            <span>{{ 'incidents.inspector.emptyDescription' | translate }}</span>
           </section>
         }
       </section>

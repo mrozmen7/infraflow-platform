@@ -1,25 +1,27 @@
-<form class="filter-bar" aria-label="Incident filters" (submit)="$event.preventDefault()">
+<form class="filter-bar" [attr.aria-label]="'incidents.filters.aria' | translate" (submit)="$event.preventDefault()">
   <label class="filter-bar__field filter-bar__field--search">
-    <span>Search incidents</span>
+    <span>{{ 'incidents.filters.searchLabel' | translate }}</span>
     <input
       #searchInput
       type="search"
       name="incident-search"
       autocomplete="off"
-      placeholder="ID, asset, location or title"
+      [placeholder]="'incidents.filters.searchPlaceholder' | translate"
       [value]="searchTerm()"
       (input)="onSearchInput($event)"
     />
   </label>
 
   <label class="filter-bar__field">
-    <span>Severity</span>
+    <span>{{ 'incidents.filters.severityLabel' | translate }}</span>
     <select name="incident-severity" [value]="severity()" (change)="onSeverityChange($event)">
       @for (severityOption of severityOptions; track severityOption) {
-        <option [value]="severityOption">{{ severityOption }}</option>
+        <option [value]="severityOption">
+          {{ severityOption === 'All' ? ('incidents.filters.allSeverities' | translate) : severityOption }}
+        </option>
       }
     </select>
   </label>
 
-  <button type="button" (click)="resetRequested.emit()">Reset filters</button>
+  <button type="button" (click)="resetRequested.emit()">{{ 'incidents.filters.reset' | translate }}</button>
 </form>

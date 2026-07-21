@@ -1,0 +1,151 @@
+{
+  "app": {
+    "skipLink": "Skip to main content",
+    "sidebarAria": "InfraFlow application navigation",
+    "brandHomeAria": "InfraFlow operations home",
+    "brandTagline": "Operations console",
+    "workspaceLabel": "Workspace",
+    "workspaceValue": "Critical infrastructure",
+    "navigationAria": "Primary navigation",
+    "systemStatusTitle": "Systems nominal",
+    "systemStatusDescription": "Operational data services connected",
+    "activeSiteLabel": "Active site",
+    "activeSiteValue": "North Tunnel Network",
+    "contextAria": "Current operational context",
+    "shiftLabel": "Shift",
+    "shiftValue": "Alpha · 06:00–14:00",
+    "environmentLabel": "Environment",
+    "environmentValue": "Training",
+    "navigationLoading": "Loading page",
+    "navigationInProgress": "Navigation in progress",
+    "footerEnvironment": "InfraFlow learning environment",
+    "footerStack": "Angular 22 · Quality gates active",
+    "languageSwitcherLabel": "Language"
+  },
+  "navigation": {
+    "incidents": "Incidents",
+    "assets": "Assets",
+    "workOrders": "Work orders"
+  },
+  "login": {
+    "eyebrow": "InfraFlow operations console",
+    "title": "Sign in to the operational workspace",
+    "summary": "Your role controls which incident workflows you may perform. Critical actions remain authorized by the backend.",
+    "username": "Username",
+    "password": "Password",
+    "submit": "Sign in",
+    "submitting": "Signing in…",
+    "invalidCredentials": "The username or password is not valid.",
+    "serviceUnavailable": "The local sign-in service is unavailable. Start the full local stack with ./infra/local/start-local.sh, then try again."
+  },
+  "incidents": {
+    "breadcrumbOperations": "Operations",
+    "title": "Incidents",
+    "lede": "Triage live infrastructure events and coordinate operator response.",
+    "reportIncident": "Report incident",
+    "metrics": {
+      "aria": "Current incident metrics",
+      "active": "Active incidents",
+      "critical": "Critical open",
+      "inProgress": "In progress",
+      "dataSource": "Data source",
+      "connecting": "Connecting"
+    },
+    "filters": {
+      "aria": "Incident filters",
+      "searchLabel": "Search incidents",
+      "searchPlaceholder": "ID, asset, location or title",
+      "severityLabel": "Severity",
+      "allSeverities": "All",
+      "reset": "Reset filters"
+    },
+    "queue": {
+      "liveQueue": "Live queue",
+      "title": "Operational incidents",
+      "resultsAria": "Incident results",
+      "loading": "Loading incident operations…",
+      "errorTitle": "Incident request failed",
+      "retry": "Retry",
+      "resultSummaryOne": "{{count}} incident found",
+      "resultSummaryMany": "{{count}} incidents found"
+    },
+    "list": {
+      "incident": "Incident",
+      "classification": "Classification",
+      "status": "Status",
+      "action": "Action"
+    },
+    "card": {
+      "status": "Status: {{status}}",
+      "inspect": "Inspect",
+      "selected": "Selected",
+      "acknowledge": "Acknowledge",
+      "acknowledging": "Acknowledging…",
+      "acknowledgementInProgress": "Acknowledgement in progress",
+      "noSignals": "No operational signal reported",
+      "signalsAria": "Operational signals",
+      "priorityAria": "Priority {{priority}}",
+      "guidance": {
+        "critical": "Immediate safety response required",
+        "high": "Urgent operational review required",
+        "medium": "Plan an operational inspection",
+        "low": "Monitor during standard operations"
+      }
+    },
+    "inspector": {
+      "label": "Incident inspector",
+      "panelAria": "Selected incident details",
+      "emptyTitle": "Select an incident",
+      "emptyDescription": "Choose an item from the live queue to review its operational context.",
+      "asset": "Asset",
+      "location": "Location",
+      "reported": "Reported",
+      "signalsTitle": "Operational signals",
+      "noSignals": "No operational signal reported",
+      "guidanceTitle": "Operator guidance",
+      "guidanceText": "Verify field conditions and linked asset state before advancing the incident workflow.",
+      "openFullRecord": "Open full record",
+      "draftWorkOrder": "Draft work order",
+      "acknowledge": "Acknowledge",
+      "acknowledging": "Acknowledging…",
+      "acknowledgementInProgress": "Acknowledgement in progress",
+      "startResponse": "Start response",
+      "startingResponse": "Starting response…",
+      "responseStartInProgress": "Response start in progress"
+    },
+    "empty": {
+      "title": "No incidents match these filters",
+      "description": "Change the search or severity filter to return to the operational queue.",
+      "clearFilters": "Clear filters"
+    },
+    "pagination": {
+      "aria": "Incident result pages",
+      "previous": "Previous",
+      "next": "Next",
+      "pageIndicator": "Page {{page}} of {{total}}"
+    },
+    "actions": {
+      "filtersReset": "Filters reset.",
+      "selected": "{{id}} selected for operational review.",
+      "acknowledging": "Acknowledging {{id}}…",
+      "acknowledged": "{{id}} acknowledged by the operator.",
+      "acknowledgeFailed": "{{id}} could not be acknowledged.",
+      "responseStarting": "Starting response for {{id}}…",
+      "responseStarted": "{{id}} response started by the operator.",
+      "responseStartFailed": "{{id}} response could not be started.",
+      "retrying": "Retrying incident request…",
+      "previousPage": "Previous incident page requested.",
+      "nextPage": "Next incident page requested.",
+      "cardSelected": "{{title}} selected. {{approvalMessage}}",
+      "approvalReview": "Approval path will be reviewed before execution.",
+      "operatorControl": "Operator remains in control before execution.",
+      "approvalNoLongerPending": "Approval request is no longer pending.",
+      "approvalDecided": "{{title}} approval {{decision}}.",
+      "toolsNeedSelection": "Client-side tools need a selected incident.",
+      "toolsCompleted": "{{count}} read-only client-side tools completed."
+    },
+    "agent": {
+      "unavailable": "Decision support is temporarily unavailable. Review the incident directly and retry."
+    }
+  }
+}

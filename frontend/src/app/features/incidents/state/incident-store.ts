@@ -1,6 +1,7 @@
 import { computed, effect, inject, Injectable, resource, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+import { debounceTime, distinctUntilChanged, map, merge } from 'rxjs';
 
 import {
   acknowledgeIncident as acknowledgeIncidentUseCase,
@@ -58,8 +59,18 @@ export class IncidentResponseStartInProgressError extends Error {
 @Injectable()
 export class IncidentStore {
   private readonly repository = inject(IncidentRepositoryPort);
+  private readonly translate = inject(TranslateService);
   private readonly state = signal<IncidentStoreState>(createInitialIncidentStoreState());
   private readonly incidentCache = new IncidentQueryCache(INCIDENT_CACHE_TTL_MS);
+
+  // Re-evaluates translated derivations when the active language changes.
+  private readonly activeLanguage = toSignal(
+    merge(
+      this.translate.onLangChange.pipe(map((event) => event.lang)),
+      this.translate.onTranslationChange.pipe(map((event) => event.lang)),
+    ),
+    { initialValue: this.translate.getCurrentLang() ?? '' },
+  );
 
   readonly searchTerm = computed(() => this.state().query.searchTerm);
   readonly severityFilter = computed(() => this.state().query.severity);
@@ -83,8 +94,14 @@ export class IncidentStore {
     () => this.state().pendingResponseStartId,
   );
   readonly resultSummary = computed(() => {
+    this.activeLanguage();
     const incidentCount = this.totalElements();
-    return `${incidentCount} incident${incidentCount === 1 ? '' : 's'} found`;
+    const summaryKey =
+      incidentCount === 1
+        ? 'incidents.queue.resultSummaryOne'
+        : 'incidents.queue.resultSummaryMany';
+
+    return this.translate.instant(summaryKey, { count: incidentCount });
   });
 
   private readonly debouncedSearchTerm = toSignal(

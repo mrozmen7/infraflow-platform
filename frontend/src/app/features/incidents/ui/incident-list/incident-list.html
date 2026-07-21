@@ -1,11 +1,11 @@
 <div class="incident-list__columns" aria-hidden="true">
-  <span>Incident</span>
-  <span>Classification</span>
-  <span>Status</span>
-  <span>Action</span>
+  <span>{{ 'incidents.list.incident' | translate }}</span>
+  <span>{{ 'incidents.list.classification' | translate }}</span>
+  <span>{{ 'incidents.list.status' | translate }}</span>
+  <span>{{ 'incidents.list.action' | translate }}</span>
 </div>
 
-<ol class="incident-list" aria-label="Incident results">
+<ol class="incident-list" [attr.aria-label]="'incidents.queue.resultsAria' | translate">
   @for (incident of incidents(); track incident.id) {
     <li>
       <app-incident-card

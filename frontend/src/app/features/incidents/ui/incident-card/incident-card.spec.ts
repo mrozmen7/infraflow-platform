@@ -1,6 +1,7 @@
 import { provideRouter } from '@angular/router';
 import { TestBed } from '@angular/core/testing';
 
+import { provideTranslateTesting, useEnglishTranslations } from '../../../../../testing/translate-testing';
 import { Incident } from '../../domain/incident';
 import { IncidentCard } from './incident-card';
 
@@ -21,8 +22,10 @@ describe('IncidentCard', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [IncidentCard],
-      providers: [provideRouter([])],
+      providers: [provideRouter([]), ...provideTranslateTesting()],
     }).compileComponents();
+
+    useEnglishTranslations();
   });
 
   it('renders the required incident input', async () => {

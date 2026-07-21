@@ -1,15 +1,14 @@
 <main class="login-page" aria-labelledby="login-title">
   <section class="login-card">
-    <p class="login-card__eyebrow">InfraFlow operations console</p>
-    <h1 id="login-title">Sign in to the operational workspace</h1>
+    <p class="login-card__eyebrow">{{ 'login.eyebrow' | translate }}</p>
+    <h1 id="login-title">{{ 'login.title' | translate }}</h1>
     <p class="login-card__summary">
-      Your role controls which incident workflows you may perform. Critical actions remain
-      authorized by the backend.
+      {{ 'login.summary' | translate }}
     </p>
 
     <form (submit)="$event.preventDefault(); submit()">
       <label>
-        <span>Username</span>
+        <span>{{ 'login.username' | translate }}</span>
         <input
           #usernameInput
           type="text"
@@ -21,7 +20,7 @@
       </label>
 
       <label>
-        <span>Password</span>
+        <span>{{ 'login.password' | translate }}</span>
         <input
           #passwordInput
           type="password"
@@ -37,7 +36,7 @@
       }
 
       <button type="submit" [disabled]="isSubmitting() || !canSubmit()">
-        {{ isSubmitting() ? 'Signing in…' : 'Sign in' }}
+        {{ (isSubmitting() ? 'login.submitting' : 'login.submit') | translate }}
       </button>
     </form>
   </section>
