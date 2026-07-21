@@ -44,6 +44,34 @@ class IncidentWorkflowPolicyTests {
       .hasMessage("Only acknowledged incidents can start an operational response.");
   }
 
+  @Test
+  void inProgressIncidentCanBeResolved() {
+    Incident resolved = incident(IncidentStatus.IN_PROGRESS).resolve();
+
+    assertThat(resolved.status()).isEqualTo(IncidentStatus.RESOLVED);
+  }
+
+  @Test
+  void openIncidentCannotBeResolvedDirectly() {
+    assertThatThrownBy(() -> incident(IncidentStatus.OPEN).resolve())
+      .isInstanceOf(BusinessRuleViolationException.class)
+      .hasMessage("Only incidents with an active response can be resolved.");
+  }
+
+  @Test
+  void acknowledgedIncidentCannotBeResolvedWithoutActiveResponse() {
+    assertThatThrownBy(() -> incident(IncidentStatus.ACKNOWLEDGED).resolve())
+      .isInstanceOf(BusinessRuleViolationException.class)
+      .hasMessage("Only incidents with an active response can be resolved.");
+  }
+
+  @Test
+  void resolvedIncidentCannotBeResolvedAgain() {
+    assertThatThrownBy(() -> incident(IncidentStatus.RESOLVED).resolve())
+      .isInstanceOf(BusinessRuleViolationException.class)
+      .hasMessage("Only incidents with an active response can be resolved.");
+  }
+
   private Incident incident(IncidentStatus status) {
     return new Incident(
       new IncidentId("INC-2026-0009"),

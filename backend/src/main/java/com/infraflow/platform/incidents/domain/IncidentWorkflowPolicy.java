@@ -24,9 +24,9 @@ public final class IncidentWorkflowPolicy {
   }
 
   public static void ensureCanResolve(Incident incident) {
-    if (incident.status() == IncidentStatus.RESOLVED) {
+    if (incident.status() != IncidentStatus.IN_PROGRESS) {
       throw new BusinessRuleViolationException(
-        "Resolved incidents cannot be resolved again."
+        "Only incidents with an active response can be resolved."
       );
     }
   }

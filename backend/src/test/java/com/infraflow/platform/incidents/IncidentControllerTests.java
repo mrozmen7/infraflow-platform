@@ -163,9 +163,17 @@ class IncidentControllerTests {
 
   @Test
   @WithMockUser(roles = "ADMIN")
-  void allowsAdminToResolveIncident() throws Exception {
-    mockMvc.perform(post("/api/v1/incidents/INC-2026-0001/resolve"))
+  void allowsAdminToResolveIncidentWithActiveResponse() throws Exception {
+    mockMvc.perform(post("/api/v1/incidents/INC-2026-0002/resolve"))
       .andExpect(status().isOk())
       .andExpect(jsonPath("$.status").value("Resolved"));
+  }
+
+  @Test
+  @WithMockUser(roles = "ADMIN")
+  void rejectsResolveForIncidentWithoutActiveResponse() throws Exception {
+    mockMvc.perform(post("/api/v1/incidents/INC-2026-0001/resolve"))
+      .andExpect(status().isConflict())
+      .andExpect(jsonPath("$.message").value("Only incidents with an active response can be resolved."));
   }
 }
