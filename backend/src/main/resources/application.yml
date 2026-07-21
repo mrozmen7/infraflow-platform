@@ -41,6 +41,9 @@ springdoc:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
+  # Pin JSON as the declared response media type so exported contracts carry
+  # application/json instead of */* (client generators key on this).
+  default-produces-media-type: application/json
 
 infraflow:
   cors:

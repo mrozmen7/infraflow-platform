@@ -1,6 +1,13 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 
+import { acknowledgeIncident } from '../../../../core/api/generated/fn/incidents/acknowledge-incident';
+import { createIncident } from '../../../../core/api/generated/fn/incidents/create-incident';
+import { getIncident } from '../../../../core/api/generated/fn/incidents/get-incident';
+import { searchIncidents } from '../../../../core/api/generated/fn/incidents/search-incidents';
+import { startIncidentResponse } from '../../../../core/api/generated/fn/incidents/start-incident-response';
+import type { IncidentResponse } from '../../../../core/api/generated/models/incident-response';
+import { requireResponseFields } from '../../../../core/api/require-response-fields';
 import type { AppRuntimeConfig } from '../../../../core/config/app-runtime-config';
 import type { IncidentRepositoryPort } from '../../application';
 import {
@@ -9,15 +16,21 @@ import {
   type IncidentPage,
   type IncidentQuery,
   type NewIncident,
+  parseIncidentId,
 } from '../../domain/incident';
 
-interface IncidentPageResponse {
-  readonly content: readonly Incident[];
-  readonly page: number;
-  readonly size: number;
-  readonly totalElements: number;
-  readonly totalPages: number;
-}
+const INCIDENT_REQUIRED_FIELDS = [
+  'id',
+  'title',
+  'description',
+  'location',
+  'assetId',
+  'reportedAt',
+  'severity',
+  'priority',
+  'status',
+  'operationalSignals',
+] as const;
 
 export class HttpIncidentRepository implements IncidentRepositoryPort {
   constructor(
@@ -26,42 +39,44 @@ export class HttpIncidentRepository implements IncidentRepositoryPort {
   ) {}
 
   async search(query: IncidentQuery): Promise<IncidentPage> {
-    const params = new HttpParams()
-      .set('searchTerm', query.searchTerm)
-      .set('severity', query.severity)
-      .set('page', query.page)
-      .set('size', query.size);
-
     const response = await firstValueFrom(
-      this.http.get<IncidentPageResponse>(this.incidentsUrl(), { params }),
+      searchIncidents(this.http, this.rootUrl(), {
+        searchTerm: query.searchTerm,
+        severity: query.severity,
+        page: query.page,
+        size: query.size,
+      }),
     );
+    const page = response.body;
 
     return {
-      incidents: response.content,
-      page: response.page,
-      size: response.size,
-      totalElements: response.totalElements,
-      totalPages: response.totalPages,
+      incidents: (page.content ?? []).map((incident) => toIncident(incident)),
+      page: page.page ?? query.page,
+      size: page.size ?? query.size,
+      totalElements: page.totalElements ?? 0,
+      totalPages: page.totalPages ?? 0,
     };
   }
 
-  findById(incidentId: IncidentId): Promise<Incident | undefined> {
-    return firstValueFrom(
-      this.http.get<Incident>(`${this.incidentsUrl()}/${incidentId}`),
+  async findById(incidentId: IncidentId): Promise<Incident | undefined> {
+    const response = await firstValueFrom(
+      getIncident(this.http, this.rootUrl(), { incidentId }),
     );
+
+    return toIncident(response.body);
   }
 
   save(incident: Incident): Promise<Incident> {
     if (incident.status === 'Acknowledged') {
       return firstValueFrom(
-        this.http.post<Incident>(`${this.incidentsUrl()}/${incident.id}/acknowledge`, {}),
-      );
+        acknowledgeIncident(this.http, this.rootUrl(), { incidentId: incident.id }),
+      ).then((response) => toIncident(response.body));
     }
 
     if (incident.status === 'In Progress') {
       return firstValueFrom(
-        this.http.post<Incident>(`${this.incidentsUrl()}/${incident.id}/start-response`, {}),
-      );
+        startIncidentResponse(this.http, this.rootUrl(), { incidentId: incident.id }),
+      ).then((response) => toIncident(response.body));
     }
 
     return Promise.resolve(incident);
@@ -69,11 +84,32 @@ export class HttpIncidentRepository implements IncidentRepositoryPort {
 
   create(newIncident: NewIncident): Promise<Incident> {
     return firstValueFrom(
-      this.http.post<Incident>(this.incidentsUrl(), newIncident),
-    );
+      createIncident(this.http, this.rootUrl(), {
+        body: { ...newIncident, operationalSignals: [...newIncident.operationalSignals] },
+      }),
+    ).then((response) => toIncident(response.body));
   }
 
-  private incidentsUrl(): string {
-    return `${this.runtimeConfig.apiBaseUrl}/v1/incidents`;
+  private rootUrl(): string {
+    // Generated operation paths are contract-absolute (`/api/v1/...`); the
+    // runtime config only contributes an optional origin prefix before `/api`.
+    return this.runtimeConfig.apiBaseUrl.replace(/\/api$/, '');
   }
+}
+
+function toIncident(response: IncidentResponse): Incident {
+  requireResponseFields(response, INCIDENT_REQUIRED_FIELDS, 'IncidentResponse');
+
+  return {
+    id: parseIncidentId(response.id!),
+    title: response.title!,
+    description: response.description!,
+    location: response.location!,
+    assetId: response.assetId!,
+    reportedAt: response.reportedAt!,
+    severity: response.severity!,
+    priority: response.priority!,
+    status: response.status!,
+    operationalSignals: response.operationalSignals!,
+  };
 }

@@ -9,11 +9,13 @@
     "build:pages-demo": "ng build --configuration pages-demo",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "generate:api": "ng-openapi-gen --input ../contracts/openapi/infraflow-api-v1.openapi.json --output src/app/core/api/generated",
+    "check:api": "node scripts/check-api-client.mjs",
     "test:architecture": "node scripts/check-architecture.mjs",
     "test:guardrails": "node scripts/check-frontend-guardrails.mjs",
     "e2e": "playwright test",
     "e2e:headed": "playwright test --headed",
-    "quality": "npm run test:architecture && npm run test:guardrails && npm test -- --watch=false && npm run build",
+    "quality": "npm run test:architecture && npm run test:guardrails && npm run check:api && npm test -- --watch=false && npm run build",
     "quality:full": "npm run quality && npm run e2e"
   },
   "private": true,
@@ -36,6 +38,7 @@
     "@angular/compiler-cli": "^22.0.0",
     "@playwright/test": "1.61.1",
     "jsdom": "^28.0.0",
+    "ng-openapi-gen": "^1.0.5",
     "prettier": "^3.8.1",
     "typescript": "~6.0.2",
     "vitest": "^4.0.8"

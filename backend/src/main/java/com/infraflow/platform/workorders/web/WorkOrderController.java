@@ -38,7 +38,7 @@ class WorkOrderController {
 
   @GetMapping
   @PreAuthorize("hasAnyRole('OPERATOR', 'ADMIN')")
-  @Operation(summary = "List work orders")
+  @Operation(operationId = "listWorkOrders", summary = "List work orders")
   List<WorkOrderResponse> findAll() {
     return workOrderService.findAll().stream()
       .map(WorkOrderResponse::from)
@@ -47,7 +47,7 @@ class WorkOrderController {
 
   @GetMapping("/{workOrderId}")
   @PreAuthorize("hasAnyRole('OPERATOR', 'ADMIN')")
-  @Operation(summary = "Get work order by id")
+  @Operation(operationId = "getWorkOrder", summary = "Get work order by id")
   WorkOrderResponse get(
     @Parameter(example = "WO-2026-0001")
     @PathVariable @Pattern(regexp = "WO-\\d{4}-\\d{4}") String workOrderId
@@ -58,6 +58,7 @@ class WorkOrderController {
   @PostMapping("/drafts")
   @PreAuthorize("hasAnyRole('OPERATOR', 'ADMIN')")
   @Operation(
+    operationId = "draftWorkOrder",
     summary = "Draft a work order from an incident",
     description = "Creates a controlled work order draft from an existing incident context."
   )
@@ -89,18 +90,21 @@ class WorkOrderController {
 
   @PostMapping("/{workOrderId}/ready")
   @PreAuthorize("hasAnyRole('OPERATOR', 'ADMIN')")
+  @Operation(operationId = "moveWorkOrderToReady", summary = "Move a drafted work order to ready")
   WorkOrderWorkflowResponse moveToReady(@PathVariable @Pattern(regexp = "WO-\\d{4}-\\d{4}") String workOrderId) {
     return WorkOrderWorkflowResponse.from("READY", workOrderService.moveToReady(new WorkOrderId(workOrderId)));
   }
 
   @PostMapping("/{workOrderId}/start")
   @PreAuthorize("hasAnyRole('OPERATOR', 'ADMIN')")
+  @Operation(operationId = "startWorkOrder", summary = "Start work on a ready work order")
   WorkOrderWorkflowResponse start(@PathVariable @Pattern(regexp = "WO-\\d{4}-\\d{4}") String workOrderId) {
     return WorkOrderWorkflowResponse.from("IN_PROGRESS", workOrderService.start(new WorkOrderId(workOrderId)));
   }
 
   @PostMapping("/{workOrderId}/complete")
   @PreAuthorize("hasRole('ADMIN')")
+  @Operation(operationId = "completeWorkOrder", summary = "Complete a work order after verification")
   WorkOrderWorkflowResponse complete(@PathVariable @Pattern(regexp = "WO-\\d{4}-\\d{4}") String workOrderId) {
     return WorkOrderWorkflowResponse.from("DONE", workOrderService.complete(new WorkOrderId(workOrderId)));
   }

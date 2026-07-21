@@ -32,7 +32,7 @@ class AssetController {
 
   @GetMapping
   @PreAuthorize("hasAnyRole('OPERATOR', 'ADMIN')")
-  @Operation(summary = "Search registered infrastructure assets")
+  @Operation(operationId = "searchAssets", summary = "Search registered infrastructure assets")
   List<AssetResponse> search(
     @Parameter(description = "Free text filter for id, name, type or location")
     @RequestParam(defaultValue = "") String searchTerm
@@ -42,8 +42,9 @@ class AssetController {
 
   @GetMapping("/{assetId}")
   @PreAuthorize("hasAnyRole('OPERATOR', 'ADMIN')")
-  @Operation(summary = "Get asset by id")
+  @Operation(operationId = "getAsset", summary = "Get asset by id")
   @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "Asset detail"),
     @ApiResponse(
       responseCode = "404",
       description = "Asset not found",

@@ -19,6 +19,6 @@ class IncidentAgentController {
   private final IncidentAgentService agentService;
   IncidentAgentController(IncidentAgentService agentService) { this.agentService = agentService; }
   @GetMapping("/incidents/{incidentId}") @PreAuthorize("hasAnyRole('OPERATOR', 'ADMIN')")
-  @Operation(summary = "Generate a mock, provider-neutral incident proposal")
+  @Operation(operationId = "proposeIncidentActions", summary = "Generate a mock, provider-neutral incident proposal")
   IncidentAgentProposal propose(@PathVariable @Pattern(regexp = "INC-\\d{4}-\\d{4}") String incidentId) { return agentService.propose(new IncidentId(incidentId)); }
 }

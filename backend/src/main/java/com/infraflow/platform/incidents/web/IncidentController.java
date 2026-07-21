@@ -45,6 +45,7 @@ class IncidentController {
   @GetMapping
   @PreAuthorize("hasAnyRole('OPERATOR', 'ADMIN')")
   @Operation(
+    operationId = "searchIncidents",
     summary = "Search incidents",
     description = "Returns a page of the incident queue filtered by free text and optional severity."
   )
@@ -76,7 +77,7 @@ class IncidentController {
 
   @GetMapping("/{incidentId}")
   @PreAuthorize("hasAnyRole('OPERATOR', 'ADMIN')")
-  @Operation(summary = "Get incident by id")
+  @Operation(operationId = "getIncident", summary = "Get incident by id")
   IncidentResponse get(
     @Parameter(example = "INC-2026-0001")
     @PathVariable @Pattern(regexp = "INC-\\d{4}-\\d{4}") String incidentId
@@ -87,6 +88,7 @@ class IncidentController {
   @PostMapping
   @PreAuthorize("hasAnyRole('OPERATOR', 'ADMIN')")
   @Operation(
+    operationId = "createIncident",
     summary = "Report a new incident",
     description = "Creates a new operations incident. The initial status is Open."
   )
@@ -109,6 +111,7 @@ class IncidentController {
   @PostMapping("/{incidentId}/acknowledge")
   @PreAuthorize("hasAnyRole('OPERATOR', 'ADMIN')")
   @Operation(
+    operationId = "acknowledgeIncident",
     summary = "Acknowledge an incident",
     description = "Marks an open incident as seen by an operator without resolving the physical issue."
   )
@@ -135,6 +138,7 @@ class IncidentController {
   @PostMapping("/{incidentId}/start-response")
   @PreAuthorize("hasAnyRole('OPERATOR', 'ADMIN')")
   @Operation(
+    operationId = "startIncidentResponse",
     summary = "Start response workflow",
     description = "Moves an acknowledged incident into active response coordination."
   )
@@ -161,6 +165,7 @@ class IncidentController {
   @PostMapping("/{incidentId}/resolve")
   @PreAuthorize("hasRole('ADMIN')")
   @Operation(
+    operationId = "resolveIncident",
     summary = "Resolve an incident",
     description = "Closes an incident after operational ownership and response have been verified. Admin only."
   )

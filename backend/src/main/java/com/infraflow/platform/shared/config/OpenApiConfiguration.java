@@ -6,6 +6,8 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
+import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,6 +19,9 @@ class OpenApiConfiguration {
   @Bean
   OpenAPI infraflowOpenApi() {
     return new OpenAPI()
+      // Pin a relative server so exported contracts do not depend on the port
+      // or host that served /v3/api-docs.
+      .servers(List.of(new Server().url("/")))
       .components(new Components()
         .addSecuritySchemes(BEARER_AUTH, new SecurityScheme()
           .type(SecurityScheme.Type.HTTP)
