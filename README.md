@@ -194,6 +194,27 @@ cd backend
 mvn spring-boot:run -Dspring-boot.run.profiles=local
 ```
 
+### Full-stack Docker Compose
+
+The `infra/full-stack/compose.yml` stack runs the whole system in containers:
+PostgreSQL, the Spring Boot backend (built from `backend/Dockerfile`) and the
+Angular production build served by nginx (built from `frontend/Dockerfile`).
+nginx proxies `/api` requests to the backend, so the UI and API share one origin.
+
+```bash
+docker compose -f infra/full-stack/compose.yml up --build
+```
+
+- UI: `http://localhost:18088`
+- Backend API / health: `http://localhost:18080/actuator/health`
+- PostgreSQL: `localhost:55433` (kept separate from the development instance on `55432`)
+
+Database credentials default to `infraflow`/`infraflow` and can be overridden
+through `POSTGRES_DB`, `POSTGRES_USER` and `POSTGRES_PASSWORD`. `JWT_SECRET`
+has a local demo default; always set a real secret through the environment
+beyond local use. Stop the stack with
+`docker compose -f infra/full-stack/compose.yml down`.
+
 Quality checks:
 
 ```bash

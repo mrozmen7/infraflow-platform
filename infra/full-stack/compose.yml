@@ -1,0 +1,70 @@
+name: infraflow-full-stack
+
+# Full-stack demo: PostgreSQL, Spring Boot backend and the Angular production
+# build served by nginx. The Angular app calls /api on the same origin, and
+# nginx proxies those requests to the backend service.
+#
+# Start:  docker compose -f infra/full-stack/compose.yml up --build
+# Stop:   docker compose -f infra/full-stack/compose.yml down
+# UI:     http://localhost:18088  (backend API: http://localhost:18080)
+#
+# The default credentials and JWT secret below are for local demo use only.
+# Override them through the environment for anything beyond that.
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: infraflow-fullstack-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-infraflow}
+      POSTGRES_USER: ${POSTGRES_USER:-infraflow}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-infraflow}
+    ports:
+      - '55433:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    volumes:
+      - infraflow-fullstack-postgres-data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ../../backend
+    container_name: infraflow-fullstack-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-infraflow}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-infraflow}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-infraflow}
+      # Local demo default only; always provide a real secret through the environment.
+      JWT_SECRET: ${JWT_SECRET:-infraflow-compose-demo-secret-with-at-least-256-bits}
+    ports:
+      - '18080:8080'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -fsS http://localhost:8080/actuator/health || exit 1']
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  frontend:
+    build:
+      context: ../../frontend
+    container_name: infraflow-fullstack-frontend
+    ports:
+      - '18088:80'
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -q -O /dev/null http://localhost/ || exit 1']
+      interval: 10s
+      timeout: 3s
+      retries: 6
+
+volumes:
+  infraflow-fullstack-postgres-data:
