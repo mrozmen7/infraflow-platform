@@ -21,11 +21,20 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,prometheus
   endpoint:
     health:
       probes:
         enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  metrics:
+    distribution:
+      percentiles-histogram:
+        # Publishes histogram buckets so Prometheus can compute latency percentiles.
+        http.server.requests: true
 
 springdoc:
   api-docs:

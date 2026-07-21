@@ -52,12 +52,15 @@ class SecurityConfiguration {
       .authorizeHttpRequests(requests -> requests
         .requestMatchers(
           "/actuator/health",
+          "/actuator/health/**",
           "/actuator/info",
+          "/actuator/prometheus",
           "/v3/api-docs/**",
           "/swagger-ui.html",
           "/swagger-ui/**",
           "/api/v1/auth/**"
         ).permitAll()
+        .requestMatchers("/actuator/**").hasRole("ADMIN")
         .anyRequest().authenticated()
       )
       .oauth2ResourceServer(resourceServer -> resourceServer

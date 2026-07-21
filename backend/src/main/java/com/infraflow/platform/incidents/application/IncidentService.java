@@ -7,6 +7,8 @@ import com.infraflow.platform.shared.audit.AuditLogService;
 import com.infraflow.platform.shared.audit.AuditOutcome;
 import com.infraflow.platform.shared.error.ResourceNotFoundException;
 import com.infraflow.platform.shared.security.CurrentActorProvider;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -22,17 +24,20 @@ public class IncidentService implements IncidentLookupPort {
   private final AuditLogService auditLogService;
   private final CurrentActorProvider actorProvider;
   private final Clock clock;
+  private final MeterRegistry meterRegistry;
 
   public IncidentService(
     IncidentRepository incidentRepository,
     AuditLogService auditLogService,
     CurrentActorProvider actorProvider,
-    Clock clock
+    Clock clock,
+    MeterRegistry meterRegistry
   ) {
     this.incidentRepository = incidentRepository;
     this.auditLogService = auditLogService;
     this.actorProvider = actorProvider;
     this.clock = clock;
+    this.meterRegistry = meterRegistry;
   }
 
   @Transactional(readOnly = true)
@@ -123,6 +128,8 @@ public class IncidentService implements IncidentLookupPort {
     String successMessage
   ) {
     String actor = actorProvider.currentActor();
+    Timer.Sample sample = Timer.start(meterRegistry);
+    String outcome = AuditOutcome.SUCCESS.name();
     try {
       Incident saved = incidentRepository.save(transition.apply(get(incidentId)));
       auditLogService.record(
@@ -136,6 +143,7 @@ public class IncidentService implements IncidentLookupPort {
 
       return saved;
     } catch (RuntimeException exception) {
+      outcome = AuditOutcome.REJECTED.name();
       auditLogService.record(
         actor,
         action,
@@ -146,6 +154,13 @@ public class IncidentService implements IncidentLookupPort {
       );
 
       throw exception;
+    } finally {
+      sample.stop(Timer
+        .builder("infraflow.incident.workflow")
+        .description("Latency of incident workflow commands")
+        .tag("action", action)
+        .tag("outcome", outcome)
+        .register(meterRegistry));
     }
   }
 }

@@ -1,0 +1,35 @@
+name: infraflow-observability
+
+# Metrics and dashboards for the InfraFlow backend.
+# Start PostgreSQL first (../postgres/compose.yml) and run the backend with the
+# local profile, then: docker compose -f infra/observability/compose.yml up -d
+services:
+  prometheus:
+    image: prom/prometheus:v3.4.1
+    container_name: infraflow-prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.retention.time=15d'
+    ports:
+      - '9090:9090'
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    # host.docker.internal resolves natively on Docker Desktop; on Linux this
+    # extra_hosts entry maps it to the host gateway.
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+
+  grafana:
+    image: grafana/grafana:12.0.2
+    container_name: infraflow-grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: 'false'
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - prometheus
