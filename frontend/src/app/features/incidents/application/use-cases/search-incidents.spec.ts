@@ -1,4 +1,4 @@
-import type { IncidentQuery } from '../../domain/incident';
+import type { IncidentPage, IncidentQuery } from '../../domain/incident';
 import type { IncidentRepositoryPort } from '../ports/incident-repository.port';
 import { searchIncidents } from './search-incidents';
 
@@ -12,7 +12,14 @@ describe('searchIncidents', () => {
       search: (query, abortSignal) => {
         receivedQuery = query;
         receivedAbortSignal = abortSignal;
-        return Promise.resolve([]);
+        const emptyPage: IncidentPage = {
+          incidents: [],
+          page: query.page,
+          size: query.size,
+          totalElements: 0,
+          totalPages: 0,
+        };
+        return Promise.resolve(emptyPage);
       },
       findById: () => Promise.resolve(undefined),
       save: (incident) => Promise.resolve(incident),
@@ -27,11 +34,16 @@ describe('searchIncidents', () => {
 
     await searchIncidents(
       repository,
-      { searchTerm: '  transformer  ', severity: 'Critical' },
+      { searchTerm: '  transformer  ', severity: 'Critical', page: 1, size: 20 },
       abortController.signal,
     );
 
-    expect(receivedQuery).toEqual({ searchTerm: 'transformer', severity: 'Critical' });
+    expect(receivedQuery).toEqual({
+      searchTerm: 'transformer',
+      severity: 'Critical',
+      page: 1,
+      size: 20,
+    });
     expect(receivedAbortSignal).toBe(abortController.signal);
   });
 });

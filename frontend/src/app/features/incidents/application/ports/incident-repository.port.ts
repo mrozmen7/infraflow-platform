@@ -1,6 +1,7 @@
 import type {
   Incident,
   IncidentId,
+  IncidentPage,
   IncidentQuery,
   NewIncident,
 } from '../../domain/incident';
@@ -9,7 +10,7 @@ export abstract class IncidentRepositoryPort {
   abstract search(
     query: IncidentQuery,
     abortSignal?: AbortSignal,
-  ): Promise<readonly Incident[]>;
+  ): Promise<IncidentPage>;
   abstract findById(
     incidentId: IncidentId,
     abortSignal?: AbortSignal,

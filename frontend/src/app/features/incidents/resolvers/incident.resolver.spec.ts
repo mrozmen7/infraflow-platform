@@ -26,7 +26,14 @@ const incident: Incident = {
 describe('incidentResolver', () => {
   it('resolves an incident before route activation', async () => {
     configureRepository({
-      search: () => Promise.resolve([]),
+      search: () =>
+        Promise.resolve({
+          incidents: [],
+          page: 0,
+          size: 20,
+          totalElements: 0,
+          totalPages: 0,
+        }),
       findById: () => Promise.resolve(incident),
       save: () => Promise.resolve(incident),
       create: (newIncident) => Promise.resolve({ ...incident, ...newIncident }),
@@ -41,7 +48,14 @@ describe('incidentResolver', () => {
 
   it('redirects unknown incident ids to the not-found route', async () => {
     configureRepository({
-      search: () => Promise.resolve([]),
+      search: () =>
+        Promise.resolve({
+          incidents: [],
+          page: 0,
+          size: 20,
+          totalElements: 0,
+          totalPages: 0,
+        }),
       findById: () => Promise.resolve(undefined),
       save: () => Promise.resolve(incident),
       create: (newIncident) => Promise.resolve({ ...incident, ...newIncident }),

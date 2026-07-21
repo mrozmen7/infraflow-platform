@@ -155,6 +155,40 @@ h1 {
   font-size: 0.72rem;
 }
 
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--if-space-3);
+  padding: var(--if-space-2) var(--if-space-4);
+  border-top: 1px solid var(--if-color-border);
+}
+
+.pagination span {
+  color: var(--if-color-ink-muted);
+  font-size: 0.72rem;
+}
+
+.pagination button {
+  border: 1px solid var(--if-color-border);
+  background: var(--if-color-surface);
+  color: var(--if-color-primary);
+  padding: var(--if-space-1) var(--if-space-3);
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.pagination button:hover:not(:disabled) {
+  background: var(--if-color-primary);
+  color: var(--if-color-surface);
+}
+
+.pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
 .loading-state,
 .error-state,
 .inspector-empty {

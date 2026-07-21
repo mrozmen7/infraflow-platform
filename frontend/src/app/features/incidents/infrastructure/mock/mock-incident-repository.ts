@@ -4,6 +4,7 @@ import type { IncidentRepositoryPort } from '../../application';
 import {
   type Incident,
   type IncidentId,
+  type IncidentPage,
   type IncidentQuery,
   type NewIncident,
   parseIncidentId,
@@ -53,12 +54,12 @@ export class MockIncidentRepository implements IncidentRepositoryPort {
   private incidents = initialIncidents.map((incident) => ({ ...incident }));
   private nextIncidentSequence = initialIncidents.length + 1;
 
-  async search(query: IncidentQuery, abortSignal?: AbortSignal): Promise<readonly Incident[]> {
+  async search(query: IncidentQuery, abortSignal?: AbortSignal): Promise<IncidentPage> {
     await waitForMockNetwork(180, abortSignal);
 
     const normalizedSearchTerm = query.searchTerm.trim().toLocaleLowerCase();
 
-    return this.incidents.filter((incident) => {
+    const matching = this.incidents.filter((incident) => {
       const matchesSeverity = query.severity === 'All' || incident.severity === query.severity;
       const searchableText = [incident.id, incident.title, incident.location, incident.assetId]
         .join(' ')
@@ -66,6 +67,18 @@ export class MockIncidentRepository implements IncidentRepositoryPort {
 
       return matchesSeverity && searchableText.includes(normalizedSearchTerm);
     });
+
+    const page = Math.max(query.page, 0);
+    const size = Math.max(query.size, 1);
+    const from = Math.min(page * size, matching.length);
+
+    return {
+      incidents: matching.slice(from, from + size),
+      page,
+      size,
+      totalElements: matching.length,
+      totalPages: Math.ceil(matching.length / size),
+    };
   }
 
   async findById(

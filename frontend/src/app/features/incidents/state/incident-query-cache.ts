@@ -1,7 +1,7 @@
-import type { Incident, IncidentQuery } from '../domain/incident';
+import type { IncidentPage, IncidentQuery } from '../domain/incident';
 
 export interface IncidentQueryCacheEntry {
-  readonly incidents: readonly Incident[];
+  readonly result: IncidentPage;
   readonly loadedAt: number;
 }
 
@@ -31,10 +31,10 @@ export class IncidentQueryCache {
 
   set(
     query: IncidentQuery,
-    incidents: readonly Incident[],
+    result: IncidentPage,
   ): IncidentQueryCacheEntry {
     const entry: IncidentQueryCacheEntry = {
-      incidents,
+      result,
       loadedAt: this.now(),
     };
 
@@ -51,6 +51,6 @@ export class IncidentQueryCache {
   }
 
   private createKey(query: IncidentQuery): string {
-    return `${query.searchTerm.toLocaleLowerCase()}::${query.severity}`;
+    return `${query.searchTerm.toLocaleLowerCase()}::${query.severity}::${query.page}::${query.size}`;
   }
 }

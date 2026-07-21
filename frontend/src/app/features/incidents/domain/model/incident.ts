@@ -33,4 +33,14 @@ export interface NewIncident {
 export interface IncidentQuery {
   readonly searchTerm: string;
   readonly severity: IncidentSeverityFilter;
+  readonly page: number;
+  readonly size: number;
+}
+
+export interface IncidentPage {
+  readonly incidents: readonly Incident[];
+  readonly page: number;
+  readonly size: number;
+  readonly totalElements: number;
+  readonly totalPages: number;
 }

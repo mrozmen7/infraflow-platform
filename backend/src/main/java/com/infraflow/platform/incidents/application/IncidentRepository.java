@@ -2,12 +2,13 @@ package com.infraflow.platform.incidents.application;
 
 import com.infraflow.platform.incidents.domain.Incident;
 import com.infraflow.platform.incidents.domain.IncidentId;
-import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface IncidentRepository {
 
-  List<Incident> search(IncidentSearchCriteria criteria);
+  Page<Incident> search(IncidentSearchCriteria criteria, Pageable pageable);
 
   Optional<Incident> findById(IncidentId incidentId);
 

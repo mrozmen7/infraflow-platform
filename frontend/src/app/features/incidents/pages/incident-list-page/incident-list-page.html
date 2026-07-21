@@ -76,6 +76,28 @@
           (selectRequested)="selectIncident($event)"
           (acknowledgeRequested)="acknowledgeIncident($event)"
         />
+
+        @if (incidentStore.totalPages() > 1) {
+          <nav class="pagination" aria-label="Incident result pages">
+            <button
+              type="button"
+              (click)="goToPreviousPage()"
+              [disabled]="!incidentStore.hasPreviousPage()"
+            >
+              Previous
+            </button>
+            <span aria-live="polite">
+              Page {{ incidentStore.page() + 1 }} of {{ incidentStore.totalPages() }}
+            </span>
+            <button
+              type="button"
+              (click)="goToNextPage()"
+              [disabled]="!incidentStore.hasNextPage()"
+            >
+              Next
+            </button>
+          </nav>
+        }
       } @else {
         <app-empty-state title="No incidents match these filters">
           <p>Change the search or severity filter to return to the operational queue.</p>

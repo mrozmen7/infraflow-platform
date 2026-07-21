@@ -6,9 +6,18 @@ import type { IncidentRepositoryPort } from '../../application';
 import {
   type Incident,
   type IncidentId,
+  type IncidentPage,
   type IncidentQuery,
   type NewIncident,
 } from '../../domain/incident';
+
+interface IncidentPageResponse {
+  readonly content: readonly Incident[];
+  readonly page: number;
+  readonly size: number;
+  readonly totalElements: number;
+  readonly totalPages: number;
+}
 
 export class HttpIncidentRepository implements IncidentRepositoryPort {
   constructor(
@@ -16,14 +25,24 @@ export class HttpIncidentRepository implements IncidentRepositoryPort {
     private readonly runtimeConfig: AppRuntimeConfig,
   ) {}
 
-  search(query: IncidentQuery): Promise<readonly Incident[]> {
+  async search(query: IncidentQuery): Promise<IncidentPage> {
     const params = new HttpParams()
       .set('searchTerm', query.searchTerm)
-      .set('severity', query.severity);
+      .set('severity', query.severity)
+      .set('page', query.page)
+      .set('size', query.size);
 
-    return firstValueFrom(
-      this.http.get<readonly Incident[]>(this.incidentsUrl(), { params }),
+    const response = await firstValueFrom(
+      this.http.get<IncidentPageResponse>(this.incidentsUrl(), { params }),
     );
+
+    return {
+      incidents: response.content,
+      page: response.page,
+      size: response.size,
+      totalElements: response.totalElements,
+      totalPages: response.totalPages,
+    };
   }
 
   findById(incidentId: IncidentId): Promise<Incident | undefined> {

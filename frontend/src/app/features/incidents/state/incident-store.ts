@@ -63,6 +63,12 @@ export class IncidentStore {
 
   readonly searchTerm = computed(() => this.state().query.searchTerm);
   readonly severityFilter = computed(() => this.state().query.severity);
+  readonly page = computed(() => this.state().query.page);
+  readonly pageSize = computed(() => this.state().query.size);
+  readonly totalElements = computed(() => this.state().totalElements);
+  readonly totalPages = computed(() => this.state().totalPages);
+  readonly hasPreviousPage = computed(() => this.page() > 0);
+  readonly hasNextPage = computed(() => this.page() + 1 < this.totalPages());
   readonly incidents = computed(() => selectAllIncidents(this.state().collection));
   readonly selectedIncidentId = computed(() => this.state().selectedIncidentId);
   readonly loadStatus = computed(() => this.state().loadStatus);
@@ -77,7 +83,7 @@ export class IncidentStore {
     () => this.state().pendingResponseStartId,
   );
   readonly resultSummary = computed(() => {
-    const incidentCount = this.incidents().length;
+    const incidentCount = this.totalElements();
     return `${incidentCount} incident${incidentCount === 1 ? '' : 's'} found`;
   });
 
@@ -89,6 +95,8 @@ export class IncidentStore {
   private readonly requestQuery = computed<IncidentQuery>(() => ({
     searchTerm: this.debouncedSearchTerm().trim(),
     severity: this.severityFilter(),
+    page: this.page(),
+    size: this.pageSize(),
   }));
 
   private readonly incidentsResource = resource({
@@ -112,11 +120,13 @@ export class IncidentStore {
 
     if (this.incidentsResource.hasValue()) {
       const result = this.incidentsResource.value();
-      const collection = normalizeIncidents(result.incidents);
+      const collection = normalizeIncidents(result.result.incidents);
 
       this.state.update((state) => ({
         ...state,
         collection,
+        totalElements: result.result.totalElements,
+        totalPages: result.result.totalPages,
         selectedIncidentId: reconcileSelectedIncidentId(
           collection,
           state.selectedIncidentId,
@@ -130,11 +140,31 @@ export class IncidentStore {
   });
 
   setSearchTerm(searchTerm: string): void {
-    this.updateQuery({ searchTerm });
+    this.updateQuery({ searchTerm, page: 0 });
   }
 
   setSeverityFilter(severity: IncidentSeverityFilter): void {
-    this.updateQuery({ severity });
+    this.updateQuery({ severity, page: 0 });
+  }
+
+  setPage(page: number): void {
+    const nextPage = Math.max(0, Math.min(page, Math.max(this.totalPages() - 1, 0)));
+
+    if (nextPage !== this.page()) {
+      this.updateQuery({ page: nextPage });
+    }
+  }
+
+  nextPage(): void {
+    if (this.hasNextPage()) {
+      this.updateQuery({ page: this.page() + 1 });
+    }
+  }
+
+  previousPage(): void {
+    if (this.hasPreviousPage()) {
+      this.updateQuery({ page: this.page() - 1 });
+    }
   }
 
   resetFilters(): void {
@@ -142,6 +172,8 @@ export class IncidentStore {
       query: {
         searchTerm: '',
         severity: 'All',
+        page: 0,
+        size: this.pageSize(),
       },
     });
   }
@@ -273,8 +305,8 @@ export class IncidentStore {
       };
     }
 
-    const incidents = await searchIncidents(this.repository, query, abortSignal);
-    const networkResult = this.incidentCache.set(query, incidents);
+    const page = await searchIncidents(this.repository, query, abortSignal);
+    const networkResult = this.incidentCache.set(query, page);
 
     return {
       ...networkResult,

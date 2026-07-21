@@ -9,6 +9,7 @@ import {
 import {
   Incident,
   IncidentId,
+  IncidentPage,
   IncidentQuery,
   NewIncident,
 } from '../../domain/incident';
@@ -58,19 +59,27 @@ class FakeIncidentRepository implements IncidentRepositoryPort {
   acknowledgedIncidentId = '';
   responseStartedIncidentId = '';
   searchResult = incidents;
+  reportedTotalElements: number | null = null;
+  reportedTotalPages: number | null = null;
   searchShouldFail = false;
   saveShouldFail = false;
 
-  search(query: IncidentQuery): Promise<readonly Incident[]> {
+  search(query: IncidentQuery): Promise<IncidentPage> {
     if (this.searchShouldFail) {
       return Promise.reject(new Error('Simulated incident request failure'));
     }
 
-    return Promise.resolve(
-      this.searchResult.filter(
-        (incident) => query.severity === 'All' || incident.severity === query.severity,
-      ),
+    const matching = this.searchResult.filter(
+      (incident) => query.severity === 'All' || incident.severity === query.severity,
     );
+
+    return Promise.resolve({
+      incidents: matching,
+      page: query.page,
+      size: query.size,
+      totalElements: this.reportedTotalElements ?? matching.length,
+      totalPages: this.reportedTotalPages ?? Math.ceil(matching.length / query.size),
+    });
   }
 
   findById(incidentId: IncidentId): Promise<Incident | undefined> {
@@ -320,6 +329,39 @@ describe('IncidentListPage', () => {
     expect(element.querySelector('app-empty-state')).toBeTruthy();
     expect(element.textContent).toContain('No incidents match these filters');
     expect(element.textContent).toContain('Clear filters');
+  });
+
+  it('offers pagination controls when the result spans multiple pages', async () => {
+    repository.reportedTotalElements = 21;
+    repository.reportedTotalPages = 2;
+    const fixture = TestBed.createComponent(IncidentListPage);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+
+    expect(element.textContent).toContain('21 incidents found');
+    expect(element.querySelector('.pagination')?.textContent).toContain('Page 1 of 2');
+
+    [...element.querySelectorAll<HTMLButtonElement>('.pagination button')]
+      .find((button) => button.textContent?.includes('Next'))
+      ?.click();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(element.querySelector('.pagination')?.textContent).toContain('Page 2 of 2');
+    expect(element.querySelector('p.visually-hidden')?.textContent).toContain(
+      'Next incident page requested.',
+    );
+
+    [...element.querySelectorAll<HTMLButtonElement>('.pagination button')]
+      .find((button) => button.textContent?.includes('Previous'))
+      ?.click();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(element.querySelector('.pagination')?.textContent).toContain('Page 1 of 2');
   });
 
   it('renders an error state with a retry action when loading fails', async () => {

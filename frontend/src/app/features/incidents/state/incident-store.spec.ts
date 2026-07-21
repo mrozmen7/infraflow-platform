@@ -4,6 +4,7 @@ import { IncidentRepositoryPort } from '../application';
 import type {
   Incident,
   IncidentId,
+  IncidentPage,
   IncidentQuery,
   NewIncident,
 } from '../domain/incident';
@@ -39,17 +40,27 @@ const incidents: readonly Incident[] = [
 
 class FakeIncidentRepository implements IncidentRepositoryPort {
   readonly searchQueries: IncidentQuery[] = [];
+  reportedTotalElements: number | null = null;
+  reportedTotalPages: number | null = null;
   saveGate: Promise<void> | null = null;
   saveShouldFail = false;
   saveCalls = 0;
 
-  search(query: IncidentQuery): Promise<readonly Incident[]> {
+  search(query: IncidentQuery): Promise<IncidentPage> {
     this.searchQueries.push(query);
-    return Promise.resolve(
-      incidents.filter(
-        (incident) => query.severity === 'All' || incident.severity === query.severity,
-      ),
+
+    const matching = incidents.filter(
+      (incident) => query.severity === 'All' || incident.severity === query.severity,
     );
+    const from = Math.min(query.page * query.size, matching.length);
+
+    return Promise.resolve({
+      incidents: matching.slice(from, from + query.size),
+      page: query.page,
+      size: query.size,
+      totalElements: this.reportedTotalElements ?? matching.length,
+      totalPages: this.reportedTotalPages ?? Math.ceil(matching.length / query.size),
+    });
   }
 
   findById(incidentId: IncidentId): Promise<Incident | undefined> {
@@ -131,6 +142,54 @@ describe('IncidentStore', () => {
     store.reload();
     await vi.waitFor(() => expect(repository.searchQueries).toHaveLength(3));
     await vi.waitFor(() => expect(store.loadSource()).toBe('network'));
+  });
+
+  it('navigates between result pages and serves each cached page', async () => {
+    await vi.waitFor(() => expect(store.loadStatus()).toBe('loaded'));
+    repository.reportedTotalElements = 41;
+    repository.reportedTotalPages = 3;
+    store.reload();
+    await vi.waitFor(() => expect(store.totalPages()).toBe(3));
+
+    expect(store.resultSummary()).toBe('41 incidents found');
+    expect(store.hasPreviousPage()).toBe(false);
+    expect(store.hasNextPage()).toBe(true);
+
+    store.nextPage();
+    await vi.waitFor(() =>
+      expect(repository.searchQueries.at(-1)).toMatchObject({ page: 1, size: 20 }),
+    );
+    await vi.waitFor(() => expect(store.loadStatus()).toBe('loaded'));
+
+    expect(store.page()).toBe(1);
+    expect(store.hasPreviousPage()).toBe(true);
+
+    store.previousPage();
+    await vi.waitFor(() => expect(store.page()).toBe(0));
+    await vi.waitFor(() => expect(store.loadSource()).toBe('cache'));
+
+    expect(repository.searchQueries).toHaveLength(3);
+  });
+
+  it('returns to the first page when filters change', async () => {
+    await vi.waitFor(() => expect(store.loadStatus()).toBe('loaded'));
+    repository.reportedTotalElements = 41;
+    repository.reportedTotalPages = 3;
+    store.reload();
+    await vi.waitFor(() => expect(store.totalPages()).toBe(3));
+
+    store.nextPage();
+    await vi.waitFor(() => expect(store.page()).toBe(1));
+
+    store.setSeverityFilter('Critical');
+
+    expect(store.page()).toBe(0);
+    await vi.waitFor(() =>
+      expect(repository.searchQueries.at(-1)).toMatchObject({
+        severity: 'Critical',
+        page: 0,
+      }),
+    );
   });
 
   it('accepts only a selection that exists in the current collection', async () => {

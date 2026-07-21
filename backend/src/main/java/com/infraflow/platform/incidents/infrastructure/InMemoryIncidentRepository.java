@@ -17,6 +17,10 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -31,14 +35,36 @@ class InMemoryIncidentRepository implements IncidentRepository {
   }
 
   @Override
-  public List<Incident> search(IncidentSearchCriteria criteria) {
+  public Page<Incident> search(IncidentSearchCriteria criteria, Pageable pageable) {
     String normalizedSearchTerm = criteria.searchTerm().toLowerCase(Locale.ROOT);
 
-    return incidents.values().stream()
+    List<Incident> filtered = incidents.values().stream()
       .filter(incident -> criteria.severity().isEmpty() || incident.severity() == criteria.severity().get())
       .filter(incident -> searchableText(incident).contains(normalizedSearchTerm))
-      .sorted(Comparator.comparing(Incident::reportedAt).reversed())
+      .sorted(comparatorFor(pageable.getSort()))
       .toList();
+
+    int from = (int) Math.min(pageable.getOffset(), filtered.size());
+    int to = Math.min(from + pageable.getPageSize(), filtered.size());
+
+    return new PageImpl<>(filtered.subList(from, to), pageable, filtered.size());
+  }
+
+  private Comparator<Incident> comparatorFor(Sort sort) {
+    Sort.Order order = sort.stream().findFirst().orElse(null);
+    if (order == null) {
+      return Comparator.comparing(Incident::reportedAt).reversed();
+    }
+
+    Comparator<Incident> comparator = switch (order.getProperty()) {
+      case "title" -> Comparator.comparing(Incident::title);
+      case "severity" -> Comparator.comparing(Incident::severity);
+      case "status" -> Comparator.comparing(Incident::status);
+      case "id" -> Comparator.comparing(incident -> incident.id().value());
+      default -> Comparator.comparing(Incident::reportedAt);
+    };
+
+    return order.isAscending() ? comparator : comparator.reversed();
   }
 
   @Override

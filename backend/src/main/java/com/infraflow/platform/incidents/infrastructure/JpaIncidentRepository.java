@@ -4,9 +4,10 @@ import com.infraflow.platform.incidents.application.IncidentRepository;
 import com.infraflow.platform.incidents.application.IncidentSearchCriteria;
 import com.infraflow.platform.incidents.domain.Incident;
 import com.infraflow.platform.incidents.domain.IncidentId;
-import java.util.List;
 import java.util.Optional;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -20,11 +21,10 @@ class JpaIncidentRepository implements IncidentRepository {
   }
 
   @Override
-  public List<Incident> search(IncidentSearchCriteria criteria) {
-    return springDataRepository.search(criteria.searchTerm(), criteria.severity().orElse(null))
-      .stream()
-      .map(IncidentPersistenceMapper::toDomain)
-      .toList();
+  public Page<Incident> search(IncidentSearchCriteria criteria, Pageable pageable) {
+    return springDataRepository
+      .search(criteria.searchTerm(), criteria.severity().orElse(null), pageable)
+      .map(IncidentPersistenceMapper::toDomain);
   }
 
   @Override

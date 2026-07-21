@@ -11,8 +11,9 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import java.time.Clock;
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.function.Function;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,8 +42,8 @@ public class IncidentService implements IncidentLookupPort {
   }
 
   @Transactional(readOnly = true)
-  public List<Incident> search(IncidentSearchCriteria criteria) {
-    return incidentRepository.search(criteria);
+  public Page<Incident> search(IncidentSearchCriteria criteria, Pageable pageable) {
+    return incidentRepository.search(criteria, pageable);
   }
 
   @Transactional(readOnly = true)

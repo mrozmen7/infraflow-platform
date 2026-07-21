@@ -5,13 +5,40 @@ describe('MockIncidentRepository', () => {
   it('filters incidents by search term and severity', async () => {
     const repository = new MockIncidentRepository();
 
-    const incidents = await repository.search({
+    const page = await repository.search({
       searchTerm: 'transformer',
       severity: 'Critical',
+      page: 0,
+      size: 20,
     });
 
-    expect(incidents).toHaveLength(1);
-    expect(incidents[0]?.id).toBe('INC-2026-0001');
+    expect(page.incidents).toHaveLength(1);
+    expect(page.incidents[0]?.id).toBe('INC-2026-0001');
+    expect(page.totalElements).toBe(1);
+    expect(page.totalPages).toBe(1);
+  });
+
+  it('slices the filtered result into pages', async () => {
+    const repository = new MockIncidentRepository();
+
+    const firstPage = await repository.search({
+      searchTerm: '',
+      severity: 'All',
+      page: 0,
+      size: 2,
+    });
+    const secondPage = await repository.search({
+      searchTerm: '',
+      severity: 'All',
+      page: 1,
+      size: 2,
+    });
+
+    expect(firstPage.incidents).toHaveLength(2);
+    expect(firstPage.totalElements).toBeGreaterThan(2);
+    expect(firstPage.totalPages).toBe(Math.ceil(firstPage.totalElements / 2));
+    expect(secondPage.page).toBe(1);
+    expect(secondPage.incidents[0]?.id).not.toBe(firstPage.incidents[0]?.id);
   });
 
   it('persists an updated entity inside the route-scoped fake repository', async () => {
@@ -48,7 +75,7 @@ describe('MockIncidentRepository', () => {
     const repository = new MockIncidentRepository();
     const abortController = new AbortController();
     const searchPromise = repository.search(
-      { searchTerm: '', severity: 'All' },
+      { searchTerm: '', severity: 'All', page: 0, size: 20 },
       abortController.signal,
     );
 

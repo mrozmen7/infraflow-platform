@@ -10,6 +10,8 @@ export type IncidentLoadSource = 'network' | 'cache';
 export interface IncidentStoreState {
   readonly collection: IncidentEntityState;
   readonly query: IncidentQuery;
+  readonly totalElements: number;
+  readonly totalPages: number;
   readonly selectedIncidentId: IncidentId | null;
   readonly loadStatus: IncidentLoadStatus;
   readonly errorMessage: string | null;
@@ -25,7 +27,11 @@ export function createInitialIncidentStoreState(): IncidentStoreState {
     query: {
       searchTerm: '',
       severity: 'All',
+      page: 0,
+      size: 20,
     },
+    totalElements: 0,
+    totalPages: 0,
     selectedIncidentId: null,
     loadStatus: 'idle',
     errorMessage: null,

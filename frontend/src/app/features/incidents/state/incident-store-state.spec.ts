@@ -39,7 +39,9 @@ describe('IncidentStoreState', () => {
 
     expect(firstState).toEqual({
       collection: { ids: [], entities: {} },
-      query: { searchTerm: '', severity: 'All' },
+      query: { searchTerm: '', severity: 'All', page: 0, size: 20 },
+      totalElements: 0,
+      totalPages: 0,
       selectedIncidentId: null,
       loadStatus: 'idle',
       errorMessage: null,

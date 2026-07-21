@@ -40,9 +40,47 @@ class IncidentControllerTests extends PostgresIntegrationTest {
         .queryParam("searchTerm", "tunnel")
         .queryParam("severity", "Critical"))
       .andExpect(status().isOk())
-      .andExpect(jsonPath("$", hasSize(1)))
-      .andExpect(jsonPath("$[0].id").value("INC-2026-0001"))
-      .andExpect(jsonPath("$[0].severity").value("Critical"));
+      .andExpect(jsonPath("$.content", hasSize(1)))
+      .andExpect(jsonPath("$.content[0].id").value("INC-2026-0001"))
+      .andExpect(jsonPath("$.content[0].severity").value("Critical"))
+      .andExpect(jsonPath("$.page").value(0))
+      .andExpect(jsonPath("$.size").value(20))
+      .andExpect(jsonPath("$.totalElements").value(1))
+      .andExpect(jsonPath("$.totalPages").value(1));
+  }
+
+  @Test
+  @WithMockUser(roles = "OPERATOR")
+  void paginatesIncidentSearchWithPageEnvelope() throws Exception {
+    mockMvc.perform(get("/api/v1/incidents")
+        .queryParam("page", "0")
+        .queryParam("size", "2"))
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("$.content", hasSize(2)))
+      .andExpect(jsonPath("$.content[0].id").value("INC-2026-0001"))
+      .andExpect(jsonPath("$.page").value(0))
+      .andExpect(jsonPath("$.size").value(2))
+      .andExpect(jsonPath("$.totalElements").value(3))
+      .andExpect(jsonPath("$.totalPages").value(2));
+
+    mockMvc.perform(get("/api/v1/incidents")
+        .queryParam("page", "1")
+        .queryParam("size", "2"))
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("$.content", hasSize(1)))
+      .andExpect(jsonPath("$.content[0].id").value("INC-2026-0003"))
+      .andExpect(jsonPath("$.page").value(1))
+      .andExpect(jsonPath("$.totalElements").value(3));
+  }
+
+  @Test
+  @WithMockUser(roles = "OPERATOR")
+  void sortsIncidentSearchByRequestedProperty() throws Exception {
+    mockMvc.perform(get("/api/v1/incidents")
+        .queryParam("sort", "title,asc"))
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("$.content", hasSize(3)))
+      .andExpect(jsonPath("$.content[0].title").value("Emergency phone inspection due"));
   }
 
   @Test

@@ -1,6 +1,7 @@
 import type {
   Incident,
   IncidentId,
+  IncidentPage,
   IncidentQuery,
   NewIncident,
 } from '../../domain/incident';
@@ -10,8 +11,14 @@ import { createIncident, InvalidNewIncidentError } from './create-incident';
 class CapturingIncidentRepository implements IncidentRepositoryPort {
   createdIncident: NewIncident | null = null;
 
-  search(_query: IncidentQuery): Promise<readonly Incident[]> {
-    return Promise.resolve([]);
+  search(_query: IncidentQuery): Promise<IncidentPage> {
+    return Promise.resolve({
+      incidents: [],
+      page: 0,
+      size: 20,
+      totalElements: 0,
+      totalPages: 0,
+    });
   }
 
   findById(_incidentId: IncidentId): Promise<Incident | undefined> {

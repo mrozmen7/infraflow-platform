@@ -317,4 +317,14 @@ export class IncidentListPage {
     this.actionMessage.set('Retrying incident request…');
     this.incidentStore.reload();
   }
+
+  protected goToPreviousPage(): void {
+    this.incidentStore.previousPage();
+    this.actionMessage.set('Previous incident page requested.');
+  }
+
+  protected goToNextPage(): void {
+    this.incidentStore.nextPage();
+    this.actionMessage.set('Next incident page requested.');
+  }
 }

@@ -26,7 +26,14 @@ function createRepository(incident: Incident | undefined): {
 
   return {
     repository: {
-      search: () => Promise.resolve([]),
+      search: () =>
+        Promise.resolve({
+          incidents: [],
+          page: 0,
+          size: 20,
+          totalElements: 0,
+          totalPages: 0,
+        }),
       findById: () => {
         findCalls += 1;
         return Promise.resolve(incident);
