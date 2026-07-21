@@ -4,10 +4,8 @@ import com.infraflow.platform.incidents.application.IncidentRepository;
 import com.infraflow.platform.incidents.application.IncidentSearchCriteria;
 import com.infraflow.platform.incidents.domain.Incident;
 import com.infraflow.platform.incidents.domain.IncidentId;
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
@@ -16,7 +14,6 @@ import org.springframework.stereotype.Repository;
 class JpaIncidentRepository implements IncidentRepository {
 
   private final SpringDataIncidentJpaRepository springDataRepository;
-  private final AtomicInteger sequence = new AtomicInteger(4);
 
   JpaIncidentRepository(SpringDataIncidentJpaRepository springDataRepository) {
     this.springDataRepository = springDataRepository;
@@ -44,6 +41,7 @@ class JpaIncidentRepository implements IncidentRepository {
 
   @Override
   public IncidentId nextIdentity() {
-    return new IncidentId("INC-%d-%04d".formatted(OffsetDateTime.now().getYear(), sequence.getAndIncrement()));
+    long nextNumber = springDataRepository.nextIncidentNumber();
+    return new IncidentId("INC-%d-%04d".formatted(java.time.Year.now().getValue(), nextNumber));
   }
 }

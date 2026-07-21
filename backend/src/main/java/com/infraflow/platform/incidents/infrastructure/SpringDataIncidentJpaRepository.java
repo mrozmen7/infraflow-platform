@@ -27,4 +27,7 @@ interface SpringDataIncidentJpaRepository extends JpaRepository<IncidentJpaEntit
     @Param("searchTerm") String searchTerm,
     @Param("severity") IncidentSeverity severity
   );
+
+  @Query(value = "select nextval('incident_number_sequence')", nativeQuery = true)
+  long nextIncidentNumber();
 }

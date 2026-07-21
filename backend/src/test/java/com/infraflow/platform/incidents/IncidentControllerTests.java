@@ -70,8 +70,8 @@ class IncidentControllerTests {
           }
           """))
       .andExpect(status().isCreated())
-      .andExpect(header().string("Location", "/api/v1/incidents/INC-2026-0004"))
-      .andExpect(jsonPath("$.id").value("INC-2026-0004"))
+      .andExpect(header().string("Location", "/api/v1/incidents/INC-2026-1000"))
+      .andExpect(jsonPath("$.id").value("INC-2026-1000"))
       .andExpect(jsonPath("$.status").value("Open"));
   }
 
