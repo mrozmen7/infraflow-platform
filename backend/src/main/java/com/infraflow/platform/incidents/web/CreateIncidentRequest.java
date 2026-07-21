@@ -2,8 +2,8 @@ package com.infraflow.platform.incidents.web;
 
 import com.infraflow.platform.incidents.application.CreateIncidentCommand;
 import com.infraflow.platform.incidents.domain.AssetId;
-import com.infraflow.platform.incidents.domain.IncidentPriority;
 import com.infraflow.platform.incidents.domain.IncidentSeverity;
+import com.infraflow.platform.shared.kernel.IncidentPriority;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

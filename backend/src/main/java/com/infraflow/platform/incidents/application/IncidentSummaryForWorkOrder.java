@@ -1,7 +1,7 @@
 package com.infraflow.platform.incidents.application;
 
-import com.infraflow.platform.incidents.domain.IncidentId;
-import com.infraflow.platform.incidents.domain.IncidentPriority;
+import com.infraflow.platform.shared.kernel.IncidentId;
+import com.infraflow.platform.shared.kernel.IncidentPriority;
 
 public record IncidentSummaryForWorkOrder(
   IncidentId incidentId,

@@ -1,4 +1,4 @@
-package com.infraflow.platform.incidents.domain;
+package com.infraflow.platform.shared.kernel;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;

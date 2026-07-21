@@ -3,7 +3,7 @@ package com.infraflow.platform.incidents.infrastructure;
 import com.infraflow.platform.incidents.application.IncidentRepository;
 import com.infraflow.platform.incidents.application.IncidentSearchCriteria;
 import com.infraflow.platform.incidents.domain.Incident;
-import com.infraflow.platform.incidents.domain.IncidentId;
+import com.infraflow.platform.shared.kernel.IncidentId;
 import java.util.Optional;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;

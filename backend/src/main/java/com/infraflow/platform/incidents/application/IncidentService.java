@@ -1,11 +1,12 @@
 package com.infraflow.platform.incidents.application;
 
 import com.infraflow.platform.incidents.domain.Incident;
-import com.infraflow.platform.incidents.domain.IncidentId;
+import com.infraflow.platform.incidents.domain.IncidentSeverity;
 import com.infraflow.platform.incidents.domain.IncidentStatus;
 import com.infraflow.platform.shared.audit.AuditLogService;
 import com.infraflow.platform.shared.audit.AuditOutcome;
 import com.infraflow.platform.shared.error.ResourceNotFoundException;
+import com.infraflow.platform.shared.kernel.IncidentId;
 import com.infraflow.platform.shared.security.CurrentActorProvider;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
@@ -19,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-public class IncidentService implements IncidentLookupPort {
+public class IncidentService implements IncidentLookupPort, IncidentAgentContextPort {
 
   private final IncidentRepository incidentRepository;
   private final AuditLogService auditLogService;
@@ -119,6 +120,17 @@ public class IncidentService implements IncidentLookupPort {
       incident.location(),
       incident.assetId().value(),
       incident.priority()
+    );
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public IncidentAgentContext getAgentContext(IncidentId incidentId) {
+    Incident incident = get(incidentId);
+
+    return new IncidentAgentContext(
+      incident.id().value(),
+      incident.severity() == IncidentSeverity.CRITICAL
     );
   }
 

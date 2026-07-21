@@ -1,4 +1,4 @@
-package com.infraflow.platform.incidents.domain;
+package com.infraflow.platform.shared.kernel;
 
 import java.util.Objects;
 import java.util.regex.Pattern;

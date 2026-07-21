@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.infraflow.platform.incidents.application.IncidentRepository;
 import com.infraflow.platform.incidents.domain.Incident;
-import com.infraflow.platform.incidents.domain.IncidentId;
+import com.infraflow.platform.shared.kernel.IncidentId;
 import com.infraflow.platform.support.PostgresIntegrationTest;
 import java.util.List;
 import java.util.concurrent.Callable;

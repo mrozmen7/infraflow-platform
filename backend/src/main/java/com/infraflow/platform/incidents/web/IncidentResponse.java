@@ -1,9 +1,9 @@
 package com.infraflow.platform.incidents.web;
 
 import com.infraflow.platform.incidents.domain.Incident;
-import com.infraflow.platform.incidents.domain.IncidentPriority;
 import com.infraflow.platform.incidents.domain.IncidentSeverity;
 import com.infraflow.platform.incidents.domain.IncidentStatus;
+import com.infraflow.platform.shared.kernel.IncidentPriority;
 import java.time.OffsetDateTime;
 import java.util.List;
 

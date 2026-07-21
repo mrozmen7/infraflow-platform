@@ -5,11 +5,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.infraflow.platform.incidents.domain.AssetId;
 import com.infraflow.platform.incidents.domain.Incident;
-import com.infraflow.platform.incidents.domain.IncidentId;
-import com.infraflow.platform.incidents.domain.IncidentPriority;
 import com.infraflow.platform.incidents.domain.IncidentSeverity;
 import com.infraflow.platform.incidents.domain.IncidentStatus;
 import com.infraflow.platform.shared.error.BusinessRuleViolationException;
+import com.infraflow.platform.shared.kernel.IncidentId;
+import com.infraflow.platform.shared.kernel.IncidentPriority;
 import java.time.OffsetDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;

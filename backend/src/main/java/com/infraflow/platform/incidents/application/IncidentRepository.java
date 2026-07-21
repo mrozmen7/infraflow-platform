@@ -1,7 +1,7 @@
 package com.infraflow.platform.incidents.application;
 
 import com.infraflow.platform.incidents.domain.Incident;
-import com.infraflow.platform.incidents.domain.IncidentId;
+import com.infraflow.platform.shared.kernel.IncidentId;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

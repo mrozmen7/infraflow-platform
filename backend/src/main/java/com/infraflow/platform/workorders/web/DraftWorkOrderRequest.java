@@ -1,6 +1,6 @@
 package com.infraflow.platform.workorders.web;
 
-import com.infraflow.platform.incidents.domain.IncidentId;
+import com.infraflow.platform.shared.kernel.IncidentId;
 import com.infraflow.platform.workorders.application.DraftWorkOrderCommand;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;

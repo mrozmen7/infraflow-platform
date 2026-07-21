@@ -2,7 +2,7 @@ package com.infraflow.platform.agentic.web;
 
 import com.infraflow.platform.agentic.application.IncidentAgentProposal;
 import com.infraflow.platform.agentic.application.IncidentAgentService;
-import com.infraflow.platform.incidents.domain.IncidentId;
+import com.infraflow.platform.shared.kernel.IncidentId;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Pattern;

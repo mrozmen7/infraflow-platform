@@ -3,7 +3,7 @@ package com.infraflow.platform.incidents;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.infraflow.platform.incidents.application.IncidentRepository;
-import com.infraflow.platform.incidents.domain.IncidentId;
+import com.infraflow.platform.shared.kernel.IncidentId;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

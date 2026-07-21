@@ -2,7 +2,7 @@ package com.infraflow.platform.incidents.infrastructure;
 
 import com.infraflow.platform.incidents.domain.AssetId;
 import com.infraflow.platform.incidents.domain.Incident;
-import com.infraflow.platform.incidents.domain.IncidentId;
+import com.infraflow.platform.shared.kernel.IncidentId;
 
 final class IncidentPersistenceMapper {
 

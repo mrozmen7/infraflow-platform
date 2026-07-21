@@ -1,8 +1,8 @@
 package com.infraflow.platform.incidents.infrastructure;
 
-import com.infraflow.platform.incidents.domain.IncidentPriority;
 import com.infraflow.platform.incidents.domain.IncidentSeverity;
 import com.infraflow.platform.incidents.domain.IncidentStatus;
+import com.infraflow.platform.shared.kernel.IncidentPriority;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;

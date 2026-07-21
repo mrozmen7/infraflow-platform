@@ -1,6 +1,6 @@
 package com.infraflow.platform.incidents.application;
 
-import com.infraflow.platform.incidents.domain.IncidentId;
+import com.infraflow.platform.shared.kernel.IncidentId;
 
 public interface IncidentLookupPort {
 

@@ -1,6 +1,6 @@
 package com.infraflow.platform.workorders.infrastructure;
 
-import com.infraflow.platform.incidents.domain.IncidentId;
+import com.infraflow.platform.shared.kernel.IncidentId;
 import com.infraflow.platform.workorders.domain.WorkOrder;
 import com.infraflow.platform.workorders.domain.WorkOrderId;
 

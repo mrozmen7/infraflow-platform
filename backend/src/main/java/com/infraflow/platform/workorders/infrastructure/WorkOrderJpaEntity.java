@@ -1,6 +1,6 @@
 package com.infraflow.platform.workorders.infrastructure;
 
-import com.infraflow.platform.incidents.domain.IncidentPriority;
+import com.infraflow.platform.shared.kernel.IncidentPriority;
 import com.infraflow.platform.workorders.domain.WorkOrderStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
