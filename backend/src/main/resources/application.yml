@@ -43,7 +43,8 @@ infraflow:
     refresh-cookie-secure: false
     jwt:
       issuer: infraflow
-      secret: infraflow-local-development-secret-with-at-least-256-bits
+      # No default: the application fails fast at startup when JWT_SECRET is missing.
+      secret: ${JWT_SECRET}
       access-token-ttl: PT15M
       refresh-token-ttl: PT8H
     users:

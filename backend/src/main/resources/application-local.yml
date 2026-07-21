@@ -5,6 +5,13 @@ spring:
     password: infraflow
     driver-class-name: org.postgresql.Driver
 
+infraflow:
+  security:
+    jwt:
+      # Local development only, never for production.
+      # Production must provide the secret through the JWT_SECRET environment variable.
+      secret: infraflow-local-development-secret-with-at-least-256-bits
+
 logging:
   level:
     org.hibernate.SQL: info

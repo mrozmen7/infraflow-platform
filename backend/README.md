@@ -58,6 +58,14 @@ Runtime rules:
 - Controller use cases are protected with `@PreAuthorize`.
 - `/api/v1/auth/login`, `/api/v1/auth/refresh`, `/v3/api-docs` and Swagger are public in local/dev runtime.
 
+## Configuration
+
+Required environment variables:
+
+| Variable | Required | Description |
+| --- | --- | --- |
+| `JWT_SECRET` | Yes (outside the `local` profile) | HMAC secret used to sign and verify JWTs. Must be at least 256 bits. The application fails fast at startup when it is missing. `application-local.yml` provides a local-development-only default that must never be used in production. |
+
 ## Run
 
 From the repository root:
