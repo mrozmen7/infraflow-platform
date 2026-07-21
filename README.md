@@ -8,9 +8,25 @@ coordinates incident triage, asset context and work-order workflows through a mo
 Angular frontend, a Spring Boot modular monolith backend and a PostgreSQL persistence
 layer.
 
-The system demonstrates domain-driven API design, signal-based frontend state,
-contract-first integration, JWT-secured backend workflows, transaction-safe audit
-logging, optimistic concurrency control and production-oriented quality gates.
+The system demonstrates domain-driven API design, signal-based frontend state and
+contract-first integration: the backend publishes an OpenAPI contract from which the
+Angular API client is generated, JWT-secured workflows with refresh-token rotation,
+transaction-safe audit logging, optimistic concurrency control, paginated incident
+search and a German/English user interface.
+
+## Architektur- und Sicherheitsüberblick
+
+- **Stack:** Angular 22 (Standalone Components, Signals), Spring Boot 3.5 / Java 21
+  als modularer Monolith, PostgreSQL mit Flyway-Migrationen.
+- **Modulgrenzen:** Fachmodule `incidents`, `assets`, `workorders` und `agentic` mit
+  den Schichten domain/application/infrastructure/web; modulübergreifende Zugriffe
+  nur über Application-Ports, durch ArchUnit-Tests erzwungen (ADR 0007).
+- **Sicherheit:** JWT-Zugangstoken (15 Minuten) mit HttpOnly-Refresh-Rotation und
+  Wiederverwendungserkennung, rollenbasierte Autorisierung (`OPERATOR`/`ADMIN`),
+  Geheimnisse ausschliesslich über Umgebungsvariablen (`JWT_SECRET`, DB-Zugangsdaten).
+- **Qualitätsgates:** 57 Backend-Tests (inkl. Testcontainers-PostgreSQL), 115
+  Frontend-Unit-Tests, Architektur- und Guardrail-Prüfungen, Abgleich des generierten
+  API-Clients mit dem OpenAPI-Vertrag, Playwright-Browserflüsse, drei CI-Workflows.
 
 ## Product scope
 
@@ -53,6 +69,8 @@ infraflow-platform/
 - Signals, computed state and resource-style loading flows
 - Route-scoped feature boundaries
 - Signal Store, normalized state and rollback-safe optimistic updates
+- German/English i18n (`@ngx-translate`), German default, persisted language preference
+- Typed API client generated from the OpenAPI contract (`ng-openapi-gen`)
 - Strict TypeScript, accessibility checks and architecture guardrails
 
 ```text
@@ -81,7 +99,9 @@ frontend/src/app/
 - Optimistic locking for concurrent incident updates
 - Transaction-safe audit logging for rejected workflow commands
 - Explicit query fetch boundaries for N+1 prevention
-- OpenAPI/Swagger contract generation
+- Paginated incident search (`page`/`size`/`sort`) backed by database queries
+- Prometheus metrics endpoint and structured JSON logging
+- OpenAPI/Swagger contract generation with stable operation ids
 
 ```text
 backend/src/main/java/com/infraflow/platform/
@@ -233,18 +253,27 @@ Useful URLs:
 
 ## Quality gates
 
-The project is protected by:
+Verified state of the current checks:
 
-- frontend unit tests
-- backend unit/API tests
-- JWT authentication and role-based authorization tests
-- optimistic locking and audit rollback tests
-- Angular production build
-- architecture fitness checks
-- security and accessibility guardrails
-- Playwright browser flows
-- OpenAPI contract export
-- GitHub Actions CI pipelines
+- **Backend: 57 tests** (`mvn test`), including Testcontainers PostgreSQL integration
+  tests, JWT authentication and role-based authorization tests, optimistic-locking and
+  audit rollback tests, and 4 ArchUnit module-boundary rules (`ModuleBoundaryTests`).
+- **Frontend: 115 unit tests** (`npm test -- --watch=false`), plus the production
+  build, an architecture import check (`test:architecture`), security and
+  accessibility guardrails (`test:guardrails`) and Playwright browser flows (`e2e`).
+- **Contract check:** `check:api` regenerates the API client and fails the quality
+  gate when it drifts from `contracts/openapi/infraflow-api-v1.openapi.json`.
+- **Observability:** Prometheus scrape endpoint (`/actuator/prometheus`, histogram
+  buckets enabled) and a provisioned Grafana dashboard (`infra/observability/`).
+- **CI:** three GitHub Actions workflows — Backend CI (`mvn test`), Frontend CI
+  (full quality gate including Playwright) and the GitHub Pages demo deployment.
+
+## Demo deployment
+
+The GitHub Pages deployment (`.github/workflows/deploy-demo.yml`) is a **static UI
+preview — not connected to the backend**. It builds the Angular app with in-memory
+mock repositories (`build:pages-demo`) so the interface can be explored without any
+running infrastructure.
 
 ## Advanced extensions
 
@@ -267,9 +296,10 @@ so the core system remains understandable, testable and operationally determinis
 - Backend hardening evidence: [docs/evidence/backend-enterprise-hardening.md](docs/evidence/backend-enterprise-hardening.md)
 - Asset and work-order integration evidence: [docs/evidence/asset-and-work-order-vertical-slices.md](docs/evidence/asset-and-work-order-vertical-slices.md)
 - Security/concurrency/query ADR: [docs/architecture/adr/0005-backend-security-concurrency-and-query-boundaries.md](docs/architecture/adr/0005-backend-security-concurrency-and-query-boundaries.md)
-- OpenAPI contract: [contracts/openapi/infraflow-api-v1.openapi.json](contracts/openapi/infraflow-api-v1.openapi.json)
+- Modular monolith ADR: [docs/architecture/adr/0007-modular-monolith-over-microservices.md](docs/architecture/adr/0007-modular-monolith-over-microservices.md)
+- OpenAPI contract: [contracts/openapi/infraflow-api-v1.openapi.json](contracts/openapi/infraflow-api-v1.openapi.json) — regenerate the frontend client with `npm run generate:api`
 - Development documentation: [docs/learning/](docs/learning/)
-- Agentic engineering notes: [docs/agentic-engineering/](docs/agentic-engineering/)
+- Agentic engineering notes: [docs/agentic-engineering/](docs/agentic-engineering/) (including the [agent lab](docs/agentic-engineering/agent-lab/))
 
 ## License
 
